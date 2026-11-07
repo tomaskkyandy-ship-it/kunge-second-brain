@@ -1,0 +1,144 @@
+filters:
+  and:
+    - file.inFolder("02_投资与分析/04_交易记录")
+    - file.ext == "md"
+    - file.name != "_选股分析模板"
+    - note.company != null
+    - note.action == null
+properties:
+  company:
+    displayName: 公司/资产
+  ticker:
+    displayName: 代码
+  asset_type:
+    displayName: 类型
+  macro_bucket:
+    displayName: 宏观因子篮子
+  sector:
+    displayName: 行业/赛道
+  status:
+    displayName: 状态
+  price:
+    displayName: 现价
+  target_buy_price:
+    displayName: 狙击买点
+  macro_score:
+    displayName: 中观分%
+  quality_score:
+    displayName: 质量分%
+  score_rate:
+    displayName: 综合分%
+  traps_hit:
+    displayName: 陷阱数
+  position_pct:
+    displayName: 仓位%
+  verdict:
+    displayName: 结论
+views:
+  - type: table
+    name: 我的股票池
+    order:
+      - company
+      - ticker
+      - asset_type
+      - macro_bucket
+      - status
+      - price
+      - target_buy_price
+      - macro_score
+      - quality_score
+      - score_rate
+      - traps_hit
+      - position_pct
+      - verdict
+    sort:
+      - property: score_rate
+        direction: DESC
+  - type: table
+    name: 皇冠明珠狙击池
+    filters:
+      and:
+        - quality_score >= 70
+    order:
+      - company
+      - ticker
+      - price
+      - target_buy_price
+      - quality_score
+      - macro_score
+      - score_rate
+      - status
+      - verdict
+    sort:
+      - property: quality_score
+        direction: DESC
+  - type: table
+    name: 股票标的
+    filters:
+      and:
+        - asset_type == "股票"
+    order:
+      - company
+      - ticker
+      - macro_bucket
+      - status
+      - price
+      - target_buy_price
+      - macro_score
+      - quality_score
+      - score_rate
+      - traps_hit
+      - position_pct
+      - verdict
+    sort:
+      - property: score_rate
+        direction: DESC
+  - type: table
+    name: 加密资产
+    filters:
+      and:
+        - asset_type == "加密资产"
+    order:
+      - company
+      - ticker
+      - macro_bucket
+      - status
+      - price
+      - target_buy_price
+      - macro_score
+      - score_rate
+      - traps_hit
+      - position_pct
+      - verdict
+    sort:
+      - property: score_rate
+        direction: DESC
+  - type: table
+    name: 待研究
+    filters:
+      and:
+        - status == "观察中"
+    order:
+      - company
+      - asset_type
+      - macro_bucket
+      - macro_score
+      - quality_score
+      - score_rate
+      - verdict
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC
+  - type: cards
+    name: 卡片视图
+    order:
+      - company
+      - asset_type
+      - macro_score
+      - quality_score
+      - score_rate
+      - verdict
+    sort:
+      - property: score_rate
+        direction: DESC

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《复利》投资清单</title>
+<style>
+:root {
+  --primary: #2c5282;
+  --accent:  #dd6b20;
+  --bg:      #fafbfc;
+  --card:    #ffffff;
+  --text:    #1a202c;
+  --muted:   #718096;
+  --border:  #e2e8f0;
+}
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+       background: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.7; }
+header { background: linear-gradient(135deg, var(--primary), #1a365d); color: white; padding: 48px 32px; }
+header h1 { margin: 0 0 12px; font-size: 32px; font-weight: 700; }
+header p { margin: 4px 0; opacity: 0.9; }
+.container { max-width: 980px; margin: 0 auto; padding: 32px; }
+.toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px;
+        margin: -32px 32px 32px; max-width: 916px; margin-left: auto; margin-right: auto; position: relative; z-index: 2; }
+.toc h3 { margin: 0 0 16px; color: var(--primary); font-size: 16px; }
+.toc ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.toc a { color: var(--text); text-decoration: none; display: flex; justify-content: space-between; padding: 8px 12px;
+          border-radius: 6px; transition: background 0.2s; }
+.toc a:hover { background: #edf2f7; }
+.toc .count { color: var(--muted); font-size: 14px; }
+.section { margin-top: 48px; }
+.section-header { display: flex; align-items: baseline; justify-content: space-between;
+                   border-bottom: 2px solid var(--primary); padding-bottom: 8px; margin-bottom: 24px; }
+.section-header h2 { margin: 0; color: var(--primary); font-size: 24px; }
+.section-header .meta { color: var(--muted); font-size: 14px; }
+.item { background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+         padding: 20px 24px; margin-bottom: 12px; }
+.item h3 { margin: 0 0 8px; color: var(--text); font-size: 17px; }
+.item .field { margin: 6px 0; font-size: 14px; }
+.item .field strong { color: var(--primary); margin-right: 4px; }
+.item .source { margin-top: 8px; font-size: 13px; color: var(--muted); font-style: italic; }
+.item.bad .source { color: var(--accent); }
+.pitfall .source { color: var(--accent); }
+footer { text-align: center; padding: 32px; color: var(--muted); font-size: 14px; }
+.summary { background: #edf2f7; border-left: 4px solid var(--primary); padding: 16px 20px;
+            border-radius: 4px; margin: 24px 0; }
+.summary p { margin: 0; }
+</style></head><body>
+<header><div class='container'>
+<h1>《复利》投资清单</h1>
+<p>蒸馏自高塔姆·拜德《复利：全球顶尖投资者的 31 节认知与决策思维课》（2024）</p>
+<p>共 <strong>101 条</strong>核心条目 · 5 大类 · 31 章出处可回溯</p>
+</div></header>
+<div class='toc'><h3>目录</h3><ul>
+<li><a href='#sec1'><span>一、思维模型与认知工具</span><span class='count'>17 条</span></a></li>
+<li><a href='#sec2'><span>二、投资铁律</span><span class='count'>24 条</span></a></li>
+<li><a href='#sec3'><span>三、公司评估与选股清单</span><span class='count'>25 条</span></a></li>
+<li><a href='#sec4'><span>四、心态与行为纪律</span><span class='count'>18 条</span></a></li>
+<li><a href='#sec5'><span>五、避坑清单</span><span class='count'>17 条</span></a></li>
+</ul></div>
+<div class='container'>
+<section class='section' id='sec1'><div class='section-header'><h2>一、思维模型与认知工具</h2><span class='meta'>共 17 条 — 『怎么想』的元能力</span></div>
+<div class='item'><h3>1. 学习机器（Learning Machine）</h3>
+<div class='field'><strong>是什么：</strong>把每天大部分时间用于「阅读—思考—再产出」的循环，让醒着比睡下时更聪明一点。不是天资聪慧，而是会持续自我迭代的机器。</div>
+<div class='field'><strong>怎么用：</strong>① 固定每天阅读时段（巴菲特 80% 时间）② 每天『卖给自己一小时』③ 阅读完把学到的东西写下来或讲给非专业听众听，让知识转化为可检索的内部资产。</div>
+<div class='source'>出处：第1章 / 第2章</div></div>
+<div class='item'><h3>2. 知识复利 + 25 页起步法</h3>
+<div class='field'><strong>是什么：</strong>知识会与已掌握的内容相互嫁接，越读越快吸收；通过每天 25 页做到底栏，把宏大目标转化成不靠意志力的微习惯。</div>
+<div class='field'><strong>怎么用：</strong>每年 340 天 × 25 页 ≈ 8500-10000 页起步；同一主题几本书并行读，让跨书连接涌现（『心灵织锦』效应）。</div>
+<div class='source'>出处：第1章 / 第2章</div></div>
+<div class='item'><h3>3. 林迪效应（Lindy Effect）</h3>
+<div class='field'><strong>是什么：</strong>不自然消亡的事物（书、想法、原则）的预期剩余寿命与现有年龄成正比——经受时间越长，剩余『保质期』越长。</div>
+<div class='field'><strong>怎么用：</strong>读流传几十/几百年的经典，而非 24 小时的新闻；评估方法/工具/技能时，把『它存在了多久』当作有效性的优先信号。</div>
+<div class='source'>出处：第2章</div></div>
+<div class='item'><h3>4. 第一性原理 + 减法认识论</h3>
+<div class='field'><strong>是什么：</strong>剥离惯例与假设，溯到不能再分解的基本真理；同时承认『我们知道的&quot;什么是错&quot;远多于&quot;什么是对&quot;』——用减法逼近本质。</div>
+<div class='field'><strong>怎么用：</strong>对任何问题多问两层『为什么/然后呢』；剔除装饰性变量；对负面知识（什么不起作用）赋权大于正面知识。</div>
+<div class='source'>出处：第2章</div></div>
+<div class='item'><h3>5. 思维模型网格 + 协同效应</h3>
+<div class='field'><strong>是什么：</strong>跨学科累积多种思维模型；多个力量同向作用时产生非线性、临界质量式的『协同效应』，这是单模型思维无法获得的杠杆。</div>
+<div class='field'><strong>怎么用：</strong>任意领域至少提炼 3-12 条核心原则；遇复杂问题强制从不同学科调用多个模型，看是否同向；为『协同效应』预判可能的临界点触发条件。</div>
+<div class='source'>出处：第3章</div></div>
+<div class='item'><h3>6. 能力圈 + 无能圈</h3>
+<div class='field'><strong>是什么：</strong>只在自己最有把握的领域行动；更要清晰地知道自己不知道什么。能力圈的大小不重要，知道边界才重要。</div>
+<div class='field'><strong>怎么用：</strong>先列出『无能圈』清单再画能力圈；遇到超出边界但被 FOMO 驱动的诱惑时，宁可错过；用阅读+年报细读逐步扩大边界。</div>
+<div class='source'>出处：第6章</div></div>
+<div class='item'><h3>7. 反向技术（Inversion）</h3>
+<div class='field'><strong>是什么：</strong>『反推，总是反推』——不正面求成功，而先列出通往失败的路径并避开。芒格版：『告诉我会死在哪里，我就避开那里。』</div>
+<div class='field'><strong>怎么用：</strong>对任何目标先反向思考：失败/破产/痛苦的样子是什么？列出所有诱因；把避免清单当作与目标清单同等重要的执行清单。</div>
+<div class='source'>出处：第6章</div></div>
+<div class='item'><h3>8. 简化三步法（可知？重要？反推？）</h3>
+<div class='field'><strong>是什么：</strong>(1) 先问『这件事可知吗？重要吗？』过滤噪声；(2) 极致专注，仅在前 20% 的事上发力；(3) 向后推理，先消除错误选项而非直接求解。</div>
+<div class='field'><strong>怎么用：</strong>任何决策先走三步：砍掉不可知/不重要的；用 25 目标法收窄到 5 个；用反向推理缩小可行解空间。</div>
+<div class='source'>出处：第8章</div></div>
+<div class='item'><h3>9. 25 选 5 + 不要做清单</h3>
+<div class='field'><strong>是什么：</strong>写下 25 个目标，圈出 5 个最重要的，其余 20 个全部归入『不惜代价避免的清单』。对一件事说 YES，等于对其余所有事说 NO。</div>
+<div class='field'><strong>怎么用：</strong>前 5 个目标达成前，不让第 6-25 进入视野；不擅于拒绝就会沦为万金油。</div>
+<div class='source'>出处：第8章</div></div>
+<div class='item'><h3>10. 内部记分卡</h3>
+<div class='field'><strong>是什么：</strong>用一套内在标准判断自己（我做对了吗？对人处事正确吗？），而不是用外部评价（别人怎么看我、我的车/衣服/财富）。</div>
+<div class='field'><strong>怎么用：</strong>重大决策前问『如果登在《华尔街日报》头条，我自己是否站得住』；泡沫/崩盘期尤其要分清两个记分卡；长期商誉会按复利增长。</div>
+<div class='source'>出处：第10章</div></div>
+<div class='item'><h3>11. 延迟满足 / 时间套利</h3>
+<div class='field'><strong>是什么：</strong>现在少拿，未来多拿——结构性优势之所以是优势，是因为多数人天然偏向即时满足；越拉长投资/职业时间范围，竞争就越稀疏。</div>
+<div class='field'><strong>怎么用：</strong>选有长期复利的事情并愿承受短期波动；以『比大多数人愿意多等几倍』作为差异化策略；优化『n 项』而非『r 项』。</div>
+<div class='source'>出处：第11章</div></div>
+<div class='item'><h3>12. 改善法（Kaizen 微步骤）</h3>
+<div class='field'><strong>是什么：</strong>通过『小到大脑不会触发恐惧反应』的步骤推进重大改变；宏大目标会唤起阻力，微小步骤绕过心理防御。</div>
+<div class='field'><strong>怎么用：</strong>六策略组合：小问题/小想法/小行动/小问题/小奖励/小时刻。比如读年报从每天 1 页开始；用『1 分钟』作为启动单位。</div>
+<div class='source'>出处：第11章</div></div>
+<div class='item'><h3>13. 事前分析（Premortem）+ 基础比率</h3>
+<div class='field'><strong>是什么：</strong>假设决定已经失败，问『为什么』——迫使自己考虑那些乐观时不会浮现的下行风险；同时用同类案例的统计基础比率替代『内部观察』做预测。</div>
+<div class='field'><strong>怎么用：</strong>下注前先写『从现在起一年后我已经亏钱』的剧本；找过去类似案例的基础概率（贝弗里：『想知道做某事的结果，不妨看看过去其他人的结果』）；把『计划谬误』挡在门外。</div>
+<div class='source'>出处：第15章 / 第27章</div></div>
+<div class='item'><h3>14. 激励超能力 / Hammurabi 法则</h3>
+<div class='field'><strong>是什么：</strong>永远不要在思考激励时思考其他事；让代理人承担不可分散的风险（建拱门者要在拱下站、自己烹饪自己吃、CEO 把身家与股东同放）才能抑制激励致偏。</div>
+<div class='field'><strong>怎么用：</strong>看任何人（顾问/CEO/对手）行为前先问『有人能从这里得到什么？』；设计系统时把反操纵功能嵌入。</div>
+<div class='source'>出处：第16章</div></div>
+<div class='item'><h3>15. 避免物理学嫉妒（Physics Envy）</h3>
+<div class='field'><strong>是什么：</strong>警惕把硬科学的精确强迫套用到社会科学/人际市场；接受『大致正确优于精确错误』，估算一系列可能值的范围而非『精确到小数』的目标价。</div>
+<div class='field'><strong>怎么用：</strong>任何估值给区间而非单点；用基础比率/场景加概率（基本 60% / 乐观 10% / 悲观 30%）代替虚假精确；分析师目标价到小数点的数字本身就是危险信号。</div>
+<div class='source'>出处：第17章</div></div>
+<div class='item'><h3>16. 股东盈余 + 价值陷阱识别</h3>
+<div class='field'><strong>是什么：</strong>真估值看股东盈余（净利润 + 折旧 - 维护性 CapEx）而非会计 EPS；警惕所有『看起来便宜』的标的——周期峰值收益、颠覆性创新威胁、治理黑洞都可能让便宜变得昂贵。</div>
+<div class='field'><strong>怎么用：</strong>把会计利润『扣回』为维护性资本支出与广告/研发；遇到价值股先排查周期/颠覆/资本错配/治理四类陷阱。</div>
+<div class='source'>出处：第18章</div></div>
+<div class='item'><h3>17. 安全边际 + 失败者的游戏</h3>
+<div class='field'><strong>是什么：</strong>投资像业余网球——不是靠赢球赢，而是靠减少非受迫性失误赢；安全边际不仅来自价格/价值差，也来自企业的内在质量与可持续性。</div>
+<div class='field'><strong>怎么用：</strong>把目标从『打出本垒打』改为『减少非受迫性失误』；选股同时看价格折扣与公司质量；持有期越长，质量比低估值更关键。</div>
+<div class='source'>出处：第19章</div></div>
+</section>
+<section class='section' id='sec2'><div class='section-header'><h2>二、投资铁律</h2><span class='meta'>共 24 条 — 必须遵守的硬规则</span></div>
+<div class='item'><h3>1. 永远不要赔钱；永远不要忘记规则一</h3>
+<div class='field'><strong>理由：</strong>保住本金是复利的前提，损失需要更大涨幅才能回本，侵蚀长期复利。</div>
+<div class='field'><strong>违反代价：</strong>一次重大亏损就可能抹掉过去数年的全部收益，复合年增长率骤降。</div>
+<div class='source'>出处：第19章</div></div>
+<div class='item'><h3>2. 价格是你付出的，价值是你所获得的；价格就是我的尽职调查</h3>
+<div class='field'><strong>理由：</strong>投资只与买入价与企业内在价值之间的差距有关，不做差价等于不投资。</div>
+<div class='field'><strong>违反代价：</strong>以过高价格买入优秀公司，好公司也需要多年消化高估值，回报平庸甚至亏损。</div>
+<div class='source'>出处：第19章</div></div>
+<div class='item'><h3>3. 以保守的股东盈余，而非会计净利润，作为估值的盈利口径</h3>
+<div class='field'><strong>理由：</strong>净利包含非现金科目且未扣除维护性资本开支，无法反映企业可分配的真实现金。</div>
+<div class='field'><strong>违反代价：</strong>高估企业内在价值，在资本密集型或护城河拓宽期被账面盈利误导。</div>
+<div class='source'>出处：第18章</div></div>
+<div class='item'><h3>4. 内在价值是估计而非精确数字，看成近似值范围而非单点</h3>
+<div class='field'><strong>理由：</strong>未来现金流不可精确预测，单点估计给人虚假信心；用一系列可能性更安全。</div>
+<div class='field'><strong>违反代价：</strong>因估值精确数字过于自信而在下跌时恐慌，在上涨时不舍得卖。</div>
+<div class='source'>出处：第18章</div></div>
+<div class='item'><h3>5. 大致正确比精确错误好；若需复杂财务模型证明合理，就不要投</h3>
+<div class='field'><strong>理由：</strong>商业是非线性复杂系统，过度量化属于物理学嫉妒，会让人忽视真正重要的定性因素。</div>
+<div class='field'><strong>违反代价：</strong>被电子表格的微小假设变化操纵，得到任何想要的结果，犯下严重定价错误。</div>
+<div class='source'>出处：第17章</div></div>
+<div class='item'><h3>6. 买入前必须做事前分析：先想象亏钱，再反推哪些假设可能错</h3>
+<div class='field'><strong>理由：</strong>人类天生乐观倾向，内部视角会高估成功概率；事前分析强制开放性思考下行风险。</div>
+<div class='field'><strong>违反代价：</strong>忽视未知事件导致时间和资金巨大超支，对最坏情形毫无准备。</div>
+<div class='source'>出处：第15章</div></div>
+<div class='item'><h3>7. 永远不要低估激励的力量，所有决策先问『有人能从这件事里得到什么』</h3>
+<div class='field'><strong>理由：</strong>激励会扭曲行为与认知，是地球上最强大的力量；多数反常行为都是激励错位的产物。</div>
+<div class='field'><strong>违反代价：</strong>受专业顾问、券商、CEO 的隐蔽利益驱动，做出对自己不利的决定。</div>
+<div class='source'>出处：第16章</div></div>
+<div class='item'><h3>8. 永远不要问理发师你是否需要理发</h3>
+<div class='field'><strong>理由：</strong>佣金激励使销售人员倾向交易而非事实；专业建议中尤其要对顾问有利的内容打折扣。</div>
+<div class='field'><strong>违反代价：</strong>买入被过度推销的有毒证券或高佣金产品，损失客户/委托人财富。</div>
+<div class='source'>出处：第16章</div></div>
+<div class='item'><h3>9. 将资本保值置于资本增值之前，先考虑下行风险再谈上行空间</h3>
+<div class='field'><strong>理由：</strong>避免反向复利的唯一方法是先确保本金安全，亏损会按几何级数侵蚀复利。</div>
+<div class='field'><strong>违反代价：</strong>一次巨亏足以毁掉多年累积的复利收益，甚至永久出局。</div>
+<div class='source'>出处：第15章 / 第19章</div></div>
+<div class='item'><h3>10. 做投资决策时记录决策日记，事后对照事实而非叙事谬误</h3>
+<div class='field'><strong>理由：</strong>人类记忆具有选择性、自利性与重建性，不诚实记录就无法真正从错误中学习。</div>
+<div class='field'><strong>违反代价：</strong>对好的结果记住错误的理由、对坏的结果改写原因，重复同样错误。</div>
+<div class='source'>出处：第15章</div></div>
+<div class='item'><h3>11. 买股票具有『取消资格的特征』时一击否决，不必从头到尾分析</h3>
+<div class='field'><strong>理由：</strong>劣质 CEO、巨大尾部风险、低利润率业务等不合格特征无法被其他因素平衡。</div>
+<div class='field'><strong>违反代价：</strong>把时间耗在有严重缺陷的公司上，并被其他亮点合理化错配。</div>
+<div class='source'>出处：第14章</div></div>
+<div class='item'><h3>12. 投资大宗商品和周期性股，要在全行业亏损、悲观情绪高涨时买入</h3>
+<div class='field'><strong>理由：</strong>资本周期：高回报吸引资本 → 激烈竞争 → 供给过剩 → 低回报；反向操作才有高回报。</div>
+<div class='field'><strong>违反代价：</strong>在繁荣顶峰买入、长期被套牢，错过周期反转的主升浪。</div>
+<div class='source'>出处：第20章</div></div>
+<div class='item'><h3>13. 资本支出就能破坏回报，警惕高资本投资与产能扩张信号</h3>
+<div class='field'><strong>理由：</strong>公司资产增长越快，股东回报反而越差；行业大量 IPO/发债/扩产是危险信号。</div>
+<div class='field'><strong>违反代价：</strong>在周期顶点入场，承受多年价格下跌和回报率的均值回归。</div>
+<div class='source'>出处：第20章</div></div>
+<div class='item'><h3>14. 内部人士集体买入是强烈看多信号</h3>
+<div class='field'><strong>理由：</strong>内部人掌握最真实信息，集群购买反映管理层对长期潜力的真实信念（『抛售股票可能有许多理由但买进只有一个理由』）。</div>
+<div class='field'><strong>违反代价：</strong>错过最佳建仓时机，或与别有用心的内部人共同被套。</div>
+<div class='source'>出处：第21章</div></div>
+<div class='item'><h3>15. 一美元的考验：留存一美元的收益是否能创造至少一美元的市场价值</h3>
+<div class='field'><strong>理由：</strong>决定公司价值的是长期 ROIC 与再投资能力，留存资本回报率低于资本成本则摧毁价值。</div>
+<div class='field'><strong>违反代价：</strong>管理层以股东利益为代价盲目扩张、过度并购，企业规模膨胀但价值缩水。</div>
+<div class='source'>出处：第22章</div></div>
+<div class='item'><h3>16. 时间是顶级公司的朋友、平庸公司的敌人；可高估买入优质公司，不可低估买入平庸公司</h3>
+<div class='field'><strong>理由：</strong>优质业务内在价值随时间复利扩大安全边际，差公司价值缩水时间越长亏损越多。</div>
+<div class='field'><strong>违反代价：</strong>贪图便宜买入『雪茄屁股』，时间变成与价值消失赛跑的对象。</div>
+<div class='source'>出处：第19章</div></div>
+<div class='item'><h3>17. 评估企业最重要的判断是定价权</h3>
+<div class='field'><strong>理由：</strong>能持续涨价且不流失客户的企业才是不需要追加资本提升利润的真生意；护城河决定竞争优势期的长度而非利润率当下水平。</div>
+<div class='field'><strong>违反代价：</strong>买入靠低利润率拼杀的公司，红皇后效应下利润随竞争持续消散。</div>
+<div class='source'>出处：第22章</div></div>
+<div class='item'><h3>18. 投资是失败者的游戏，关键在于减少非受迫性失误而非抓本垒打</h3>
+<div class='field'><strong>理由：</strong>专业选手赢在得分、业余选手败于失分；持有几只高质量公司比频繁换手更不易犯错。</div>
+<div class='field'><strong>违反代价：</strong>在长期复利游戏中被频繁的失误和小亏损累加出局。</div>
+<div class='source'>出处：第19章</div></div>
+<div class='item'><h3>19. 持有 6-20 只不同行业股票就足以分散非系统性风险，过度分散等于平庸</h3>
+<div class='field'><strong>理由：</strong>集中才能显著跑赢大盘，过度分散只是用个股风险换市场风险、研究深度被稀释。</div>
+<div class='field'><strong>违反代价：</strong>业绩接近指数，无法依靠真正的好想法获得超额回报。</div>
+<div class='source'>出处：第24章</div></div>
+<div class='item'><h3>20. 对伟大想法下重注——用盈利概率×盈利量、损失概率×损失量来衡量</h3>
+<div class='field'><strong>理由：</strong>成功的频率重要，但频率乘以幅度更重要；找到定价错误的赌注才叫价值投资。</div>
+<div class='field'><strong>违反代价：</strong>在最确定的小机会上重仓、在最有把握的大机会上半仓配置，坐失复利。</div>
+<div class='source'>出处：第24章</div></div>
+<div class='item'><h3>21. 若不能容忍一个可能的后果，无论概率多低都要避免这个行动</h3>
+<div class='field'><strong>理由：</strong>风险在于永久性消失的可能；破产、死亡、声誉一旦发生不可逆转。</div>
+<div class='field'><strong>违反代价：</strong>一次致命性『低概率』事件清零所有积蓄与信用，且无法翻身。</div>
+<div class='source'>出处：第25章</div></div>
+<div class='item'><h3>22. 永远不要把你的全部资金或整个农场押在一只股票或一个板块上</h3>
+<div class='field'><strong>理由：</strong>样本量再大的『几乎肯定』赌注里也可能出现样本外黑天鹅，结果多比预期更糟。</div>
+<div class='field'><strong>违反代价：</strong>在未被报道的风险事件中满盘皆输，永久离场。</div>
+<div class='source'>出处：第25章</div></div>
+<div class='item'><h3>23. 永远不要用借来的钱买股票，也不要投资永远需要融资才能活下去的公司</h3>
+<div class='field'><strong>理由：</strong>财务杠杆让人上瘾；任何一连串有利数字乘以零都会归零，信用消失时企业立即窒息。</div>
+<div class='field'><strong>违反代价：</strong>在最不该卖出的低点被迫平仓/破产，或持有依赖陌生人善意的脆弱企业。</div>
+<div class='source'>出处：第25章</div></div>
+<div class='item'><h3>24. 现金是机会的看涨期权，是被严重低估的资产；保持冗余流动性</h3>
+<div class='field'><strong>理由：</strong>他人被迫抛售时，现金赋予你廉价购买的选择权，财富转移中才能进退自如。</div>
+<div class='field'><strong>违反代价：</strong>市场出现绝佳机会时身无余粮，被迫在最贵时追高或最低价套现。</div>
+<div class='source'>出处：第25章</div></div>
+</section>
+<section class='section' id='sec3'><div class='section-header'><h2>三、公司评估与选股清单</h2><span class='meta'>共 25 条 — 对照每家公司打分</span></div>
+<div class='item'><h3>1. 一美元留存测试（5 年滚动）</h3>
+<div class='field'><strong>查什么：</strong>过去 5 年公司每留存 1 美元利润，是否为股东创造了至少 1 美元市值增量</div>
+<div class='field'><strong>好的迹象：</strong>期初到期末的市值变化 ≥ 期初到期末的留存收益变化</div>
+<div class='field'><strong>坏的迹象：</strong>留存收益累积但市值横盘或下跌；留存资金回报率低于资本成本</div>
+<div class='source'>出处：第22章</div></div>
+<div class='item'><h3>2. 增量投资资本回报率（ROIIC）</h3>
+<div class='field'><strong>查什么：</strong>公司再投入的每一美元能产生多少回报，而非历史沉淀 ROIC</div>
+<div class='field'><strong>好的迹象：</strong>ROIIC 显著高于资本成本（如 15-20%+），且未来 5-10 年仍有等量级以上再投资机会</div>
+<div class='field'><strong>坏的迹象：</strong>高 ROIC 主要来自历史投资，新增量资金的边际回报快速衰减</div>
+<div class='source'>出处：第22章</div></div>
+<div class='item'><h3>3. 股东盈余 = 报告盈利 + 折旧摊销 − 维护性 CapEx</h3>
+<div class='field'><strong>查什么：</strong>将 GAAP 净利调整为所有者真正可提取的现金；区分增长性 capex 与维护性 capex</div>
+<div class='field'><strong>好的迹象：</strong>股东盈余持续为正，且与净利同向甚至更高（增长期初被低估）</div>
+<div class='field'><strong>坏的迹象：</strong>扣维护性 capex 后无可分配现金；资本支出几乎全部是维护性</div>
+<div class='source'>出处：第18章</div></div>
+<div class='item'><h3>4. 轻资本 + 负营运资金结构</h3>
+<div class='field'><strong>查什么：</strong>capex/CFO 比、销售额/PP&amp;E（净）比、客户是否预付款（订阅/特许经营）</div>
+<div class='field'><strong>好的迹象：</strong>FCF/CFO 比例高；负现金转换周期；客户预付为公司增长提供 0% 利率融资</div>
+<div class='field'><strong>坏的迹象：</strong>高固定资产密集度；应收账款天数持续拉长；为维持销量必须不断追加 capex</div>
+<div class='source'>出处：第14/22章</div></div>
+<div class='item'><h3>5. 毛利率与定价权（周期内稳定度）</h3>
+<div class='field'><strong>查什么：</strong>多年毛利率走势；公司能否将原材料成本转嫁给客户；与同行对比</div>
+<div class='field'><strong>好的迹象：</strong>毛利率长期高位且稳定或缓慢提升；可超过通胀提价且不丢份额</div>
+<div class='field'><strong>坏的迹象：</strong>毛利率随商品价格大幅波动；提价即流失客户</div>
+<div class='source'>出处：第14/22章</div></div>
+<div class='item'><h3>6. 护城河来源四要素 + 文化</h3>
+<div class='field'><strong>查什么：</strong>无形资产（品牌/专利/牌照）、转换成本、网络效应、低成本优势、文化；并通过『拥有无限资源的聪明对手能否模仿』反向测试</div>
+<div class='field'><strong>好的迹象：</strong>竞争对手即使知道秘密也无法复制（盖可、内布拉斯加家具城模式）</div>
+<div class='field'><strong>坏的迹象：</strong>护城河主要靠货架位置或营销故事；新产品/对手可绕过</div>
+<div class='source'>出处：第22章</div></div>
+<div class='item'><h3>7. 竞争优势期持久性（CAP）</h3>
+<div class='field'><strong>查什么：</strong>未来 5/10/20 年超额回报能否维持；行业颠覆风险（App 型颠覆、技术周期）</div>
+<div class='field'><strong>好的迹象：</strong>CAP 长、可预测；管理层有途径每年代替性加宽护城河</div>
+<div class='field'><strong>坏的迹象：</strong>技术过快要靠持续 capex 才能不掉队；行业平均寿命已不到 10 年却仍按永续估值</div>
+<div class='source'>出处：第18章</div></div>
+<div class='item'><h3>8. 内含价值/安全边际双轨制（价格差 + 质量差）</h3>
+<div class='field'><strong>查什么：</strong>价格 ≤ 内含价值折扣 + 业务质量带来『时间维度』的额外护城河</div>
+<div class='field'><strong>好的迹象：</strong>价格≤价值 ∩ 业务质量好，长期持有可让差额随时间扩大；可在 5-10 年维度为质量付溢价</div>
+<div class='field'><strong>坏的迹象：</strong>只看低 P/B/P/E 的『雪茄屁股』，业务价值随时间蒸发</div>
+<div class='source'>出处：第19章</div></div>
+<div class='item'><h3>9. 反向 DCF / 长期预期回报思维</h3>
+<div class='field'><strong>查什么：</strong>解出市场隐含的增长率、退出倍数、利润率假设，与你自己的假设对比；用 10% 折现率做起点</div>
+<div class='field'><strong>好的迹象：</strong>你的预测比市场假设保守且仍能提供 ≥ 15% 年化；反之亦然</div>
+<div class='field'><strong>坏的迹象：</strong>为得到合理回报，你需要假设利润连续多年以两位数增速增长</div>
+<div class='source'>出处：第17章</div></div>
+<div class='item'><h3>10. 场景/敏感度分析（价值区间而非单点）</h3>
+<div class='field'><strong>查什么：</strong>用悲观/基本/乐观三档概率加权得到期望值；对每一个变量识别『驱动未来价值的最敏感因素』</div>
+<div class='field'><strong>好的迹象：</strong>悲观场景下仍能保本或小幅亏损；集中仓位前先做事前分析</div>
+<div class='field'><strong>坏的迹象：</strong>估值结论高度依赖终值假设；终值占内在价值 &gt;60%</div>
+<div class='source'>出处：第17/18章</div></div>
+<div class='item'><h3>11. 资本配置记录 vs 现金用途</h3>
+<div class='field'><strong>查什么：</strong>过去 10 年留存收益使用情况：再投资 vs 回购 vs 分红 vs 收并购；并购后是否真正增厚 ROIC</div>
+<div class='field'><strong>好的迹象：</strong>自由现金流难再投资时立刻回购或分红；并购规模小且与主业相关；像 Singleton 那样随估值高低反向操作</div>
+<div class='field'><strong>坏的迹象：</strong>管理层用高估值股票去收购低质量资产；公司规模被写进 KPI；构建『商业帝国』</div>
+<div class='source'>出处：第22/18章</div></div>
+<div class='item'><h3>12. 管理层激励与持股对齐</h3>
+<div class='field'><strong>查什么：</strong>CEO 与内部人持股比例；薪酬结构是否含 ROIC/投入资本回报部分；是否曾为高激励而发行期权</div>
+<div class='field'><strong>好的迹象：</strong>低现金工资 + 大比例股东权益；仅在长期超额回报上拿大奖金；对回报低于门槛者双倍扣回</div>
+<div class='field'><strong>坏的迹象：</strong>高现金工资 + 股票期权（无下行风险）；激励基于短期 EPS/季度业绩</div>
+<div class='source'>出处：第13/16/22章</div></div>
+<div class='item'><h3>13. 股东信/沟通质量（『FOG』检测）</h3>
+<div class='field'><strong>查什么：</strong>区分事实与陈词滥调；是否量化错误代价；是否讨论资本配置、现金流、激励设计</div>
+<div class='field'><strong>好的迹象：</strong>坦率量化错误（如巴菲特量化 Dexter 代价）+ 主动讨论机会成本；少套话、多数字</div>
+<div class='field'><strong>坏的迹象：</strong>『员工是最宝贵资产/未来一片光明』等套话密集；用『重组』『一次性』掩饰永久性问题；频繁换审计师、改公司名蹭热点</div>
+<div class='source'>出处：第13章</div></div>
+<div class='item'><h3>14. 承压能力 / 延迟满足文化</h3>
+<div class='field'><strong>查什么：</strong>管理层是否愿意为长期价值牺牲短期报表；遭遇分析师压力时是否妥协</div>
+<div class='field'><strong>好的迹象：</strong>在收购成本与短期利润冲突时仍选择前者（GEICO/Amazon 型）；股权结构使激进投资者难以介入</div>
+<div class='field'><strong>坏的迹象：</strong>管理层高频引导分析师预期、为达标削减可自由支配的 R&amp;D 与营销；高管把股价当 KPI</div>
+<div class='source'>出处：第10/11章</div></div>
+<div class='item'><h3>15. 会计三角验证与三表勾稽</h3>
+<div class='field'><strong>查什么：</strong>利润表/资产负债表/现金流量表互相印证；应收账款/存货/无形资产是否同步膨胀；利息覆盖是否被资本化造假</div>
+<div class='field'><strong>好的迹象：</strong>经营性现金流 ≥ 净利润；折旧前现金流与上一年盈利一致；负债权益比低且现金真实</div>
+<div class='field'><strong>坏的迹象：</strong>净利好看但 FCF 为负且通过新增债务分红；应收账款/存货天数持续恶化；子公司层级复杂</div>
+<div class='source'>出处：第14章</div></div>
+<div class='item'><h3>16. 杠杆与负债结构（含表外）</h3>
+<div class='field'><strong>查什么：</strong>负债权益比、利息覆盖、经营租赁/养老金/担保等表外负债、短期偿付能力</div>
+<div class='field'><strong>好的迹象：</strong>极低负债；非金融业务具备 3-5 年以上现金留存；不依赖资本市场滚动续命</div>
+<div class='field'><strong>坏的迹象：</strong>高财务杠杆；客户/批发融资高度集中度（小额信贷、依赖陌生人善意）；单笔集中客户 &gt;50% 收入</div>
+<div class='source'>出处：第14/25章</div></div>
+<div class='item'><h3>17. 财务持久力『三件套』</h3>
+<div class='field'><strong>查什么：</strong>在任何市场环境下公司是否都不依赖外部融资而生存——大额现金流 + 大额流动资产 + 无近期偿付压力</div>
+<div class='field'><strong>好的迹象：</strong>三件套同时具备；熊市中可逆势加仓对手资产</div>
+<div class='field'><strong>坏的迹象：</strong>三件套中缺任何一项；CEO 凭直觉认为『总能再融资』</div>
+<div class='source'>出处：第25章</div></div>
+<div class='item'><h3>18. 维护性 vs 增长性资本支出拆解</h3>
+<div class='field'><strong>查什么：</strong>现金流量表中 capex 总额减去『为维持当前盈利』的部分，剩余才属于真正创造价值的投资</div>
+<div class='field'><strong>好的迹象：</strong>增长性 capex 在 capex 总额中占比高；新项目能持续抬升股东盈余</div>
+<div class='field'><strong>坏的迹象：</strong>几乎所有 capex 都是『为不被淘汰而被迫』的支出</div>
+<div class='source'>出处：第18章</div></div>
+<div class='item'><h3>19. 自我持续增长率（SSGR）</h3>
+<div class='field'><strong>查什么：</strong>在不举新债、不稀释股本前提下，公司自身业务能支撑的销售增长率</div>
+<div class='field'><strong>好的迹象：</strong>SSGR ≥ 实际销售增长率（有机）；销售扩张不依赖外部融资</div>
+<div class='field'><strong>坏的迹象：</strong>增长率长期高于 SSGR，债务持续攀升；通过不断配股融资</div>
+<div class='source'>出处：第14章</div></div>
+<div class='item'><h3>20. 盈利质量粘性（业绩象限迁移概率）</h3>
+<div class='field'><strong>查什么：</strong>用 CFROI 或 ROIC 把市场分四等份，看公司留在顶级象限的概率及从底层跃升的概率</div>
+<div class='field'><strong>好的迹象：</strong>过去优秀公司有 79% 概率保持优秀/变好</div>
+<div class='field'><strong>坏的迹象：</strong>市场普遍用线性均值回归假设幻想『落后者可以很快追上』；处于 CFROI 底层</div>
+<div class='source'>出处：第19章</div></div>
+<div class='item'><h3>21. 价值陷阱识别（4 类伪装便宜的死亡）</h3>
+<div class='field'><strong>查什么：</strong>周期性峰值收益伪装低 PE；颠覆风险 App 化；管理层资本错配；治理问题掏空账面现金</div>
+<div class='field'><strong>好的迹象：</strong>低估值不是因为上述四类原因；公司可识别地属于『本来就是优秀但临时被市场错杀』</div>
+<div class='field'><strong>坏的迹象：</strong>在高股息率/低 PE 中寻找便宜货；治理差的公司账面现金价值应直接视为 0</div>
+<div class='source'>出处：第18章</div></div>
+<div class='item'><h3>22. 回购诚意（是否基于内含价值）</h3>
+<div class='field'><strong>查什么：</strong>回购价格相对内含价值/账面价值；是用超额现金回购还是为抵消期权稀释被迫回购</div>
+<div class='field'><strong>好的迹象：</strong>回购价低于内含价值，且减少总股本；管理层用自由现金流回购同时也在回购后增持</div>
+<div class='field'><strong>坏的迹象：</strong>回购执行价高于内含价值、把财富转给卖出股东；回购只是为维持 EPS 指标的应付之举</div>
+<div class='source'>出处：第22章</div></div>
+<div class='item'><h3>23. 资本周期泡沫信号（行业层面避雷）</h3>
+<div class='field'><strong>查什么：</strong>投行活动/IPO/高收益债发行激增；分析师发布会密集；行业 capex-to-depreciation 比飙升；『这次不同』叙事</div>
+<div class='field'><strong>好的迹象：</strong>位于资本周期低谷（行业内多家公司倒闭或退产能）；公司仍活着且负债可控</div>
+<div class='field'><strong>坏的迹象：</strong>大家狂欢时你还进场；供给端 capex 暴增；股票回报率历史与资产增长率几乎完全负相关</div>
+<div class='source'>出处：第20章</div></div>
+<div class='item'><h3>24. 内部人买入『Cluster-Buy』信号</h3>
+<div class='field'><strong>查什么：</strong>3+ 内部人短时间公开市场买入，特别是 CFO；优先配售、认股权证中内部人是否参与</div>
+<div class='field'><strong>好的迹象：</strong>CEO/CFO 亲自下场买入；价格不依赖杠杆；规模相对其净资产显著</div>
+<div class='field'><strong>坏的迹象：</strong>内部人抛售（除非已知个人原因）；只有少数被动指数型增持</div>
+<div class='source'>出处：第21/16章</div></div>
+<div class='item'><h3>25. 组合层风险：凯利公式与『安睡点』</h3>
+<div class='field'><strong>查什么：</strong>用凯利公式 F = PW - (PL/($W/$L)) 估算理论仓位，并按心理承受度打折到『安睡点』</div>
+<div class='field'><strong>好的迹象：</strong>高确定性资产占大头，仓位 ≤ 理论凯利值的一半；分散后单点失败不毁灭组合</div>
+<div class='field'><strong>坏的迹象：</strong>为追求高回报使用接近理论凯利的最大仓位；类似赌注集中在一个宏观变量</div>
+<div class='source'>出处：第24章</div></div>
+</section>
+<section class='section' id='sec4'><div class='section-header'><h2>四、心态与行为纪律</h2><span class='meta'>共 18 条 — 日常习惯与触发自检</span></div>
+<div class='item'><h3>1. 反推三问检查清单</h3>
+<div class='field'><strong>触发场景：</strong>准备买入或加仓任何一只股票之前</div>
+<div class='field'><strong>反模式：</strong>下意识地找支持看多的理由、为自己想买的心愿找证据</div>
+<div class='source'>出处：第8章</div></div>
+<div class='item'><h3>2. 每天『卖给自己一小时』——早起第一小时或晚间独自阅读思考</h3>
+<div class='field'><strong>触发场景：</strong>每个工作日的开始（或结束）</div>
+<div class='field'><strong>反模式：</strong>一上班就陷入邮件和即时消息；觉得不开始『做事』就焦虑</div>
+<div class='source'>出处：第1章</div></div>
+<div class='item'><h3>3. 20 个打孔位卡片——一辈子只允许做 20 次投资</h3>
+<div class='field'><strong>触发场景：</strong>想开仓或临时起意入场时</div>
+<div class='field'><strong>反模式：</strong>把交易当作日常职业，频繁操作；多动少思考</div>
+<div class='source'>出处：第11章</div></div>
+<div class='item'><h3>4. 每个交易日开盘前『重新建仓』</h3>
+<div class='field'><strong>触发场景：</strong>每天开盘前审视持仓表</div>
+<div class='field'><strong>反模式：</strong>因锚定于原始成本价或过去高点而拒绝按当前估值评估；不肯按下卖出按钮</div>
+<div class='source'>出处：第28章</div></div>
+<div class='item'><h3>5. 25 选 5 + 不要做清单</h3>
+<div class='field'><strong>触发场景：</strong>季度或个人目标复盘时；在生活和投资开始变复杂时</div>
+<div class='field'><strong>反模式：</strong>什么都想做，结果 25 件事每件都半途而废；追逐帕累托中那 80% 不重要的事</div>
+<div class='source'>出处：第8章</div></div>
+<div class='item'><h3>6. 达尔文黄金法则——把反例当平等公民对待</h3>
+<div class='field'><strong>触发场景：</strong>形成任何投资观点以后、持仓以后的任何时刻</div>
+<div class='field'><strong>反模式：</strong>只搜集支持自己看法的证据，忽略反证</div>
+<div class='source'>出处：第27章</div></div>
+<div class='item'><h3>7. 红色钢笔划出管理层通讯中的陈词滥调</h3>
+<div class='field'><strong>触发场景：</strong>读完任何管理层通讯、年报、招股说明书之后</div>
+<div class='field'><strong>反模式：</strong>被 FOG（缺乏事实、混淆视听的笼统说法）麻醉</div>
+<div class='source'>出处：第13章</div></div>
+<div class='item'><h3>8. 事实改变时改变主意（凯恩斯/达尔文原则）</h3>
+<div class='field'><strong>触发场景：</strong>公司基本面或行业发生重大变化、自己投资论据开始出现裂缝、连续业绩跑输基准时</div>
+<div class='field'><strong>反模式：</strong>鸵鸟综合征——拒绝承认不利事实；用沉没成本自我欺骗</div>
+<div class='source'>出处：第27章</div></div>
+<div class='item'><h3>9. 用贝叶斯法则更新信念：先问基本比率再问似然率</h3>
+<div class='field'><strong>触发场景：</strong>第一次接触听上去好得难以置信的故事时</div>
+<div class='field'><strong>反模式：</strong>听了一个生动故事后立刻放弃基本比率，忽略整个类别股票的历史经验</div>
+<div class='source'>出处：第27章</div></div>
+<div class='item'><h3>10. 活在内布拉斯加家具城式的『内部记分卡』里</h3>
+<div class='field'><strong>触发场景：</strong>群体狂热期（1999 互联网泡沫、朋友因股票赚钱、媒体铺天盖地唱多时）</div>
+<div class='field'><strong>反模式：</strong>把外部记分卡当主——穿什么、开什么车、别人赚多少</div>
+<div class='source'>出处：第10章</div></div>
+<div class='item'><h3>11. 米歇尔棉花糖实验般的二阶思维：今天做『困难但正确』的事换将来更多</h3>
+<div class='field'><strong>触发场景：</strong>面对任何即时满足 vs 长期复利之间的选择时</div>
+<div class='field'><strong>反模式：</strong>双曲贴现——把优秀企业遥远的现金流大幅折现、给平淡生意以过高估值</div>
+<div class='source'>出处：第11章</div></div>
+<div class='item'><h3>12. 冷却期——把决策时刻推迟到压力消退以后</h3>
+<div class='field'><strong>触发场景：</strong>股价大幅波动、宏观突发新闻、自认为方向明显、觉得『不操作就难受』时</div>
+<div class='field'><strong>反模式：</strong>在杏仁核驱动下做战或逃决策；赚到快钱就以为自己无敌</div>
+<div class='source'>出处：第31章</div></div>
+<div class='item'><h3>13. 高门槛——新仓位必须比现有仓位『明显更好』</h3>
+<div class='field'><strong>触发场景：</strong>接到新投资想法、决定是否加第二只同行业票时</div>
+<div class='field'><strong>反模式：</strong>为了分散而分散、在找不到机会时降低门槛买入平庸票</div>
+<div class='source'>出处：第28章</div></div>
+<div class='item'><h3>14. 权威双问——『他是真正的专家吗？』+『我能指望他有多诚实？』</h3>
+<div class='field'><strong>触发场景：</strong>商业电视节目、热博推荐、知名投资人公众号转发、券商研报强力推荐时</div>
+<div class='field'><strong>反模式：</strong>因为权威外表光环就直接照抄别人仓位</div>
+<div class='source'>出处：第31章</div></div>
+<div class='item'><h3>15. 嫉妒自检：FOMO 还是真正理解？</h3>
+<div class='field'><strong>触发场景：</strong>身边同行或朋友的持仓暴涨、自己没在车上时（牛顿南海泡沫就是典型）</div>
+<div class='field'><strong>反模式：</strong>被朋友赚到的钱刺痛，立刻高位跟单</div>
+<div class='source'>出处：第31章</div></div>
+<div class='item'><h3>16. 看账户时切换宽窄框架——看组合净值百分比变化而不是单只票盈亏</h3>
+<div class='field'><strong>触发场景：</strong>每日或每周检视持仓时</div>
+<div class='field'><strong>反模式：</strong>窄框架盯单只票盈亏（处置效应）：卖掉浮盈票、过久持有亏损票</div>
+<div class='source'>出处：第31章</div></div>
+<div class='item'><h3>17. 业绩复盘时主动承认运气、机遇、随机性的作用</h3>
+<div class='field'><strong>触发场景：</strong>业绩评估、向他人分享『成功经验』或自我叙事时</div>
+<div class='field'><strong>反模式：</strong>把一切归功于个人天赋与技能——这种错觉会让我们过度自信、在下一次运气不好时跌得更惨</div>
+<div class='source'>出处：第30章</div></div>
+<div class='item'><h3>18. 以过程而非结果评价每个决策</h3>
+<div class='field'><strong>触发场景：</strong>单笔交易出现意外结果时</div>
+<div class='field'><strong>反模式：</strong>用结果反推决策好坏——拔花浇草、被偶然一次成功或失败永久改变系统</div>
+<div class='source'>出处：第30章</div></div>
+</section>
+<section class='section' id='sec5'><div class='section-header'><h2>五、避坑清单</h2><span class='meta'>共 17 条 — 书中警告过的失败模式</span></div>
+<div class='item pitfall'><h3>1. 漂亮 50 与『一次性抉择』股的估值陷阱</h3>
+<div class='field'><strong>会发生什么：</strong>为最好的成长股支付 50、80 甚至 100 倍市盈率后，即使公司继续增长，股价会因估值回归而长期停滞</div>
+<div class='field'><strong>书中案例：</strong>1972 年达到顶峰的『漂亮 50』（施乐、IBM、宝丽来、可口可乐）</div>
+<div class='field'><strong>如何避开：</strong>再好的公司也要以合理价格买入；用长期回报数据反检验估值起点</div>
+<div class='source'>出处：第19章</div></div>
+<div class='item pitfall'><h3>2. 雪茄屁股式『深值』的价值陷阱</h3>
+<div class='field'><strong>会发生什么：</strong>表面上便宜的股票（市净率低、股息率高）往往是因结构性衰退而境况不佳的公司</div>
+<div class='field'><strong>书中案例：</strong>按优步到来之前盈利能力看似便宜的出租车公司，App 风险使估值彻底失效</div>
+<div class='field'><strong>如何避开：</strong>区分『价格的非理性下跌』和『价格的合理下跌』；质量比初始低估值重要得多</div>
+<div class='source'>出处：第19章</div></div>
+<div class='item pitfall'><h3>3. 庞氏式『伪增长』公司</h3>
+<div class='field'><strong>会发生什么：</strong>账面收益被通胀侵蚀，公司只能不断发行新股还旧股东，长期看价值被摧毁</div>
+<div class='field'><strong>书中案例：</strong>巴菲特在第 50 封信：『基于估价过高的股票连续发行的商业模式——就像连锁信一样』</div>
+<div class='field'><strong>如何避开：</strong>只买不断产生自由现金流的公司；拒绝『一边急于发行股票』、管理层激励错位的公司</div>
+<div class='source'>出处：第18章</div></div>
+<div class='item pitfall'><h3>4. 资本周期顶部的危险</h3>
+<div class='field'><strong>会发生什么：</strong>高回报会吸引资本涌入，破坏未来回报；1990-2015 资产增长率与股票回报几乎完全反比</div>
+<div class='field'><strong>书中案例：</strong>2016 年美国能源公司垃圾债发行量激增是应避开能源行业的信号</div>
+<div class='field'><strong>如何避开：</strong>在行业大规模下行周期、悲观情绪高涨、有公司倒闭时买入</div>
+<div class='source'>出处：第20章</div></div>
+<div class='item pitfall'><h3>5. 杠杆与集中赌注的致命性</h3>
+<div class='field'><strong>会发生什么：</strong>杠杆放大盈利，但任何一连串看似安全的数据『乘以零都会灰飞烟灭』</div>
+<div class='field'><strong>书中案例：</strong>LTCM 1998 因 25 倍杠杆押注趋同套利破产；XIV 2018 一天内暴跌 92%</div>
+<div class='field'><strong>如何避开：</strong>永远不用借来的钱买股票；现金是『机会的看涨期权』</div>
+<div class='source'>出处：第25章</div></div>
+<div class='item pitfall'><h3>6. 依赖『陌生人的善意』的高杠杆机构</h3>
+<div class='field'><strong>会发生什么：</strong>内在 ROE 低、资本密集、负 FCF 的企业需要持续外部资金，资本市场一关闭就立刻死亡</div>
+<div class='field'><strong>书中案例：</strong>印度软件公司 RS Software 约 85% 收入来自 Visa，客户集中度使其随时面临定价权丧失</div>
+<div class='field'><strong>如何避开：</strong>避开『持续依赖陌生人善意的企业』；选择现金充裕、净现金资产负债表的业务</div>
+<div class='source'>出处：第16/25章</div></div>
+<div class='item pitfall'><h3>7. 激励错位——佣金/咨询中的代理人偏见</h3>
+<div class='field'><strong>会发生什么：</strong>代理人经常为最大化自身报酬而牺牲客户/股东利益；复杂产品、高佣金产品会被大力推荐</div>
+<div class='field'><strong>书中案例：</strong>芒格：施乐业务员卖新款佣金更低，旧机器反而卖得更好</div>
+<div class='field'><strong>如何避开：</strong>选择『只收固定费用的』顾问；永远问『有谁会从这件事里得到什么？』</div>
+<div class='source'>出处：第16章</div></div>
+<div class='item pitfall'><h3>8. 物理嫉妒与虚假精确</h3>
+<div class='field'><strong>会发生什么：</strong>追求 DCF 中的『精确数字』导致分析师可以反向演算得到任意结果</div>
+<div class='field'><strong>书中案例：</strong>格雷厄姆：『精确的公式和高度不精确的假设结合起来，可以用来确立任何价值』</div>
+<div class='field'><strong>如何避开：</strong>采用『大致正确比精确错误好』；如果需要复杂模型证明合理性，就不要投</div>
+<div class='source'>出处：第17章</div></div>
+<div class='item pitfall'><h3>9. 处置效应（拔花浇草）</h3>
+<div class='field'><strong>会发生什么：</strong>把盈利股早早卖掉锁定小利润，却死抱亏损股希望回本</div>
+<div class='field'><strong>书中案例：</strong>Dalbar 数据：截至 2018 年的 20 年间，标普 500 基金年回报 5.6%，而平均投资者回报仅 1.9%</div>
+<div class='field'><strong>如何避开：</strong>每个交易日开始前问『如果今天从头建仓，我会以现在的价格买入吗』</div>
+<div class='source'>出处：第31章</div></div>
+<div class='item pitfall'><h3>10. 锚定与沉没成本谬误</h3>
+<div class='field'><strong>会发生什么：</strong>以买入价、52 周低点、同行购买价作为决策锚点；不愿面对亏损承认错误，反而加倍下注</div>
+<div class='field'><strong>书中案例：</strong>作者 2013 年因 CORE Education 和 Wockhardt 暴跌 50% 而兴奋买入，结果又跌 50%</div>
+<div class='field'><strong>如何避开：</strong>把股票和个人决定分开；买入后『忘记你支付了什么』</div>
+<div class='source'>出处：第14/31章</div></div>
+<div class='item pitfall'><h3>11. 权威盲从与『抄袭买入』</h3>
+<div class='field'><strong>会发生什么：</strong>电视专家、知名同行、热门博客推荐看似权威，盲目模仿买入时缺乏个人信念</div>
+<div class='field'><strong>书中案例：</strong>作者 2013 年仅凭『一位知名市场专家在商业电视上的推荐』购入 Subex，暴跌 50%+</div>
+<div class='field'><strong>如何避开：</strong>向专家学习两个问题：『他是真正的专家吗？』+『他有多诚实？』</div>
+<div class='source'>出处：第14/31章</div></div>
+<div class='item pitfall'><h3>12. 嫉妒驱动的 FOMO 买入</h3>
+<div class='field'><strong>会发生什么：</strong>看到朋友/同行赚钱就心理失衡，跳过自己的尽调匆忙买入，常在接近顶峰时进入</div>
+<div class='field'><strong>书中案例：</strong>1720 年牛顿——先期 100% 利润离场南海公司，因朋友们继续赚钱而在顶峰再次买入，最后巨亏</div>
+<div class='field'><strong>如何避开：</strong>关掉社交媒体，远离 FOMO 心理；今天唯一需要比较的是昨天的你</div>
+<div class='source'>出处：第14/31章</div></div>
+<div class='item pitfall'><h3>13. 高股息率/低市盈率的虚假安全</h3>
+<div class='field'><strong>会发生什么：</strong>高股息率股票若处于周期性峰值收益或维护性 CapEx 庞大，实际无股东盈余</div>
+<div class='field'><strong>书中案例：</strong>作者：『高股息率的股票最终都变成了价值陷阱，并摧毁财富』</div>
+<div class='field'><strong>如何避开：</strong>用股东盈余而非报告收益估值；区分『高资本回报、护城河坚固』的股息和『必须留存再投资否则淘汰』的受限股息</div>
+<div class='source'>出处：第18章</div></div>
+<div class='item pitfall'><h3>14. 过度分散与『多元化变成多重恶化』</h3>
+<div class='field'><strong>会发生什么：</strong>过度分散导致对每家公司缺乏深度了解；分散不足或分散于同一类因子，带来虚假安全感</div>
+<div class='field'><strong>书中案例：</strong>菲利普·费雪：『对个人来说，持有超过 20 只不同的股票是财务无能的表现』</div>
+<div class='field'><strong>如何避开：</strong>在能力圈内集中持有 8-15 家最了解的优质企业；分散针对的是独立因子而非股票数量</div>
+<div class='source'>出处：第24章</div></div>
+<div class='item pitfall'><h3>15. 牛市末期的 IPO 狂热和高杠杆保证金融资</h3>
+<div class='field'><strong>会发生什么：</strong>在一级市场和二级市场极高的保证金融资水平下，没盈利、质地平庸甚至虚构故事的公司都能以荒谬估值发行</div>
+<div class='field'><strong>书中案例：</strong>霍华德·马克斯牛市第三阶段：『每个人都确信基本面情况将会变得更好，而且永远只会更好』</div>
+<div class='field'><strong>如何避开：</strong>铭记邓普顿：『投资中最危险的一句话是&quot;这次与以往不同&quot;』</div>
+<div class='source'>出处：第20/23/26章</div></div>
+<div class='item pitfall'><h3>16. 管理层资本错配（建设帝国式并购）</h3>
+<div class='field'><strong>会发生什么：</strong>经理人为追求规模、声誉或短期奖金进行奢侈并购，以高估值股票收购低估值资产，破坏股东价值</div>
+<div class='field'><strong>书中案例：</strong>彼得·林奇称之为『膀胱理论』——公司现金越多，被分散化错配的压力越大</div>
+<div class='field'><strong>如何避开：</strong>考察管理层的资本配置者记录；并购规模越大、买方与目标业务相似性越小，越可能破坏价值</div>
+<div class='source'>出处：第18/22章</div></div>
+<div class='item pitfall'><h3>17. 鸵鸟综合症与『否认/合理化』</h3>
+<div class='field'><strong>会发生什么：</strong>面对持仓基本面恶化明确信号，投资者否认事实、寻找支持原结论的证据</div>
+<div class='field'><strong>书中案例：</strong>作者在 SKS Microfinance 案例中，把卖出股票的钱快速投入 Manappuram Finance——幸运及时醒悟</div>
+<div class='field'><strong>如何避开：</strong>建立决策日志；当出现管理层诚信问题或长期价值创造受损时立即退出</div>
+<div class='source'>出处：第14/15/27/31章</div></div>
+</section>
+<div class='summary'><p><strong>方法论：</strong>5 个并行 agent 各自从『思维模型 / 投资铁律 / 公司评估 / 心态纪律 / 避坑清单』五个视角扫描全书 31 章，产出 113 条原始条目；主 agent 整合去重后形成 89 条核心清单。所有条目均从原书蒸馏，未引入其他来源。</p></div>
+</div>
+<footer>《复利》投资清单 · 蒸馏自高塔姆·拜德同名书籍</footer>
+</body></html>

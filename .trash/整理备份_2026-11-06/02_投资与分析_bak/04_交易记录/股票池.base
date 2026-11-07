@@ -1,0 +1,66 @@
+filters:
+  and:
+    - file.inFolder("02_投资与分析/04_交易记录")
+    - 'file.ext == "md"'
+    - 'file.name != "_选股分析模板"'
+    - 'note.company != null'
+    - 'note.action == null'
+
+properties:
+  company:
+    displayName: 公司
+  ticker:
+    displayName: 代码
+  sector:
+    displayName: 行业
+  status:
+    displayName: 状态
+  score_rate:
+    displayName: 得分率
+  traps_hit:
+    displayName: 命中陷阱数
+  position_pct:
+    displayName: 仓位%
+  verdict:
+    displayName: 结论
+
+views:
+  - type: table
+    name: 我的股票池
+    order:
+      - company
+      - ticker
+      - sector
+      - status
+      - score_rate
+      - traps_hit
+      - position_pct
+      - verdict
+    sort:
+      - property: score_rate
+        direction: DESC
+
+  - type: table
+    name: 待研究
+    filters:
+      and:
+        - 'status == "观察中"'
+    order:
+      - company
+      - sector
+      - score_rate
+      - verdict
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC
+
+  - type: cards
+    name: 卡片视图
+    order:
+      - company
+      - score_rate
+      - verdict
+    sort:
+      - property: score_rate
+        direction: DESC

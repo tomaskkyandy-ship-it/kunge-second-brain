@@ -1,0 +1,22 @@
+{
+  "language": "auto",
+  "showNotebookLMInContextMenu": true,
+  "showGeminiInContextMenu": true,
+  "showGoogleInContextMenu": true,
+  "autoSendQueries": true,
+  "copySelectionToClipboard": true,
+  "showCopyNotice": true,
+  "notebooks": [],
+  "defaultNotebookId": "",
+  "currentSidebarNotebookId": "",
+  "checkNotebooksOnStartup": true,
+  "autoRemoveInvalidNotebooks": true,
+  "mappings": [],
+  "autoMatchByName": true,
+  "googleSearchUrl": "[https://stackoverflow.com](https://stackoverflow.com",
+  "showCoffeeBanner": false,
+  "showCoffeeIconInHeader": false,
+  "hideNotebookLMHeader": true,
+  "hideSupport": true,
+  "activeTab": "notebooklm"
+}

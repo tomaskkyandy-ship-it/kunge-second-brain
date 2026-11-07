@@ -1,0 +1,56 @@
+name: 📡 每日投资情报与iPhone推送 (08:30 & 21:30)
+
+on:
+  schedule:
+    # GitHub Actions 使用 UTC 时间：
+    # UTC 00:30 = 北京时间 早上 08:30（美股收盘及盘后财报复盘）
+    - cron: '30 0 * * *'
+    # UTC 13:30 = 北京时间 晚上 21:30（美股盘前宏观数据与开盘预警）
+    - cron: '30 13 * * *'
+  workflow_dispatch: # 允许在 GitHub 网页/手机 App 上随时手动点击「Run workflow」立即试跑
+
+permissions:
+  contents: write # 允许将生成的每日情报 Markdown 自动 Commit 回 Obsidian 仓库
+
+jobs:
+  run-daily-brief:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 1. 检出坤哥的第二大脑仓库
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: 🐍 2. 配置 Python 3.11 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: '02_投资与分析/05_每日情报/scripts/requirements.txt'
+
+      - name: 📦 3. 安装依赖库 (google-genai / yfinance / requests)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r "02_投资与分析/05_每日情报/scripts/requirements.txt"
+
+      - name: 🧠 4. 运行情报引擎 + 生成 Obsidian 日报 + 推送 iPhone Bark
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          BARK_KEY: ${{ secrets.BARK_KEY }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python "02_投资与分析/05_每日情报/scripts/run_daily_brief.py"
+
+      - name: 💾 5. 自动将最新日报保存并推送到 GitHub 仓库
+        run: |
+          git config user.name "Antigravity Investment Bot"
+          git config user.email "bot@antigravity.local"
+          git add "02_投资与分析/05_每日情报/"
+          if git diff --staged --quiet; then
+            echo "没有新增或变更的情报文件需要提交。"
+          else
+            git commit -m "📡 自动更新每日投资情报 ($(date -u -d '+8 hours' '+%Y-%m-%d %H:%M')) [skip ci]"
+            git push
+          fi
