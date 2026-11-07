@@ -107,10 +107,12 @@ def fetch_google_news_rss(query: str, max_items: int = 6):
 
 
 def fetch_realtime_market_and_news(targets):
-    """使用 yfinance + Google News RSS 获取宏观路标与股票池标的的实时精确行情及最新新闻"""
+    """使用 yfinance + Google News RSS 获取宏观路标（含黄金、原油、金油比）与股票池标的的实时精确行情及最新新闻"""
     macro_symbols = {
         "10Y美债收益率 (^TNX)": "^TNX",
         "美元指数 (DX-Y.NYB)": "DX-Y.NYB",
+        "WTI原油期货 (CL=F)": "CL=F",
+        "COMEX黄金期货 (GC=F)": "GC=F",
         "VIX恐慌指数 (^VIX)": "^VIX",
         "标普500 (^GSPC)": "^GSPC",
         "纳斯达克100 (^NDX)": "^NDX",
@@ -119,7 +121,8 @@ def fetch_realtime_market_and_news(targets):
     snapshot = {
         "timestamp_bjt": NOW_BJT.strftime("%Y-%m-%d %H:%M:%S"),
         "macro_prices": {},
-        "macro_news": fetch_google_news_rss("US economy Federal Reserve CPI ISM PMI Treasury yield", max_items=8),
+        "cross_asset_ratios": {},
+        "macro_news": fetch_google_news_rss("US economy Federal Reserve CPI ISM PMI Treasury yield oil gold", max_items=8),
         "targets_data": {}
     }
 
@@ -176,6 +179,32 @@ def fetch_realtime_market_and_news(targets):
         rss_news = fetch_google_news_rss(f"{t['company']} {raw_ticker} stock crypto", max_items=5)
         t_info["latest_news"].extend(rss_news)
         snapshot["targets_data"][raw_ticker] = t_info
+
+    # 3. 自动计算华尔街核心跨资产比值：金油比 (Gold/Oil Ratio) 与 BTC/黄金比 (BTC/Gold Ratio)
+    gold_price = snapshot["macro_prices"].get("COMEX黄金期货 (GC=F)", {}).get("latest")
+    oil_price = snapshot["macro_prices"].get("WTI原油期货 (CL=F)", {}).get("latest")
+    btc_price = snapshot["targets_data"].get("BTC", {}).get("latest_price")
+
+    if isinstance(gold_price, (int, float)) and isinstance(oil_price, (int, float)) and oil_price > 0:
+        go_ratio = round(gold_price / oil_price, 2)
+        if go_ratio > 30:
+            go_signal = "🚨 >30 衰退/避险与潜在救市放水预警区（金强油弱）"
+        elif go_ratio < 15:
+            go_signal = "🔴 <15 恶性通胀与加息压制预警区（油强金弱）"
+        else:
+            go_signal = "🟢 15–30 正常周期波动区间"
+        snapshot["cross_asset_ratios"]["金油比 (Gold/WTI Ratio)"] = {
+            "value": go_ratio,
+            "signal": go_signal,
+            "formula": f"${gold_price} / ${oil_price}"
+        }
+
+    if isinstance(btc_price, (int, float)) and isinstance(gold_price, (int, float)) and gold_price > 0:
+        bg_ratio = round(btc_price / gold_price, 2)
+        snapshot["cross_asset_ratios"]["数字黄金/实物黄金比 (BTC/Gold Ratio)"] = {
+            "value": f"1 BTC = {bg_ratio} 盎司黄金",
+            "note": "用于评估 BTC 相对于全球央行黄金买盘的滞后补涨空间或过热程度"
+        }
 
     return snapshot
 
@@ -260,7 +289,7 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
   - YAML Frontmatter (`title`, `date: {TODAY_STR}`, `tags: [投资系统/每日情报]`, `macro_quadrant`, `triggered_alerts`)
   - `# 📡 {TODAY_STR} 每日投资情报与买卖扳机监控（{SESSION_LABEL}）`
   - `## 一、🚨 买卖扳机与红线预警仪表盘（学徒买 · 师傅卖）`（Markdown 表格）
-  - `## 二、🧭 宏观 7 大路标与四象限快照`
+  - `## 二、🧭 宏观 7 大路标与金油双锚快照`（必须包含 WTI 原油价格与三档警戒线对比、黄金价格、实时【金油比】与【BTC/黄金比】信号解读）
   - `## 三、🔬 核心标的二级/三级情报深潜（含预期差三问）`
   - `## 四、🌊 五大赛道二阶传导扫描`
   - `## 五、⚖️ 贝叶斯动态调分建议表（待坤哥人工确认）`
@@ -272,9 +301,9 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 #### 第二部分：用于推送到坤哥 iPhone Bark 的精简 JSON（严禁包裹代码块，直接输出合法 JSON 对象）
 格式如下：
 {{
-  "alert_level": "active 或 timeSensitive（若有标的跌入狙击买点 15% 以内、或触发卖出红线/排雷日历 <7 天，设为 timeSensitive）",
+  "alert_level": "active 或 timeSensitive（若有标的跌入狙击买点 15% 以内、或触发卖出红线/排雷日历 <7 天、或 WTI 原油 >$90 / 金油比 >30，设为 timeSensitive）",
   "title": "📡 {TODAY_STR} 投资情报：一句话核心结论（不超过22个字）",
-  "body": "用 4 行极简要点列出：\\n1. 🟢 买点监控（如 COIN 现价$xx 距买点差x%）\\n2. ⚠️ 排雷预警\\n3. 🧭 宏观温度（10Y美债/VIX）\\n4. ⚖️ 贝叶斯调分建议摘要"
+  "body": "用 4 行极简要点列出：\\n1. 🟢 买点监控（如 COIN 现价$xx 距买点差x%）\\n2. ⚠️ 排雷预警\\n3. 🧭 宏观与金油双锚（10Y美债/WTI油价/黄金/金油比）\\n4. ⚖️ 贝叶斯调分建议摘要"
 }}
 """
 
