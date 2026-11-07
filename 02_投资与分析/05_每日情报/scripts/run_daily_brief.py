@@ -1,28 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-坤哥的第二大脑 · 云端每日投资情报与买卖扳机监控引擎
+坤哥的第二大脑 · 云端每日投资情报与买卖扳机监控引擎 (v2.0 免付费配额满血版)
 运行环境：GitHub Actions (Ubuntu) 或 本地 Python 3.10+
-功能：
-1. 动态扫描 `02_投资与分析/04_交易记录/` 下所有个股与加密资产笔记（提取 YAML 参数与核心扳机）
-2. 通过 yfinance 实时拉取美股价格、BTC 价格、10Y 美债收益率、美元指数 DXY、VIX 恐慌指数
-3. 调用 Google Gemini API (开启原生 Google Search 实时联网搜索)，结合半衰期漏斗与贝叶斯模型生成早/晚报
-4. 自动写入 `02_投资与分析/05_每日情报/YYYY-MM-DD_每日投资情报.md`（绝不篡改个股底稿）
+核心特性：
+1. 动态扫描 `02_投资与分析/04_交易记录/` 下所有个股与加密资产笔记（加减股票只需改 Obsidian 笔记，零代码维护）
+2. 通过 yfinance + Google News RSS 直接免费拉取美股/BTC实时行情、10Y美债、DXY、VIX 以及过去24小时全球权威财经新闻（无需付费 Google Search Grounding 配额！）
+3. 自动多模型智能容灾回退：优先调用 `gemini-3.5-flash` -> `gemini-3-flash-preview` -> `gemini-3.1-flash-lite` -> `gemini-3.8-flash`
+4. 自动写入 `02_投资与分析/05_每日情报/YYYY-MM-DD_每日投资情报.md`（绝不自动篡改个股底稿）
 5. 通过 Bark 推送高可读性摘要与分级预警到坤哥的 iPhone 锁屏
 """
 
 import os
 import re
-import sys
 import json
+import time
+import urllib.parse
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
 import yaml
 import requests
 import yfinance as yf
-from google import genai
-from google.genai import types
 
 # 设定北京时间 (UTC+8)
 BJT = timezone(timedelta(hours=8))
@@ -78,13 +78,36 @@ def load_portfolio_targets():
             "score_rate": meta.get("score_rate", ""),
             "position_pct": meta.get("position_pct", 0),
             "verdict": str(meta.get("verdict", "")),
-            "body_excerpt": body[:2500],  # 截取核心结论、排雷日历与买卖扳机供 AI 对照
+            "body_excerpt": body[:2000],
         })
     return targets
 
 
-def fetch_realtime_market_data(targets):
-    """使用 yfinance 获取宏观路标与股票池标的的实时精确行情"""
+def fetch_google_news_rss(query: str, max_items: int = 6):
+    """通过 Google News RSS 免费抓取最新英文/中文权威财经新闻"""
+    encoded_q = urllib.parse.quote(f"{query} when:2d")
+    rss_url = f"https://news.google.com/rss/search?q={encoded_q}&hl=en-US&gl=US&ceid=US:en"
+    items = []
+    try:
+        resp = requests.get(rss_url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+        if resp.status_code == 200:
+            root = ET.fromstring(resp.content)
+            for item in root.findall("./channel/item")[:max_items]:
+                title = item.findtext("title", "")
+                pub_date = item.findtext("pubDate", "")
+                source = item.findtext("source", "")
+                items.append({
+                    "title": title,
+                    "source": source,
+                    "published": pub_date
+                })
+    except Exception as e:
+        items.append({"note": f"RSS fetch warning: {e}"})
+    return items
+
+
+def fetch_realtime_market_and_news(targets):
+    """使用 yfinance + Google News RSS 获取宏观路标与股票池标的的实时精确行情及最新新闻"""
     macro_symbols = {
         "10Y美债收益率 (^TNX)": "^TNX",
         "美元指数 (DX-Y.NYB)": "DX-Y.NYB",
@@ -93,7 +116,12 @@ def fetch_realtime_market_data(targets):
         "纳斯达克100 (^NDX)": "^NDX",
     }
 
-    market_snapshot = {"macro": {}, "targets": {}}
+    snapshot = {
+        "timestamp_bjt": NOW_BJT.strftime("%Y-%m-%d %H:%M:%S"),
+        "macro_prices": {},
+        "macro_news": fetch_google_news_rss("US economy Federal Reserve CPI ISM PMI Treasury yield", max_items=8),
+        "targets_data": {}
+    }
 
     # 1. 获取宏观高频指标
     for label, sym in macro_symbols.items():
@@ -104,18 +132,26 @@ def fetch_realtime_market_data(targets):
                 latest = float(hist["Close"].iloc[-1])
                 prev = float(hist["Close"].iloc[-2]) if len(hist) > 1 else latest
                 chg_pct = ((latest - prev) / prev * 100) if prev else 0.0
-                market_snapshot["macro"][label] = {
+                snapshot["macro_prices"][label] = {
                     "latest": round(latest, 2),
                     "change_pct": f"{chg_pct:+.2f}%"
                 }
         except Exception as e:
-            market_snapshot["macro"][label] = {"error": str(e)}
+            snapshot["macro_prices"][label] = {"error": str(e)}
 
-    # 2. 获取股票池标的实时价格
+    # 2. 获取股票池标的实时价格与专属新闻
     crypto_map = {"BTC": "BTC-USD", "ZEC": "ZEC-USD"}
     for t in targets:
         raw_ticker = t["ticker"].upper()
         yf_sym = crypto_map.get(raw_ticker, raw_ticker)
+        t_info = {
+            "company": t["company"],
+            "status": t["status"],
+            "target_buy_price": t["target_buy_price"],
+            "latest_price": t["recorded_price"],
+            "change_pct_1d": "0.00%",
+            "latest_news": []
+        }
         try:
             tk = yf.Ticker(yf_sym)
             hist = tk.history(period="5d")
@@ -123,40 +159,78 @@ def fetch_realtime_market_data(targets):
                 latest = float(hist["Close"].iloc[-1])
                 prev = float(hist["Close"].iloc[-2]) if len(hist) > 1 else latest
                 chg_pct = ((latest - prev) / prev * 100) if prev else 0.0
-                market_snapshot["targets"][raw_ticker] = {
-                    "latest_price": round(latest, 2),
-                    "change_pct_1d": f"{chg_pct:+.2f}%"
-                }
-            else:
-                market_snapshot["targets"][raw_ticker] = {
-                    "latest_price": t["recorded_price"],
-                    "note": "非公开交易或暂无yfinance行情，沿用档案价"
-                }
-        except Exception:
-            market_snapshot["targets"][raw_ticker] = {
-                "latest_price": t["recorded_price"],
-                "note": "拉取异常，沿用档案价"
-            }
+                t_info["latest_price"] = round(latest, 2)
+                t_info["change_pct_1d"] = f"{chg_pct:+.2f}%"
 
-    return market_snapshot
+            # 尝试拉取 yfinance 内置新闻
+            yf_news = getattr(tk, "news", []) or []
+            for n in yf_news[:4]:
+                content = n.get("content", {}) if isinstance(n, dict) else {}
+                title = content.get("title") or n.get("title")
+                if title:
+                    t_info["latest_news"].append({"title": title, "source": "Yahoo Finance"})
+        except Exception:
+            pass
+
+        # 补充 Google News RSS 定向抓取
+        rss_news = fetch_google_news_rss(f"{t['company']} {raw_ticker} stock crypto", max_items=5)
+        t_info["latest_news"].extend(rss_news)
+        snapshot["targets_data"][raw_ticker] = t_info
+
+    return snapshot
+
+
+def call_gemini_with_fallback(api_key: str, prompt: str) -> str:
+    """使用 REST API 调用 Gemini 3.x 模型群，具备自动降级与重试机制（完全适配免费层 Key）"""
+    candidate_models = [
+        "gemini-3.5-flash",
+        "gemini-3-flash-preview",
+        "gemini-3.8-flash",
+        "gemini-3.1-flash-lite",
+        "gemini-flash-lite-latest",
+    ]
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.2}
+    }
+
+    last_err = ""
+    for model_name in candidate_models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        for attempt in range(2):
+            try:
+                print(f"🧠 正在请求大模型 [{model_name}] (尝试 {attempt + 1}/2)...")
+                resp = requests.post(url, json=payload, timeout=90)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    text = data["candidates"][0]["content"]["parts"][0]["text"]
+                    print(f"✅ 模型 [{model_name}] 响应成功！")
+                    return text
+                else:
+                    last_err = f"{model_name} HTTP {resp.status_code}: {resp.text[:200]}"
+                    print(f"⚠️ {last_err}")
+                    time.sleep(2)
+            except Exception as e:
+                last_err = f"{model_name} Exception: {e}"
+                print(f"⚠️ {last_err}")
+                time.sleep(2)
+
+    raise RuntimeError(f"所有候选 Gemini 模型均调用失败，最后错误: {last_err}")
 
 
 def generate_intelligence_with_gemini(targets, market_snapshot):
-    """调用 Gemini 2.5 (带 Google Search Grounding) 生成每日投资情报"""
+    """构建 Prompt 并调用 Gemini 生成每日投资情报"""
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError("未检测到环境变量 GEMINI_API_KEY！请在 GitHub Secrets 中配置。")
 
-    client = genai.Client(api_key=api_key)
-
-    # 读取方法论核心摘要作为标尺
     news_sop_path = METHOD_DIR / "新闻过滤与贝叶斯动态更新系统.md"
-    news_sop_text = news_sop_path.read_text(encoding="utf-8")[:3000] if news_sop_path.exists() else ""
+    news_sop_text = news_sop_path.read_text(encoding="utf-8")[:2500] if news_sop_path.exists() else ""
 
     prompt = f"""你现在是「坤哥的第二大脑」专属机构级首席投资官与风控官。
 今天是北京时间 **{TODAY_STR}**，当前执行批次为：**{SESSION_LABEL}**。
 
-### 一、今日实时行情快照（已由系统通过交易所接口精确拉取）
+### 一、今日实时行情与过去 24–48 小时全球权威财经新闻（已由系统实时抓取）
 ```json
 {json.dumps(market_snapshot, ensure_ascii=False, indent=2)}
 ```
@@ -171,16 +245,13 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 
 ---
 
-### 四、你的执行任务（请务必调用 Google Search 工具搜索过去 24 小时最新英文/中文权威财经动态）
-1. **定向联网搜索**：
-   - 搜索美国宏观最新动态（ISM PMI、CPI/PCE、美联储官员最新表态、2Y/10Y美债与高收益债利差 HY OAS）。
-   - 搜索股票池活跃标的（`GOOGL`、`BTC`、`CRCL`、`COIN`、`SPCX`、`RXRX`）过去 24–48 小时的重要财报、SEC 文件（10-Q/8-K/13F/Form 4）、监管进展、ETF 净流入/流出、锁定期解禁与临床数据。
-2. **严格执行半衰期三级漏斗**：
-   - 剔除 90% 半衰期 < 1 周的一级噪音（放置在文末第 6 节简短划掉）。
+### 四、你的执行任务
+1. **严格执行半衰期三级漏斗**：
+   - 从上方抓取到的实时新闻中，剔除半衰期 < 1 周的一级噪音（放置在文末第 6 节简短划掉）。
    - 重点深潜二级中观信号（1–4季度）与三级微观突变（>3年或黑天鹅），每条核心情报必须回答 **「预期差三问」**（① News vs. Price Action 预期差在哪？② 二阶传导是谁？③ 属于软证据还是硬证据？）。
-3. **「学徒买、师傅卖」双扳机实时比对**：
+2. **「学徒买、师傅卖」双扳机实时比对**：
    - 将上方 JSON 中的实时最新价（`latest_price`）与每只标的预设的 `target_buy_price` 精确对比，计算还差多少百分比，判断是否触发🟢建仓扳机或🔴卖出/排雷预警。
-4. **输出格式要求（严格输出两部分，用 `===BARK_SUMMARY_SPLIT===` 分隔）**：
+3. **输出格式要求（严格输出两部分，用 `===BARK_SUMMARY_SPLIT===` 分隔）**：
 
 #### 第一部分：完整的 Obsidian Markdown 报告（直接以 `---` YAML Frontmatter 开头，不要包裹在代码块里）
 - 注意：正文中所有的美元符号必须转义为 `\\$`（如 `\\$120`、`\\$75,500`），防止 Obsidian KaTeX 公式渲染错乱！
@@ -201,30 +272,20 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 #### 第二部分：用于推送到坤哥 iPhone Bark 的精简 JSON（严禁包裹代码块，直接输出合法 JSON 对象）
 格式如下：
 {{
-  "alert_level": "active 或 timeSensitive（若有标的跌入狙击买点 5% 以内、或触发卖出红线/排雷日历 <7 天，设为 timeSensitive）",
-  "title": "📡 {TODAY_STR} 投资早/晚报：一句话核心结论（不超过22个字）",
-  "body": "用 4-6 行极简要点列出：\\n1. 🚨 扳机状态（如 COIN 现价$xx 距买点差x%）\\n2. ⚠️ 排雷预警\\n3. 🧭 宏观温度（10Y美债/VIX）\\n4. ⚖️ 是否有贝叶斯调分建议"
+  "alert_level": "active 或 timeSensitive（若有标的跌入狙击买点 15% 以内、或触发卖出红线/排雷日历 <7 天，设为 timeSensitive）",
+  "title": "📡 {TODAY_STR} 投资情报：一句话核心结论（不超过22个字）",
+  "body": "用 4 行极简要点列出：\\n1. 🟢 买点监控（如 COIN 现价$xx 距买点差x%）\\n2. ⚠️ 排雷预警\\n3. 🧭 宏观温度（10Y美债/VIX）\\n4. ⚖️ 贝叶斯调分建议摘要"
 }}
 """
 
-    # 调用 Gemini 2.5 Flash 并启用 Google Search Grounding
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            tools=[types.Tool(google_search=types.GoogleSearch())],
-            temperature=0.2,
-        ),
-    )
+    full_text = call_gemini_with_fallback(api_key, prompt)
 
-    full_text = response.text or ""
     if "===BARK_SUMMARY_SPLIT===" in full_text:
         md_part, bark_part = full_text.split("===BARK_SUMMARY_SPLIT===", 1)
     else:
         md_part = full_text
         bark_part = "{}"
 
-    # 清理可能残留的首尾代码块标记
     md_part = re.sub(r"^```(?:markdown)?\s*", "", md_part.strip())
     md_part = re.sub(r"\s*```$", "", md_part.strip())
 
@@ -236,7 +297,7 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
         bark_data = {
             "alert_level": "timeSensitive",
             "title": f"📡 {TODAY_STR} 每日投资情报已送达",
-            "body": "今日股票池买卖扳机巡检与半衰期过滤已完成，请打开 Obsidian 查看完整报告。"
+            "body": "今日股票池买卖扳机巡检与半衰期过滤已完成，请点击通知或打开 Obsidian 查看完整报告。"
         }
 
     return md_part, bark_data
@@ -257,7 +318,6 @@ def save_report_to_obsidian(md_content: str):
     else:
         report_path.write_text(md_content, encoding="utf-8")
 
-    # 自动把当天日报链接加入 每日投资情报总览.md
     index_path = DAILY_DIR / "每日投资情报总览.md"
     if index_path.exists():
         idx_text = index_path.read_text(encoding="utf-8")
@@ -276,10 +336,8 @@ def send_bark_notification(bark_data: dict):
         print("⚠️ 未配置 BARK_KEY 环境变量，跳过 iPhone Bark 推送。")
         return
 
-    # 兼容用户直接填 Key 或填完整 https://api.day.app/xxx/ URL
     if bark_key_or_url.startswith("http"):
         base_url = bark_key_or_url.rstrip("/")
-        # 如果 URL 是 https://api.day.app/<key>，提取 endpoint
         parts = base_url.split("/")
         bark_server = "/".join(parts[:3])
         device_key = parts[3] if len(parts) > 3 else ""
@@ -297,7 +355,6 @@ def send_bark_notification(bark_data: dict):
         "sound": "bell",
     }
 
-    # 如果配置了 GITHUB_REPOSITORY，点击 Bark 通知可直接跳转到 GitHub 手机网页查看完整 Markdown 报告
     gh_repo = os.environ.get("GITHUB_REPOSITORY", "").strip()
     if gh_repo:
         payload["url"] = f"https://github.com/{gh_repo}/blob/main/02_%E6%8A%95%E8%B5%84%E4%B8%8E%E5%88%86%E6%9E%90/05_%E6%AF%8F%E6%97%A5%E6%83%85%E6%8A%A5/{TODAY_STR}_%E6%AF%8F%E6%97%A5%E6%8A%95%E8%B5%84%E6%83%85%E6%8A%A5.md"
@@ -312,8 +369,8 @@ def main():
     targets = load_portfolio_targets()
     print(f"📦 已加载股票池标的 {len(targets)} 只: {[t['ticker'] for t in targets]}")
 
-    market_snapshot = fetch_realtime_market_data(targets)
-    print("📈 已拉取实时行情快照。")
+    market_snapshot = fetch_realtime_market_and_news(targets)
+    print("📈 已拉取实时行情与全球权威财经 RSS 快照。")
 
     md_content, bark_data = generate_intelligence_with_gemini(targets, market_snapshot)
     report_path = save_report_to_obsidian(md_content)
