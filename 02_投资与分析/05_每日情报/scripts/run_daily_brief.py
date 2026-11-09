@@ -453,7 +453,7 @@ def call_gemini_with_fallback(api_key: str, prompt: str) -> str:
     ]
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.2}
+        "generationConfig": {"temperature": 0.2, "maxOutputTokens": 8192}
     }
 
     last_err = ""
@@ -465,8 +465,11 @@ def call_gemini_with_fallback(api_key: str, prompt: str) -> str:
                 resp = requests.post(url, json=payload, timeout=95)
                 if resp.status_code == 200:
                     data = resp.json()
-                    text = data["candidates"][0]["content"]["parts"][0]["text"]
-                    print(f"✅ 模型 [{model_name}] 响应成功！")
+                    parts = data["candidates"][0]["content"]["parts"]
+                    text = "".join(p.get("text", "") for p in parts if not p.get("thought", False))
+                    if not text.strip():
+                        text = "".join(p.get("text", "") for p in parts)
+                    print(f"✅ 模型 [{model_name}] 响应成功！(长度: {len(text)} 字符)")
                     return text
                 else:
                     last_err = f"{model_name} HTTP {resp.status_code}: {resp.text[:200]}"
@@ -532,20 +535,17 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 {json.dumps(targets, ensure_ascii=False, indent=2)}
 ```
 
-### 三、必须遵守的方法论与过滤铁律
-{news_sop_text}
-
 ---
 
 {mode_instructions}
 
-### 四、通用格式硬性要求（严格输出两部分，用 `===BARK_SUMMARY_SPLIT===` 分隔）
+### 四、通用格式硬性要求（严格输出两部分，用 `[BARK_PUSH_START]` 分隔）
 - **严禁输出任何已删除标的（RXRX、CT、ZEC）！**
 - 正文中所有的美元符号必须转义为 `\\$`（如 `\\$120`、`\\$75,500`），防止 Obsidian KaTeX 公式渲染错乱！
-- 必须使用 Obsidian 双链语法（如 `[[Alphabet GOOGL]]`、`[[Bitcoin BTC]]`、`[[Circle CRCL]]`、`[[Coinbase COIN]]`、`[[SpaceX SPCX]]`、`[[股票池]]`、`[[颠覆性新物种与生命力评估模型]]`）。
+- 必须使用 Obsidian 双链语法（如 `[[Alphabet GOOGL]]`、`[[Bitcoin BTC]]`、`[[Circle CRCL]]`、`[[Coinbase COIN]]`、`[[SpaceX SPCX]]`、`[[股票池]]`、`[[颠覆性新物种与生命力评估模型]]`、`[[新物种与候选猎物雷达池]]`）。
 
-#### 分隔符（独占一行）：
-`===BARK_SUMMARY_SPLIT===`
+#### 分隔符（在 Markdown 报告全部结束后，独占一行写以下标记）：
+`[BARK_PUSH_START]`
 
 #### 第二部分：用于推送到坤哥 iPhone Bark 的精简 JSON（严禁包裹代码块，直接输出合法 JSON 对象）
 {{
@@ -557,7 +557,9 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 
     full_text = call_gemini_with_fallback(api_key, prompt)
 
-    if "===BARK_SUMMARY_SPLIT===" in full_text:
+    if "[BARK_PUSH_START]" in full_text:
+        md_part, bark_part = full_text.split("[BARK_PUSH_START]", 1)
+    elif "===BARK_SUMMARY_SPLIT===" in full_text:
         md_part, bark_part = full_text.split("===BARK_SUMMARY_SPLIT===", 1)
     else:
         md_part = full_text
