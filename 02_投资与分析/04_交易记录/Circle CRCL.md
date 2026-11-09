@@ -7,13 +7,16 @@ created: 2026-11-07
 ticker: "CRCL"
 company: "Circle Internet Group"
 asset_type: 股票
+pool_type: "⏳周期观察池"
 macro_bucket: "🔥通胀实物(高息受益)"
 sector: "稳定币 / 金融科技"
 status: 观察中
 price: 68
 target_buy_price: "$40 或 USDC增速>30%"
+target_sell_price: "$120(PE>60x泡沫止盈) 或 USDC份额<15%/分成恶化证伪清仓"
 macro_score: 55
 quality_score: 63
+vitality_score: 62
 score_rate: 60
 traps_hit: 2
 position_pct: 0

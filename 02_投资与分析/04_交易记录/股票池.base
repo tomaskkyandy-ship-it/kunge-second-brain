@@ -12,6 +12,8 @@ properties:
     displayName: 代码
   asset_type:
     displayName: 类型
+  pool_type:
+    displayName: 所属池子
   macro_bucket:
     displayName: 宏观因子篮子
   sector:
@@ -21,11 +23,15 @@ properties:
   price:
     displayName: 现价
   target_buy_price:
-    displayName: 狙击买点
+    displayName: 🟢学徒买点
+  target_sell_price:
+    displayName: 🔴师傅卖点
   macro_score:
     displayName: 中观分%
   quality_score:
     displayName: 质量分%
+  vitality_score:
+    displayName: 新物种生命力%
   score_rate:
     displayName: 综合分%
   traps_hit:
@@ -40,15 +46,16 @@ views:
     order:
       - company
       - ticker
-      - asset_type
+      - pool_type
       - macro_bucket
       - status
       - price
       - target_buy_price
+      - target_sell_price
       - macro_score
       - quality_score
+      - vitality_score
       - score_rate
-      - traps_hit
       - position_pct
       - verdict
     sort:
@@ -64,13 +71,34 @@ views:
       - ticker
       - price
       - target_buy_price
+      - target_sell_price
       - quality_score
       - macro_score
       - score_rate
+      - position_pct
       - status
       - verdict
     sort:
       - property: quality_score
+        direction: DESC
+  - type: table
+    name: 新物种观察池
+    filters:
+      and:
+        - vitality_score >= 65
+    order:
+      - company
+      - ticker
+      - price
+      - target_buy_price
+      - target_sell_price
+      - vitality_score
+      - quality_score
+      - score_rate
+      - status
+      - verdict
+    sort:
+      - property: vitality_score
         direction: DESC
   - type: table
     name: 股票标的
@@ -80,14 +108,15 @@ views:
     order:
       - company
       - ticker
-      - macro_bucket
+      - pool_type
       - status
       - price
       - target_buy_price
+      - target_sell_price
       - macro_score
       - quality_score
+      - vitality_score
       - score_rate
-      - traps_hit
       - position_pct
       - verdict
     sort:
@@ -101,42 +130,29 @@ views:
     order:
       - company
       - ticker
-      - macro_bucket
+      - pool_type
       - status
       - price
       - target_buy_price
+      - target_sell_price
       - macro_score
+      - quality_score
       - score_rate
-      - traps_hit
       - position_pct
       - verdict
     sort:
       - property: score_rate
         direction: DESC
-  - type: table
-    name: 待研究
-    filters:
-      and:
-        - status == "观察中"
-    order:
-      - company
-      - asset_type
-      - macro_bucket
-      - macro_score
-      - quality_score
-      - score_rate
-      - verdict
-      - file.mtime
-    sort:
-      - property: file.mtime
-        direction: DESC
   - type: cards
     name: 卡片视图
     order:
       - company
-      - asset_type
-      - macro_score
+      - pool_type
+      - price
+      - target_buy_price
+      - target_sell_price
       - quality_score
+      - vitality_score
       - score_rate
       - verdict
     sort:

@@ -6,13 +6,16 @@ created: 2026-11-07
 ticker: "GOOGL"
 company: "Alphabet Inc."
 asset_type: 股票
+pool_type: "💎皇冠明珠复利池"
 macro_bucket: "🌊流动性久期"
 sector: "互联网 / 云计算 / AI"
 status: 观察中
 price: 285
 target_buy_price: "$230 或单季FCF转正(+$150亿)"
+target_sell_price: "$420(PE>35x泡沫止盈) 或 Cloud利润率<20%/Search转负证伪清仓"
 macro_score: 56
 quality_score: 73
+vitality_score: 78
 score_rate: 68
 traps_hit: 2
 position_pct: 0
