@@ -10,14 +10,14 @@ asset_type: 股票
 macro_bucket: "🌊流动性久期"
 sector: "加密交易所 / 金融科技"
 status: 观察中
-price: 139
+price: 135
 target_buy_price: "$90 或 SBC/EBITDA<40%"
 macro_score: 60
 quality_score: 64
 score_rate: 61
 traps_hit: 1
 position_pct: 0
-verdict: 合规护城河最强的加密平台、净现金，但处于周期低谷，SBC 吞掉约 70% EBITDA，高管大额减持；等加密深熊或稀释改善再看
+verdict: 合规护城河最强的加密平台、净现金，但处于周期低谷（BTC在Coinbase连续61天折价），SBC 吞掉约 70% EBITDA，高管大额减持；等深熊跌至 $90 或稀释改善再看
 ---
 
 # Coinbase（COIN）个股分析

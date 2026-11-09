@@ -54,7 +54,7 @@ def parse_markdown_frontmatter(file_path: Path):
 
 
 def load_portfolio_targets():
-    """从 04_交易记录 文件夹读取所有标的笔记（排除索引与交易流水）"""
+    """从 04_交易记录 文件夹读取所有活跃标的笔记（排除索引、交易流水与已放弃标的）"""
     targets = []
     skip_files = {"股票池.md", "投资决策日志.md"}
     for md_file in sorted(RECORDS_DIR.glob("*.md")):
@@ -63,6 +63,9 @@ def load_portfolio_targets():
         meta, body = parse_markdown_frontmatter(md_file)
         if "ticker" not in meta or "action" in meta:
             continue
+        status_str = str(meta.get("status", "观察中")).strip()
+        if "放弃" in status_str:
+            continue
         targets.append({
             "file_name": md_file.stem,
             "ticker": str(meta.get("ticker", "")),
@@ -70,7 +73,7 @@ def load_portfolio_targets():
             "asset_type": str(meta.get("asset_type", "股票")),
             "macro_bucket": str(meta.get("macro_bucket", "")),
             "sector": str(meta.get("sector", "")),
-            "status": str(meta.get("status", "观察中")),
+            "status": status_str,
             "recorded_price": meta.get("price", ""),
             "target_buy_price": str(meta.get("target_buy_price", "")),
             "macro_score": meta.get("macro_score", ""),
@@ -284,7 +287,7 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 
 #### 第一部分：完整的 Obsidian Markdown 报告（直接以 `---` YAML Frontmatter 开头，不要包裹在代码块里）
 - 注意：正文中所有的美元符号必须转义为 `\\$`（如 `\\$120`、`\\$75,500`），防止 Obsidian KaTeX 公式渲染错乱！
-- 必须使用 Obsidian 双链语法引用笔记（如 `[[Alphabet GOOGL]]`、`[[Bitcoin BTC]]`、`[[Circle CRCL]]`、`[[Coinbase COIN]]`、`[[SpaceX SPCX]]`、`[[Recursion RXRX]]`、`[[股票池]]`）。
+- 必须使用 Obsidian 双链语法引用活跃笔记（如 `[[Alphabet GOOGL]]`、`[[Bitcoin BTC]]`、`[[Circle CRCL]]`、`[[Coinbase COIN]]`、`[[SpaceX SPCX]]`、`[[股票池]]`）。严禁输出已删除/已放弃的标的（如 RXRX、CT、ZEC）。
 - 章节结构必须包含：
   - YAML Frontmatter (`title`, `date: {TODAY_STR}`, `tags: [投资系统/每日情报]`, `macro_quadrant`, `triggered_alerts`)
   - `# 📡 {TODAY_STR} 每日投资情报与买卖扳机监控（{SESSION_LABEL}）`
