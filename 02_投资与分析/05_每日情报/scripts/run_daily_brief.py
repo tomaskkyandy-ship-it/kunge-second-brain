@@ -137,9 +137,9 @@ def compute_technical_indicators(hist_df):
 
 
 def load_portfolio_targets():
-    """从 04_交易记录 文件夹读取所有活跃标的笔记（排除索引、交易流水与已放弃标的）"""
+    """从 04_交易记录 文件夹读取所有活跃标的笔记（排除索引、雷达池、交易流水与已放弃标的）"""
     targets = []
-    skip_files = {"股票池.md", "投资决策日志.md"}
+    skip_files = {"股票池.md", "投资决策日志.md", "新物种与候选猎物雷达池.md"}
     for md_file in sorted(RECORDS_DIR.glob("*.md")):
         if md_file.name in skip_files:
             continue
@@ -228,15 +228,57 @@ def fetch_onchain_and_sentiment_metrics():
 
 
 def scan_sector_radar_candidates(existing_tickers: set):
-    """🔭 五大赛道新物种与错杀猎物雷达：自动扫描赛道代表性龙头是否出现暴跌错杀或超卖"""
+    """🔭 五大赛道新物种与错杀猎物雷达：自动扫描候选猎物并附带【第一性原理推荐理由】与【核心卡点】"""
     radar_watchlist = [
-        {"ticker": "NVDA", "name": "NVIDIA (AI算力底座)", "pool": "💎皇冠/🚀新物种"},
-        {"ticker": "TSLA", "name": "Tesla (FSD与具身机器人新物种)", "pool": "🚀新物种观察池"},
-        {"ticker": "RKLB", "name": "Rocket Lab (商业航天第二极)", "pool": "🚀新物种观察池"},
-        {"ticker": "PLTR", "name": "Palantir (AI操作系统新物种)", "pool": "🚀新物种观察池"},
-        {"ticker": "LLY", "name": "Eli Lilly (GLP-1医药皇冠)", "pool": "💎皇冠明珠复利池"},
-        {"ticker": "META", "name": "Meta Platforms (社交与AI开源皇冠)", "pool": "💎皇冠明珠复利池"},
-        {"ticker": "AMZN", "name": "Amazon (AWS云与机器人飞轮)", "pool": "💎皇冠明珠复利池"},
+        {
+            "ticker": "PLTR",
+            "name": "Palantir (AI操作系统新物种)",
+            "pool": "🚀新物种观察池",
+            "recommend_reason": "本体论(Ontology)架构深嵌军工与巨头血管，转换成本极高；AIP引爆商业S曲线，Rule of 40突破80%+的罕见高FCF应用层真龙",
+            "risk_and_trigger": "平时PE/PS估值极贵且有SBC减持；重点盯防随纳指回调至 $130-$140 区间或日线 RSI≤30 恐慌错杀时转正建档"
+        },
+        {
+            "ticker": "NVDA",
+            "name": "NVIDIA (AI算力全栈底座)",
+            "pool": "💎皇冠/🚀新物种",
+            "recommend_reason": "黄仁勋极客掌舵，CUDA生态+NVLink+1年1代极限迭代垄断全球AI训练>80%利润池",
+            "risk_and_trigger": "下游云巨头CapEx/折旧比达4-6倍高位且自研ASIC分流；等回调至 $150-$170 或 RSI≤30 时狙击"
+        },
+        {
+            "ticker": "TSLA",
+            "name": "Tesla (FSD与具身机器人新物种)",
+            "pool": "🚀新物种观察池",
+            "recommend_reason": "端到端物理AI大脑+百万车队真实数据闭环+一体化压铸莱特定律；Megapack储能现金牛喂养Robotaxi与Optimus人形机器人",
+            "risk_and_trigger": "汽车价格战挤压毛利、FSD监管审批时滞；等回调至 $200-$220 或无监督FSD跨州获批拐点"
+        },
+        {
+            "ticker": "RKLB",
+            "name": "Rocket Lab (商业航天第二极)",
+            "pool": "🚀新物种观察池",
+            "recommend_reason": "全球除SpaceX外唯一高频发射+卫星零部件垂直整合龙头(空间系统占营收>70%提供造血底盘)，中型可回收火箭Neutron直指星座组网",
+            "risk_and_trigger": "Neutron首飞与回收工程验证期FCF微负；等回调至 $18-$22 或 Neutron 成功入轨回收验证"
+        },
+        {
+            "ticker": "META",
+            "name": "Meta Platforms (社交垄断与AI皇冠)",
+            "pool": "💎皇冠明珠复利池",
+            "recommend_reason": "33亿日活社交网络效应不可复制，AI推荐直接拉升广告ARPU(高ROIIC)，扎克伯格随时可砍开支恢复巨额FCF",
+            "risk_and_trigger": "Reality Labs年亏超$150亿且处AI CapEx军备竞赛期；等 $480-$520 或 CapEx 增速见顶"
+        },
+        {
+            "ticker": "AMZN",
+            "name": "Amazon (AWS云与物流机器人飞轮)",
+            "pool": "💎皇冠明珠复利池",
+            "recommend_reason": "AWS云+高毛利广告驱动营业利润率创新高，百万台仓储机器人按莱特定律持续压降履约成本",
+            "risk_and_trigger": "面临AWS AI基建与Kuiper卫星高CapEx折旧期；等 $175-$190 区间或FCF加速扩张拐点"
+        },
+        {
+            "ticker": "LLY",
+            "name": "Eli Lilly (GLP-1代谢医药皇冠)",
+            "pool": "💎皇冠明珠复利池",
+            "recommend_reason": "替尔泊肽(Mounjaro/Zepbound)十年一遇超级大单品，适应症向心血管/NASH扩展，强定价权且无近期专利悬崖",
+            "risk_and_trigger": "表观PE常年40-50x偏贵、口服竞品与医保控费扰动；等错杀回调至 $680-$730 区间"
+        },
     ]
     radar_results = []
     for item in radar_watchlist:
@@ -248,7 +290,6 @@ def scan_sector_radar_candidates(existing_tickers: set):
             hist = tk.history(period="6mo")
             tech = compute_technical_indicators(hist)
             if tech:
-                # 筛选重点异动（单日波动较大、RSI < 38 接近超卖、或距高点回撤 > 20%）
                 radar_results.append({
                     "ticker": sym,
                     "name": item["name"],
@@ -256,7 +297,10 @@ def scan_sector_radar_candidates(existing_tickers: set):
                     "latest_price": tech["latest_price"],
                     "change_1d": tech["change_pct_1d"],
                     "rsi_14": tech["rsi_14"],
+                    "rsi_signal": tech["rsi_signal"],
                     "drawdown_52w": tech["drawdown_from_52w_high"],
+                    "recommend_reason": item["recommend_reason"],
+                    "risk_and_trigger": item["risk_and_trigger"],
                 })
         except Exception:
             pass
@@ -456,8 +500,8 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 3. `## 三、🔬 核心精锐二级/三级情报深潜（含预期差三问）`
    - 仅分析当前股票池中的 5 只活跃精锐（`GOOGL`、`BTC`、`CRCL`、`COIN`、`SPCX`），严禁出现已删除的 `RXRX / CT / ZEC`！
    - 对 `[[SpaceX SPCX]]` 必须结合其 **【🚀新物种生命力 85.5% vs 12/08 解禁倒计时】** 双重属性分析。
-4. `## 四、🔭 五大赛道二阶传导与「新物种/错杀猎物雷达」`
-   - 结合 `new_hunter_radar` 中的量化扫描数据（NVDA, TSLA, RKLB, PLTR, LLY, META, AMZN），指出今日是否有赛道龙头出现 RSI 超卖或深度回撤值得纳入新物种池/皇冠池研究。
+4. `## 四、🔭 五大赛道二阶传导与「新物种/错杀猎物雷达」（详见 [[新物种与候选猎物雷达池]]）`
+   - 结合 `new_hunter_radar` 中的数据，必须输出一张 **【🔭 候选猎物雷达追踪表】**，表格列必须包含：`候选标的` | `归属池` | `最新价(涨跌) & RSI(14)` | `💡核心推荐理由(第一性原理/护城河)` | `⚠️当前卡点与转正观察价`，绝不允许只给代码不写推荐理由！
 5. `## 五、⚖️ 贝叶斯动态调分建议表（待坤哥人工确认）`
 6. `## 六、🗑️ 今日已过滤的一级噪音（半衰期 < 1 周）`
 """
@@ -466,12 +510,12 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 ### 🌙 当前为【21:30 晚报模式：美股盘前宏观/金油异动 & 今晚挂单狙击快报】
 ⚠️ **晚报铁律：拒绝重复早报的长篇大论！必须极度精炼、实战导向，专为美股开盘前 1 小时盯盘与挂单服务！**
 请按以下 4 大精简实战章节输出：
-1. `## 一、🎯 今晚开盘「学徒买 · 师傅卖」挂单作战表`
+1. `## 一、🎯 今晚开盘「学徒买 · 师傅卖」挂单作战表（仅列主池 5 大精锐）`
    - 表格列：`标的(双链)` | `盘前/最新价` | `RSI(14)` | `🟢今晚买点挂单线(差距%)` | `🔴今晚止盈/止损红线` | `今晚开盘一句话动作指令`
 2. `## 二、⚡ 欧美盘宏观、金油比与链上资金异动速递`
    - 聚焦过去 12 小时内 10Y美债、WTI原油、黄金、USDC 流通市值、加密恐慌贪婪指数的最新边际变化。
-3. `## 三、🔭 盘前核心标的与「新物种猎物雷达」异动警报`
-   - 播报 5 只核心精锐及新物种雷达池（TSLA, RKLB, PLTR, NVDA 等）今晚是否有重大盘前催化剂或错杀机会。
+3. `## 三、🔭 「新物种与错杀猎物雷达池」盘前异动与推荐逻辑追踪（详见 [[新物种与候选猎物雷达池]]）`
+   - 必须输出一张 **【🔭 预备队猎物雷达追踪表】**，列包含：`候选标的(PLTR/NVDA/TSLA/RKLB等)` | `最新价 & RSI(14)` | `💡为什么值得盯(核心推荐理由)` | `🎯转正观察区与今晚策略`。
 4. `## 四、⚖️ 盘前紧急贝叶斯调分或排雷提醒（若无则写“今日晚盘维持早报评分不变”）`
 """
 
@@ -537,12 +581,23 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 
 
 def save_report_to_obsidian(md_content: str):
-    """将生成的日报写入 Obsidian 05_每日情报 目录，并更新总览索引"""
+    """将生成的日报写入 Obsidian 05_每日情报 目录，自动清理已废弃标的残留，并更新总览索引"""
     DAILY_DIR.mkdir(parents=True, exist_ok=True)
     report_path = DAILY_DIR / f"{TODAY_STR}_每日投资情报.md"
 
+    def purge_deprecated_lines(text: str) -> str:
+        """过滤掉旧报告表格中可能残留的 RXRX / Concrete CT / Zcash ZEC 行"""
+        deprecated_patterns = ("RXRX", "Recursion", "Concrete CT", "Zcash ZEC", "| **CT** |", "| **ZEC** |")
+        cleaned_lines = [
+            line for line in text.splitlines()
+            if not (line.lstrip().startswith("|") and any(p in line for p in deprecated_patterns))
+        ]
+        return "\n".join(cleaned_lines)
+
+    md_content = purge_deprecated_lines(md_content)
+
     if report_path.exists() and not IS_MORNING:
-        existing = report_path.read_text(encoding="utf-8")
+        existing = purge_deprecated_lines(report_path.read_text(encoding="utf-8"))
         # 清理晚报可能自带的重复 YAML Frontmatter
         clean_evening = re.sub(r"^---\s*\n.*?\n---\s*\n", "", md_content, flags=re.DOTALL).strip()
         if "## 🌙 晚盘" not in existing:
