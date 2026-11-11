@@ -1,0 +1,2046 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0d1117">
+<title>美股加密产业链股票清单</title>
+<style>
+:root {
+  color-scheme: dark;
+  --page: #0d1117;
+  --card: #161b22;
+  --surface: #21262d;
+  --line: #30363d;
+  --ink: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-hover: #79c0ff;
+  --control-border: #6e7681;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: var(--page);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; font-size: 1rem; line-height: 1.6; }
+h1, h2, h3, h4, p, dl, dd { margin: 0; }
+h1, h2, h3, h4 { line-height: 1.28; text-wrap: balance; }
+a { color: var(--accent); text-underline-offset: 0.23em; }
+a:hover { color: var(--accent-hover); }
+::selection { color: var(--page); background: var(--accent-hover); }
+:where(a, button, input, select, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+a, button, input, select, summary {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: #58a6ff30;
+}
+button, select, summary { cursor: pointer; }
+[id] { scroll-margin-top: 1.25rem; }
+.shell {
+  max-inline-size: 78rem;
+  padding-inline: max(1.25rem, env(safe-area-inset-left)) max(1.25rem, env(safe-area-inset-right));
+  margin-inline: auto;
+}
+.skip-link {
+  position: fixed;
+  inset: 1rem auto auto 1rem;
+  transform: translateY(calc(-100% - 2rem));
+  z-index: 2;
+  padding: .65rem 1rem;
+  background: var(--card);
+}
+.skip-link:focus { transform: none; }
+
+.masthead { border-block-end: 1px solid var(--line); }
+.topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .25rem 1.5rem;
+  flex-wrap: wrap;
+  min-block-size: 4.5rem;
+  border-block-end: 1px solid var(--line);
+}
+.topline nav { display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
+.topline a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: .9rem;
+}
+.topline a:hover { color: var(--accent-hover); text-decoration: underline; }
+.topline .mast-title { color: var(--ink); font-weight: 700; letter-spacing: .06em; }
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 6.2rem);
+  padding-block: clamp(2.5rem, 4.6vw, 4.25rem);
+}
+.edition { color: var(--muted); font-weight: 600; font-size: .92rem; }
+.edition time { color: var(--ink); margin-inline-start: .4em; }
+h1 {
+  font-size: clamp(2.25rem, 5.1vw, 4.9rem);
+  line-height: 1.12;
+  font-weight: 760;
+  margin-block: .8rem 1.3rem;
+  letter-spacing: .015em;
+}
+.hero-intro { max-inline-size: 46ch; text-wrap: pretty; color: var(--ink); font-size: clamp(1rem, 1.6vw, 1.14rem); }
+.market { margin-block-start: .75rem; max-inline-size: 55ch; color: var(--muted); font-size: .86rem; }
+.overview {
+  padding: clamp(1.15rem, 2.4vw, 1.9rem);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: .75rem;
+}
+.overview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .45rem 1rem;
+  flex-wrap: wrap;
+  padding-block-end: .8rem;
+  border-block-end: 1px solid var(--line);
+}
+.overview-head h2 { font-size: 1rem; font-weight: 650; }
+.overview-head p { color: var(--muted); font-size: .82rem; }
+.overview-head strong { color: var(--ink); font-size: 2.3rem; line-height: 1; margin-inline-end: .2rem; }
+.bar-list { margin-block: .75rem; }
+.bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: .27rem 1rem;
+  padding-block: .35rem .5rem;
+  text-decoration: none;
+  color: var(--ink);
+  min-block-size: 44px;
+  font-size: .89rem;
+}
+.bar-row:hover { color: var(--accent-hover); text-decoration: underline; }
+.bar-row strong { color: var(--accent); }
+.track {
+  grid-column: 1 / -1;
+  display: block;
+  background: var(--line);
+  block-size: .34rem;
+  border-radius: .35rem;
+}
+.track > span { display: block; inline-size: var(--size); block-size: 100%; background: var(--accent); border-radius: inherit; }
+.bar-note { font-size: .78rem; color: var(--muted); }
+
+.directory { padding-block-start: clamp(1.85rem, 4vw, 3.75rem); }
+.section-lead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: .3rem 1rem;
+  border-block-end: 1px solid var(--line);
+  padding-block-end: .75rem;
+}
+.section-lead h2, .reference h2 { font-size: clamp(1.6rem, 2.6vw, 2.25rem); }
+.section-lead p { color: var(--muted); margin-block-start: .3rem; font-size: .9rem; }
+.text-link { min-block-size: 44px; display: inline-flex; align-items: center; font-size: .9rem; }
+.scope { color: var(--muted); font-size: .9rem; max-inline-size: 84ch; text-wrap: pretty; margin-block: .8rem 1.1rem; }
+.filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1.15fr) minmax(0, .85fr) auto;
+  align-items: end;
+  gap: .8rem;
+  padding: 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: .65rem;
+  background: var(--card);
+}
+.control { display: grid; min-inline-size: 0; gap: .25rem; }
+.control label { font-size: .83rem; font-weight: 650; }
+.filters :where(input, select, button) {
+  font: inherit;
+  color: var(--ink);
+  background-color: var(--page);
+  border: 1px solid var(--control-border);
+  border-radius: .4rem;
+  padding: .5rem .65rem;
+  min-block-size: 44px;
+  min-inline-size: 0;
+}
+.filters :where(input, select):hover { border-color: var(--muted); }
+.filters input::placeholder { color: var(--muted); }
+.filters button { color: var(--ink); font-weight: 640; background-color: var(--surface); }
+.filters button:hover { background-color: var(--line); }
+.results { color: var(--muted); margin-block: .65rem 1.3rem; font-size: .86rem; }
+.empty { padding: 1.4rem; border: 1px dashed var(--control-border); background: var(--card); }
+.category { margin-block: 1.75rem 2.7rem; }
+.category-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .5rem 1rem;
+  padding: .85rem 1.05rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: .35rem;
+}
+.category-heading h3 { font-size: clamp(1.2rem, 2vw, 1.7rem); }
+.category-heading p { color: var(--muted); margin-block-start: .2rem; font-size: .86rem; }
+.category-count { flex: none; font-weight: 700; white-space: nowrap; }
+.context { font-size: .9rem; }
+.context summary {
+  padding: .55rem .75rem;
+  min-block-size: 44px;
+  color: var(--accent);
+  font-weight: 600;
+  inline-size: fit-content;
+}
+.context summary:hover { color: var(--accent-hover); text-decoration: underline; }
+.context .prose { padding: .1rem 1rem 1rem; color: var(--muted); }
+.subgroup {
+  overflow-wrap: anywhere;
+  margin-block: .65rem 1.1rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: .55rem;
+}
+.subhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .72rem 1rem;
+  border-block-end: 1px solid var(--line);
+}
+.subhead h4 { font-size: 1.03rem; }
+.subcount { color: var(--muted); font-size: .84rem; white-space: nowrap; }
+.entries { margin: 0; padding: 0; list-style: none; }
+.entry {
+  display: grid;
+  grid-template-columns: minmax(9rem, .88fr) minmax(0, 2.7fr);
+  align-items: start;
+  gap: .6rem 1.1rem;
+  padding: .8rem 1rem;
+  border-block-end: 1px solid var(--line);
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 5.4rem;
+}
+.entry:nth-child(even) { background: var(--page); }
+.identity { display: grid; min-inline-size: 0; align-content: start; gap: .05rem; }
+.ticker {
+  display: block;
+  font-size: 1.1rem;
+  line-height: 1.3;
+  letter-spacing: .025em;
+  font-weight: 780;
+}
+.company { font-size: .86rem; font-weight: 580; }
+.tags { display: flex; flex-wrap: wrap; gap: .25rem; margin-block-start: .28rem; }
+.tag {
+  border-radius: .24rem;
+  color: var(--ink);
+  padding: .05rem .35rem;
+  background: var(--surface);
+  font-size: .72rem;
+}
+.tag.core { color: var(--accent-hover); }
+.audit-link { display: inline-flex; align-items: center; min-block-size: 1.65rem; color: var(--accent); }
+.audit-ledger { margin-block: .45rem; border: 1px solid var(--line); border-radius: .4rem; }
+.audit-ledger .table-scroll { margin: .25rem .75rem .75rem; }
+#audit table :is(th, td):first-child { min-inline-size: 4.5rem; white-space: nowrap; }
+#audit table :is(th, td):last-child a { white-space: nowrap; }
+.entry-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  gap: .5rem 1rem;
+}
+.entry-fields.single { grid-template-columns: minmax(0, 1fr); }
+.entry-field dt { color: var(--muted); font-size: .75rem; font-weight: 630; }
+.entry-field dd { margin-block-start: .1rem; font-size: .9rem; }
+
+.reference {
+  margin-block: 1.5rem;
+  padding: clamp(1rem, 2.8vw, 2.1rem);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: .55rem;
+}
+.prose { overflow-wrap: anywhere; }
+.prose p { max-inline-size: 74ch; margin-block: .65rem; }
+.prose :where(ul, ol) { max-inline-size: 76ch; padding-inline-start: 1.6rem; margin-block: .7rem; }
+.prose li + li { margin-block-start: .35rem; }
+.prose h3 { margin-block: 1.25rem .6rem; font-size: 1.1rem; }
+.table-scroll { overflow-x: auto; margin-block: .85rem; }
+.prose table { border-collapse: collapse; inline-size: 100%; min-inline-size: 30rem; font-size: .9rem; }
+.prose :where(th, td) { padding: .5rem .65rem; border: 1px solid var(--line); vertical-align: top; text-align: start; }
+.prose th { background: var(--surface); }
+.footer { display: flex; justify-content: space-between; align-items: center; gap: .6rem 1rem; flex-wrap: wrap; color: var(--muted); font-size: .86rem; padding-block: 1rem 2rem; }
+.footer a { min-block-size: 44px; display: inline-flex; align-items: center; }
+
+@media (max-width: 52rem) {
+  .hero { gap: 1.5rem; }
+  .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .search-control { grid-column: 1 / -1; }
+  .filters button { justify-self: start; }
+}
+@media (max-width: 40rem) {
+  .topline { padding-block: .2rem; }
+  .topline nav { gap: 0 1rem; }
+  .hero { grid-template-columns: minmax(0, 1fr); padding-block: 1.75rem 2rem; }
+  h1 { margin-block: .55rem .85rem; }
+  .overview { padding: .85rem 1rem; }
+  .overview-head { padding-block-end: .55rem; }
+  .overview-head strong { font-size: 1.8rem; }
+  .bar-list { margin-block: .35rem; }
+  .entry { grid-template-columns: minmax(0, 1fr); contain-intrinsic-block-size: auto 9rem; }
+  .entry-fields { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 23rem) {
+  .filters { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  :root { print-color-adjust: exact; }
+  .topline, .filters, .results, .skip-link, .footer, .text-link { display: none !important; }
+  .hero { padding-block: 1rem; }
+  .entry { content-visibility: visible; break-inside: avoid; }
+  .category-heading, .subhead { break-after: avoid; }
+}
+
+.hero-priority { gap: clamp(1.25rem, 5vw, 4.2rem); padding-block: clamp(1.5rem, 3.5vw, 3.1rem); }
+.hero-priority h1 { font-size: clamp(2rem, 4.4vw, 3.85rem); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: .4rem 1.15rem; align-items: center; margin-block-start: .9rem; }
+.hero-actions a { display: inline-flex; align-items: center; min-block-size: 44px; font-size: .9rem; font-weight: 650; }
+
+.priority { padding-block: clamp(1.7rem, 3.7vw, 3.2rem) .65rem; }
+.priority-intro { max-inline-size: 80ch; color: var(--muted); margin-block: .85rem .25rem; }
+.priority-nav { display: flex; flex-wrap: wrap; gap: .25rem .9rem; margin-block: 0 1.1rem; }
+.priority-nav a { display: inline-flex; align-items: center; min-block-size: 44px; font-size: .9rem; }
+.priority-group { margin-block: 1.35rem; border: 1px solid var(--line); border-radius: .6rem; background: var(--card); }
+.priority-group-head { padding: .85rem 1rem; background: var(--surface); border-radius: .55rem .55rem 0 0; }
+.priority-group h3 { font-size: clamp(1.14rem, 2vw, 1.4rem); }
+.priority-group-head p { margin-block-start: .25rem; font-size: .87rem; color: var(--muted); }
+.priority-rows { list-style: none; margin: 0; padding: 0; }
+.priority-company { display: grid; grid-template-columns: minmax(12rem, 1fr) minmax(0, 2.6fr); gap: .45rem 1.15rem; padding: .95rem 1rem; border-block-start: 1px solid var(--line); overflow-wrap: anywhere; }
+.priority-company:target { box-shadow: inset 3px 0 var(--accent); }
+.priority-identity { min-inline-size: 0; }
+.priority-identity h4 { font-size: 1rem; margin-block-end: .2rem; }
+.priority-identity h4 > span { display: block; color: var(--accent-hover); font-size: 1.08rem; margin-block-end: .25rem; }
+.priority-identity p { color: var(--muted); font-size: .86rem; }
+.priority-detail p { margin-block: 0 .35rem; }
+.priority-detail strong { font-weight: 690; margin-inline-end: .35em; }
+.priority-detail details { font-size: .9rem; }
+.priority-detail summary { display: list-item; min-block-size: 44px; padding-block: .55rem; color: var(--accent); width: fit-content; font-weight: 640; }
+.priority-detail summary:hover { color: var(--accent-hover); }
+.priority-detail dl { padding: .05rem 0 .5rem .75rem; border-inline-start: 1px solid var(--line); }
+.priority-detail dt { font-weight: 670; color: var(--ink); }
+.priority-detail dd { color: var(--muted); margin-block: .15rem .55rem; }
+.priority-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0 .85rem; font-size: .79rem; }
+.priority-links a { display: inline-flex; align-items: center; min-block-size: 32px; }
+.directory-overview { margin-block: .75rem 1.1rem; max-inline-size: 51rem; }
+.entry:target { box-shadow: inset 3px 0 var(--accent); }
+.library-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .65rem; margin-block-start: .75rem; color: var(--muted); font-size: .81rem; }
+.library-meta a { display: inline-flex; align-items: center; min-block-size: 36px; }
+
+@media (max-width: 40rem) {
+  .hero-priority { gap: .8rem; padding-block: 1.3rem 1.45rem; }
+  .priority-company { grid-template-columns: minmax(0, 1fr); }
+  .priority-links a { min-block-size: 44px; }
+}
+
+.category-actions { display: flex; align-items: center; gap: .5rem; }
+.category-toggle { min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: .45rem; background: var(--card); color: var(--accent); font: inherit; cursor: pointer; }
+.category[data-collapsed] > :not(.category-heading) { display: none; }
+
+/* Reading layout: index and distribution beside the research text. */
+.hero.hero-priority { padding-block: clamp(1rem, 3vw, 2rem); }
+.hero-priority h1 { font-size: clamp(1.8rem, 3.8vw, 3rem); margin-block: .35rem .55rem; text-wrap: balance; }
+.hero-intro { max-inline-size: 65ch; }
+.research-layout { display: grid; grid-template-columns: minmax(15rem, 1fr) minmax(0, 3.4fr); align-items: start; gap: clamp(1.5rem, 4vw, 3rem); padding-block-start: 1.75rem; }
+.research-index { position: sticky; inset-block-start: 1rem; }
+.index-nav { display: grid; margin-block-end: 1rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--card); }
+.index-nav a { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding-inline: .85rem; min-block-size: 44px; color: var(--ink); text-decoration: none; }
+.index-nav a + a { border-block-start: 1px solid var(--line); }
+.index-nav a:hover { color: var(--accent-hover); text-decoration: underline; }
+.index-nav span { color: var(--accent); font-size: .82rem; font-variant-numeric: tabular-nums; }
+.research-index .overview { padding: .85rem; margin: 0; }
+.research-index .overview-head strong { font-size: 1rem; }
+.research-index .bar-row { min-block-size: 52px; grid-template-columns: minmax(0, 1fr) auto; gap: .15rem .5rem; }
+.research-index .track { grid-column: 1 / -1; }
+.research-content { min-inline-size: 0; }
+.priority { padding-block-start: 0; }
+.priority-intro { max-inline-size: 68ch; }
+.priority-group-head { border-inline-start: 3px solid var(--accent); }
+.priority-company { grid-template-columns: minmax(9rem, 1fr) minmax(0, 3fr); }
+.priority-company p { max-inline-size: 72ch; }
+.directory, .reference { border-block-start: 1px solid var(--line); }
+.category-toggle:hover { background: var(--surface); color: var(--accent-hover); }
+.category-toggle { touch-action: manipulation; }
+[id] { scroll-margin-block-start: 1rem; }
+@media (max-width: 60rem), (max-height: 650px) {
+  .research-index { position: static; }
+}
+@media (max-width: 60rem) {
+  .research-layout { grid-template-columns: minmax(0, 1fr); }
+  .index-nav { display: flex; flex-wrap: wrap; margin: 0; }
+  .index-nav a + a { border-block-start: 0; }
+  .research-index .overview { margin-block-start: .75rem; }
+  .research-index .bar-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem 1rem; }
+}
+@media (max-width: 40rem) {
+  .priority-company { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  .research-layout { display: block; }
+  .research-index { position: static; margin-block-end: 1rem; }
+  .index-nav { display: none; }
+}
+</style>
+</head>
+<body id="top">
+<a class="skip-link" href="#priority-heading">跳到优先研究名单</a>
+<header class="masthead">
+  <div class="shell">
+    <div class="topline">
+      <a href="#top" class="mast-title">产业研究档案</a>
+      <nav aria-label="页面导航">
+        <a href="#priority-heading">优先研究</a>
+        <a href="#directory">完整目录</a>
+        <a href="#audit">最终审核</a>
+      </nav>
+    </div>
+    <div class="hero hero-priority">
+      <div class="hero-copy">
+        <p class="edition">优先研究更新 <time datetime="2026-11-09">2026 年 11 月 9 日</time></p>
+        <h1>美股加密产业链股票清单</h1>
+        <p class="hero-intro">先研究 14 家有代表性的公司，再到 113 家完整目录查找同类标的和一手披露。</p>
+        <p class="library-meta">研究库版本 <span data-library-version>v2.7.9</span><a href="../02_Versions_版本与更新/03_History_版本与更新记录.html">查看版本与更新记录</a></p>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="shell research-layout">
+  <aside class="research-index" aria-label="研究索引">
+    <nav class="index-nav" aria-label="阅读路径">
+      <a href="#priority-heading">优先研究 <span>14 家</span></a>
+      <a href="#directory">完整目录 <span>113 项</span></a>
+      <a href="#audit">审核记录</a>
+    </nav>
+    <section class="overview directory-overview" aria-labelledby="overview-title">
+        <div class="overview-head">
+          <h2 id="overview-title">完整目录分类</h2>
+          <p><strong>113</strong> 个代码</p>
+        </div>
+        <div class="bar-list" aria-label="各类条目数">
+          <a class="bar-row treasury" href="#treasury" data-category-link><span>加密财库</span><strong>40</strong><span class="track" aria-hidden="true"><span style="--size:35.398%"></span></span></a>
+<a class="bar-row markets" href="#markets" data-category-link><span>交易、经纪与金控</span><strong>24</strong><span class="track" aria-hidden="true"><span style="--size:21.239%"></span></span></a>
+<a class="bar-row infrastructure" href="#infrastructure" data-category-link><span>稳定币、RWA（现实世界资产） 与基础设施</span><strong>23</strong><span class="track" aria-hidden="true"><span style="--size:20.354%"></span></span></a>
+<a class="bar-row compute" href="#compute" data-category-link><span>矿企与算力</span><strong>26</strong><span class="track" aria-hidden="true"><span style="--size:23.009%"></span></span></a>
+        </div>
+        <p class="bar-note">选择分类，展开目录并跳到该处。条长表示占全部代码的比例。</p>
+      </section>
+  </aside>
+  <main class="research-content">
+  <section class="priority" aria-labelledby="priority-heading">
+  <div class="section-lead">
+    <div>
+      <h2 id="priority-heading" tabindex="-1">优先研究名单</h2>
+      <p>14 家 · 4 类商业模式 · 资料读取截至 <time datetime="2026-11-09">2026 年 11 月 9 日</time></p>
+    </div>
+    <a class="text-link" href="#directory">跳到完整股票目录</a>
+  </div>
+  <p class="priority-intro">从已审核的 113 家公司中，优先选有可核查经营数据、能代表不同赚钱方式、下一期能用明确指标验证的公司。这里给出研究顺序，股价与估值需单独分析。</p>
+  <nav class="priority-nav" aria-label="优先研究分类"><a href="#priority-treasury">加密财库</a><a href="#priority-markets">交易、托管与机构服务</a><a href="#priority-infrastructure">稳定币与资产代币化</a><a href="#priority-mining">矿业、设备与算力</a></nav>
+  <section class="priority-group" aria-labelledby="priority-treasury">
+  <div class="priority-group-head">
+    <h3 id="priority-treasury">加密财库 · 3 家</h3>
+    <p>比较每股持币、质押收益和可动用资产。</p>
+  </div>
+  <ul class="priority-rows" role="list"><li class="priority-company" id="priority-MSTR" data-priority="MSTR">
+  <div class="priority-identity">
+    <h4><span translate="no">MSTR（股票代码）</span>Strategy（比特币财库与企业分析软件公司）</h4>
+    <p>看普通股融资如何影响每股持币</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>2026 年 11 月 9 日申报显示，11 月 2 日至 8 日卖出约 205 万股普通股，净募资 2.838 亿美元。其中 8,190 万美元买入 1,036 枚比特币，1.883 亿美元回购浮息永续优先股，1,360 万美元留作一般用途的美元现金。截至 11 月 8 日共持有 850,364 枚比特币。<a href="#PR-MSTR-03" aria-label="查看 11 月 9 日申报来源">来源</a></p>
+    <p><strong>每股复算</strong>比特币总量较前一周增 0.12%，假设稀释后股数增 0.45%。每股毛持币由约 187,443 聪降至 186,826 聪，降约 0.33%。1 聪等于一亿分之一枚比特币。<a href="#PR-MSTR-04" aria-label="查看每股持币计算来源">来源</a></p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl>
+        <dt>每股口径</dt>
+        <dd>每股毛持币等于总持币量除以假设稀释后股数。股数计入假设转股、期权行权及股票奖励结算。公司披露的三季度 BTC Yield（年内累计每股持币变动率在该季度的差值）为 −11.9%。按季初和季末每股持币直接相比则约降 11.0%。<a href="#PR-MSTR-02" aria-label="查看三季报指标定义">来源</a></dd>
+        <dt>回购对股息的影响</dt>
+        <dd>约 66% 的净募资用于回购 1,887,464 股 STRC（浮息永续优先股代码）。假设回购股份全部注销，并按每股 100 美元的股息计算基数和当前 12% 的年股息率不变，单就这笔回购折算，一年可少付约 2,265 万美元股息。实际金额取决于回购结算及董事会宣派的股息。<a href="#PR-MSTR-05" aria-label="查看优先股股息政策来源">来源</a></dd>
+        <dt>下一次核对</dt>
+        <dd>对照每股毛持币和普通股剩余价值。后者需估算比特币、美元资产及软件业务价值，并扣除债务和优先股等优先请求权。公司截至 11 月 8 日披露，用于优先股股息和债务利息的专项美元储备为 47.7 亿美元。后续同时看这项储备和年度应付金额。<a href="#PR-MSTR-03" aria-label="查看美元储备来源">来源</a></dd>
+        <dt>反证与局限</dt>
+        <dd>本周每股毛持币下降，同时回购有望减少后续股息。若后续持续依靠增发支付股息或回购，而每股毛持币和扣除优先请求权后的每股剩余价值同时走弱，持币总量增长就难以支撑普通股的研究理由。</dd>
+      </dl>
+    </details>
+    <div class="priority-links" aria-label="MSTR（股票代码）的披露与目录链接"><a id="PR-MSTR-03" href="https://www.sec.gov/Archives/edgar/data/1050446/000119312526452693/mstr-20261109.htm">美国证交会申报｜11 月 9 日持仓与融资</a><a id="PR-MSTR-04" href="https://www.strategy.com/ledger">公司持币与股本台账｜11 月 2 日及 9 日两期</a><a id="PR-MSTR-05" href="https://www.strategy.com/press/strategy-announces-third-quarter-2026-financial-results_10-29-2026">公司三季度业绩公告｜优先股股息政策</a><a id="PR-MSTR-02" href="https://www.sec.gov/Archives/edgar/data/1050446/000105044626000060/mstr-20260930.htm">美国证交会申报｜三季报及每股指标口径</a><a id="PR-MSTR-01" href="https://www.sec.gov/Archives/edgar/data/1050446/000119312526442707/mstr-20261102.htm">美国证交会申报｜11 月 2 日持仓更新</a><a href="#stock-MSTR" data-entry-link>查看完整目录条目</a></div>
+  </div>
+</li><li class="priority-company" id="priority-BMNR" data-priority="BMNR">
+  <div class="priority-identity">
+    <h4><span translate="no">BMNR（股票代码）</span>BitMine Immersion Technologies（以太坊财库与质押公司）</h4>
+    <p>看质押如何转化为收入</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>公司 2026 年 11 月 2 日披露，截至 11 月 1 日持有 6,060,506 枚 ETH（以太坊原生代币），其中 5,227,037 枚已质押，约占 86%。</p>
+    <p><strong>研究价值</strong>可用来区分自有代币的质押奖励、向外部客户提供验证服务的收入，以及币价变化带来的账面损益。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>下一份财报核对实际确认的质押收入、直接费用和第三方客户收入。若未分拆披露，将第三方业务规模标为待核验。</dd><dt>反证与局限</dt><dd>高质押比例会降低可即时调配的持仓。若奖励率回落、成本上升或第三方收费无法证实，质押业务的独立盈利能力仍缺少证据。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="BMNR（股票代码）的披露与目录链接"><a id="PR-BMNR-01" href="https://www.sec.gov/Archives/edgar/data/1829311/000149315226049572/ex99-1.htm">美国证交会申报｜11 月 2 日持仓与质押更新</a><a href="#stock-BMNR" data-entry-link>查看完整目录条目</a></div>
+  </div>
+</li><li class="priority-company" id="priority-FWDI" data-priority="FWDI">
+  <div class="priority-identity">
+    <h4><span translate="no">FWDI（股票代码）</span>Forward Industries（索拉纳财库公司）</h4>
+    <p>看每股持仓增长与资产可动用性</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>公司 2026 年 10 月 1 日披露，截至 9 月 30 日持有 8,501,298 枚 SOL（索拉纳原生代币）及等价敞口。完全稀释后每股数量由 0.0730 升至 0.0806，季度增 10.4%。数据初步且未经审计，口径包含已抵押代币，排除借入代币。</p>
+    <p><strong>研究价值</strong>适合对照同类财库的每股持仓指标，再拆分原生持仓、流动质押凭证和抵押资产的流动性。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>用截至 9 月 30 日的年度审计结果核对每股持仓、完全稀释股数和已抵押余额，计算普通股对应的可动用资产变化。</dd><dt>反证与局限</dt><dd>若完全稀释股数增长快于持仓，或新增持仓主要被锁定或抵押，财库扩张对普通股的贡献会弱于持仓总量所显示的幅度。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="FWDI（股票代码）的披露与目录链接"><a id="PR-FWDI-01" href="https://www.sec.gov/Archives/edgar/data/38264/000168316826007543/forward_ex9901.htm">美国证交会申报｜10 月 1 日财库更新及计算口径</a><a href="#stock-FWDI" data-entry-link>查看完整目录条目</a></div>
+  </div>
+</li></ul>
+</section><section class="priority-group" aria-labelledby="priority-markets">
+  <div class="priority-group-head">
+    <h3 id="priority-markets">交易、托管与机构服务 · 4 家</h3>
+    <p>比较成交、客户资产与可留存的费用收入。</p>
+  </div>
+  <ul class="priority-rows" role="list"><li class="priority-company" id="priority-COIN" data-priority="COIN">
+  <div class="priority-identity">
+    <h4><span translate="no">COIN（股票代码）</span>Coinbase Global（加密交易与金融服务平台）</h4>
+    <p>综合交易平台</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>2026 年三季度，交易收入约 5.90 亿美元，订阅与服务收入约 5.70 亿美元。公司口径的加密交易额市场份额为 10.7%。</p>
+    <p><strong>研究价值</strong>用它拆解一站式平台的两条变现路径：交易活跃度带来的手续费，以及客户资产留存带来的稳定币、托管和其他服务收入。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>下季按同口径核对交易市场份额、交易收入和订阅与服务收入。若份额继续提升，交易收入能否同步恢复？</dd><dt>反证与局限</dt><dd>2026 年三季度交易收入仍同比下降 44%。市场份额提高可能来自同行成交萎缩，也可能伴随收费压力，须结合绝对收入判断。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="COIN（股票代码）的披露与目录链接"><a id="PR-COIN-01" href="https://www.sec.gov/Archives/edgar/data/1679788/000167978826000122/coin-20260930.htm">2026 年三季报</a><a id="PR-COIN-02" href="https://investor.coinbase.com/news/news-details/2026/Coinbase-Q3-2026-Earnings-Show-All-time-high-Coinbase-One-Subscribers-and-Prediction-Markets-Surpassing-200-Million-in-Annualized-Revenue/default.aspx">2026 年三季度业绩公告</a><a href="#stock-COIN" data-entry-link>查看完整目录条目</a><a href="../US_stocks/01_Companies_公司研究/COIN_Coinbase_业务研究/04_Views_可视化/COIN_Business_业务研究.html">打开公司研究页</a></div>
+  </div>
+</li><li class="priority-company" id="priority-BTGO" data-priority="BTGO">
+  <div class="priority-identity">
+    <h4><span translate="no">BTGO（股票代码）</span>BitGo Holdings（机构数字资产托管服务商）</h4>
+    <p>托管与结算</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>2026 年二季度客户平台资产为 652 亿美元，按期内每日余额公允价值的中位数计，较去年同期 903 亿美元下降；期末客户数由 4621 增至 5833。</p>
+    <p><strong>研究价值</strong>可追踪机构客户从托管延伸到质押、交易、稳定币和结算的收费路径，并分辨资产价格上涨与客户规模增长。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>查三季报的客户数、客户平台资产与订阅服务收入。若资产规模回升，拆分价格因素，并检查费用收入是否随客户扩张。</dd><dt>反证与局限</dt><dd>客户平台资产含托管及非托管客户资产，会随币价变化。数字资产买卖按总额确认的收入规模，容易掩盖该业务的薄利润率。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="BTGO（股票代码）的披露与目录链接"><a id="PR-BTGO-01" href="https://www.sec.gov/Archives/edgar/data/1740604/000174060426000050/btgo-20260630.htm">2026 年二季报及平台资产定义</a><a id="PR-BTGO-02" href="https://investors.bitgo.com/news/news-details/2026/BitGo-Holdings-to-Report-Third-Quarter-2026-Financial-Results-on-Monday-November-9-2026/default.aspx">三季报预告，定于美国东部时间 11 月 9 日盘后</a><a href="#stock-BTGO" data-entry-link>查看完整目录条目</a></div>
+  </div>
+</li><li class="priority-company" id="priority-GLXY" data-priority="GLXY">
+  <div class="priority-identity">
+    <h4><span translate="no">GLXY（股票代码）</span>Galaxy Digital（机构数字资产业务与数据中心运营商）</h4>
+    <p>机构加密金融与数据中心并行</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>2026 年三季度，公司口径的调整后毛利（非通用会计准则）为数字资产部门约 7100 万美元、数据中心部门约 7900 万美元，分别列报。</p>
+    <p><strong>研究价值</strong>同一家企业能并行观察机构交易、融资和资管的周期性，与人工智能数据中心交付及租约的经营节奏。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>下季分别看数字资产分部毛利、贷款规模，及数据中心交付容量与租赁收入。哪一边推动了分部经营改善？</dd><dt>反证与局限</dt><dd>集团业绩还受财库和投资估值变动影响；数据中心有建设、融资与租户集中风险，分部毛利也不能直接推断股东现金流。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="GLXY（股票代码）的披露与目录链接"><a id="PR-GLXY-01" href="https://galaxydigital.gcs-web.com/news-releases/news-release-details/galaxy-announces-third-quarter-2026-financial-results">2026 年三季度业绩公告及分部调节表</a><a href="#stock-GLXY" data-entry-link>查看完整目录条目</a></div>
+  </div>
+</li><li class="priority-company" id="priority-BLSH" data-priority="BLSH">
+  <div class="priority-identity">
+    <h4><span translate="no">BLSH（股票代码）</span>Bullish（面向机构的数字资产交易及信息服务商）</h4>
+    <p>机构交易与市场数据</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>公司 11 月 5 日披露的未审计月报显示，2026 年 10 月名义成交额为 377 亿美元，低于 9 月的 486 亿美元；按公司口径，平均交易价差从 2.14 升至 2.43 个基点。</p>
+    <p><strong>研究价值</strong>可与综合型交易平台对照，观察机构成交、每单位成交变现率与订阅和数据业务各自如何支撑收入。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>看 11 月 18 日计划披露的三季度业绩，核对调整后交易收入与订阅、服务及其他收入；再用后续月报检验 10 月成交下滑是否延续。</dd><dt>反证与局限</dt><dd>名义成交额是交易规模，平均交易价差是公司定义的单位成交变现指标。两者都不能直接推断利润，拟议收购和代币化扩张也要等交割与实际使用数据。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="BLSH（股票代码）的披露与目录链接"><a id="PR-BLSH-01" href="https://investors.bullish.com/news-releases/news-release-details/bullish-releases-october-2026-monthly-metrics">2026 年 10 月交易数据与指标定义</a><a id="PR-BLSH-02" href="https://investors.bullish.com/news-releases/news-release-details/bullish-announce-third-quarter-2026-financial-results">2026 年三季报披露日预告</a><a id="PR-BLSH-03" href="https://investors.bullish.com/news-releases/news-release-details/bullish-reports-second-quarter-2026-results">2026 年二季度业绩及拟议收购进展</a><a href="#stock-BLSH" data-entry-link>查看完整目录条目</a><a href="../US_stocks/01_Companies_公司研究/BLSH_Bullish_业务研究/04_Views_可视化/BLSH_Business_业务研究.html">打开公司研究页</a></div>
+  </div>
+</li></ul>
+</section><section class="priority-group" aria-labelledby="priority-infrastructure">
+  <div class="priority-group-head">
+    <h3 id="priority-infrastructure">稳定币与资产代币化 · 4 家</h3>
+    <p>比较储备留存、贷款变现、登记收费与机构结算。</p>
+  </div>
+  <ul class="priority-rows" role="list"><li class="priority-company" id="priority-CRCL" data-priority="CRCL">
+  <div class="priority-identity">
+    <h4><span translate="no">CRCL（股票代码）</span>Circle Internet Group（美元稳定币发行与支付网络公司）</h4>
+    <p>稳定币发行与渠道分成</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>2026 年三季度，USDC（美元稳定币）平均流通额为 733 亿美元，同比增 8%；储备收入为 6.58 亿美元，同比降 8%。其他收入含 1.82 亿美元的 ARC（区块链网络代币）预售收入。</p>
+    <p><strong>研究价值</strong>可以同时看到流通量、储备收益率、分销成本与新产品收入如何影响发行人实际留存。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>下季单列代币预售收入，比较平均流通量、储备收益率、扣除分销和交易成本后的储备收益，以及支付与服务收入。</dd><dt>反证与局限</dt><dd>若流通量增加但储备收益率下滑或渠道分成上升，发行人留存未必增加。预售收入也不能作为经常性支付收入外推。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="CRCL（股票代码）的披露与目录链接"><a id="PR-CRCL-01" href="https://www.sec.gov/Archives/edgar/data/1876042/000187604226000309/finalq3epr-110326.htm">2026 年三季度业绩及口径</a><a id="PR-CRCL-02" href="https://www.sec.gov/Archives/edgar/data/1876042/000187604226000311/crcl-20260930.htm">2026 年三季报</a><a href="#stock-CRCL" data-entry-link>查看完整目录条目</a><a href="../US_stocks/01_Companies_公司研究/CRCL_Circle_业务研究/04_Views_可视化/CRCL_Business_业务研究.html">打开公司研究页</a></div>
+  </div>
+</li><li class="priority-company" id="priority-FIGR" data-priority="FIGR">
+  <div class="priority-identity">
+    <h4><span translate="no">FIGR（股票代码）</span>Figure Technology Solutions（链上贷款撮合与资产代币化公司）</h4>
+    <p>链上信贷与平台收费</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>公司 10 月 6 日披露，2026 年三季度消费者贷款市场业务量初步为 51.19 亿美元。该口径含平台发放及特定第三方贷款交易，排除 9 月 1 日收购后 Kiavi（房地产融资平台）的发放量。公司 11 月 3 日更新的经营数据另列 10 月约 16.7 亿美元，环比降 6%，为未经审计的初步数。</p>
+    <p><strong>研究价值</strong>可以检验链上登记和贷款市场能否改善贷款销售速度、资金占用与单位收费，观察业务量如何传导到利润。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>在公司计划于美国东部时间 11 月 12 日盘前发布的三季度业绩中，拆分原有业务和并购贡献，对照单位变现率、贷款销售损益与资金成本。</dd><dt>反证与局限</dt><dd>若业务量增长伴随单位变现下降，或贷款出售变慢、资金占用和信用成本上升，效率改善仍需验证。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="FIGR（股票代码）的披露与目录链接"><a id="PR-FIGR-01" href="https://investors.figure.com/node/8281/pdf">三季度初步经营数据及业务量定义</a><a id="PR-FIGR-02" href="https://www.sec.gov/Archives/edgar/data/2064124/000149315226040931/form8-k.htm">9 月 1 日完成并购的申报</a><a id="PR-FIGR-03" href="https://investors.figure.com/events-presentations/events">三季度业绩披露日程</a><a id="PR-FIGR-04" href="https://www.figure.com/investors/metrics">11 月 3 日经营数据快照</a><a href="#stock-FIGR" data-entry-link>查看完整目录条目</a><a href="../US_stocks/01_Companies_公司研究/FIGR_Figure_业务研究/04_Views_可视化/FIGR_Business_业务研究.html">打开公司研究页</a></div>
+  </div>
+</li><li class="priority-company" id="priority-SECZ" data-priority="SECZ">
+  <div class="priority-identity">
+    <h4><span translate="no">SECZ（股票代码）</span>Securitize（证券代币化与资产服务公司）</h4>
+    <p>证券上链与服务费</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>合并上市前的经营主体披露，2026 年二季度代币化收入约 784 万美元，资产服务收入约 660 万美元。公司 11 月 2 日宣布面向合资格投资者的链上美股产品扩至 25 只。</p>
+    <p><strong>研究价值</strong>同一公司提供发行与登记、资产服务和交易相关技术。产品上线数量可以与实际使用和收费分别跟踪。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>公司安排于美国东部时间 11 月 9 日盘后披露三季度业绩。核对合并后的收入分项、可持续收费占比，以及新增股票产品是否已有可核查成交或活跃客户数据。</dd><dt>反证与局限</dt><dd>上线品种、托管或管理规模与营收口径不同。若持续费用收入未能随产品扩张增长，产品数量本身不足以支持商业化判断。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="SECZ（股票代码）的披露与目录链接"><a id="PR-SECZ-01" href="https://www.sec.gov/Archives/edgar/data/2094496/000162828026056164/exhibit991-secz2q26earning.htm">合并前经营主体的二季度披露</a><a id="PR-SECZ-02" href="https://investors.securitize.io/news/news-details/2026/Securitize-Expands-Onchain-U-S--Stock-Offering-to-25-Equities/default.aspx">11 月 2 日链上股票产品公告</a><a id="PR-SECZ-03" href="https://investors.securitize.io/news/news-details/2026/Securitize-to-Host-Third-Quarter-2026-Earnings-Call/default.aspx">三季度披露日程</a><a href="#stock-SECZ" data-entry-link>查看完整目录条目</a><a href="../US_stocks/01_Companies_公司研究/SECZ_Securitize_业务研究/04_Views_可视化/SECZ_Business_业务研究.html">打开公司研究页</a></div>
+  </div>
+</li><li class="priority-company" id="priority-BR" data-priority="BR">
+  <div class="priority-identity">
+    <h4><span translate="no">BR（股票代码）</span>Broadridge Financial Solutions（博德里奇金融科技公司）</h4>
+    <p>传统金融机构的链上结算对照</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>公司 11 月 6 日披露，分布式账本回购平台在 2026 年 10 月累计处理 7.6 万亿美元的证券回购，日均 3,450 亿美元。两项均为平台处理金额。</p>
+    <p><strong>研究价值</strong>适合对照新上市代币化公司，观察成熟金融技术供应商如何将链上回购、结算和股东治理嵌入既有客户流程。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>下次季报追踪投产机构数量、平台收费披露及相关分部的经常性收入。将代币估值损益与软件服务收益分开。</dd><dt>反证与局限</dt><dd>季报未单列该平台收入。即使处理金额很大，单凭业务量仍无法估计其对集团利润的贡献。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="BR（股票代码）的披露与目录链接"><a id="PR-BR-01" href="https://www.broadridge.com/press-release/2026/broadridges-distributed-ledger-repo-processes-7-point-6-trillion-in-october">10 月平台交易量披露</a><a id="PR-BR-02" href="https://www.sec.gov/Archives/edgar/data/1383312/000162828026069260/br-20260930.htm">截至 9 月末季报与分部说明</a><a href="#stock-BR" data-entry-link>查看完整目录条目</a></div>
+  </div>
+</li></ul>
+</section><section class="priority-group" aria-labelledby="priority-mining">
+  <div class="priority-group-head">
+    <h3 id="priority-mining">矿业、设备与算力 · 3 家</h3>
+    <p>比较单位成本、矿机经济性与已确认的算力租赁收入。</p>
+  </div>
+  <ul class="priority-rows" role="list"><li class="priority-company" id="priority-CLSK" data-priority="CLSK">
+  <div class="priority-identity">
+    <h4><span translate="no">CLSK（股票代码）</span>CleanSpark（比特币自营矿企）</h4>
+    <p>自营挖矿成本基准</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>2026 年 9 月产出 529 枚比特币，月均运营算力为 36.0 EH/s（每秒 10¹⁸ 次哈希运算）。截至 6 月末季度，自有矿场每枚比特币直接能耗相关成本为 44,406 美元，计入矿机折旧后的直接成本为 96,277 美元。</p>
+    <p><strong>研究价值</strong>披露同一矿场的产量、电费与折旧，适合先拆清矿企的现金成本和设备损耗，再比较其他公司。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>下一份财报对比月均算力、单位电费、计入折旧的单位直接成本和每枚实际确认的挖矿收入。公司已改为按季披露运营数据。</dd><dt>反证与局限</dt><dd>截至 6 月末季度，每枚挖矿收入平均 71,692 美元，低于含折旧直接成本。电费低于币价时，仍需核算矿机更新及其他开支。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="CLSK（股票代码）的披露与目录链接"><a id="PR-CLSK-01" href="https://investors.cleanspark.com/news/news-details/2026/CleanSpark-Releases-September-2026-Operational-Update/default.aspx">9 月公司运营更新</a><a id="PR-CLSK-02" href="https://www.sec.gov/Archives/edgar/data/827876/000119312526338382/clsk-20260630.htm">截至 6 月末季报</a><a href="#stock-CLSK" data-entry-link>查看完整目录条目</a></div>
+  </div>
+</li><li class="priority-company" id="priority-BTDR" data-priority="BTDR">
+  <div class="priority-identity">
+    <h4><span translate="no">BTDR（股票代码）</span>Bitdeer Technologies Group（比特小鹿科技集团）</h4>
+    <p>自研矿机与挖矿效率</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>2026 年 9 月产出 1,355 枚比特币，含自营及合作挖矿。同期自有机房的自营算力为 82.3 EH/s（每秒 10¹⁸ 次哈希运算）。截至 6 月末季度，自营挖矿收入 1.684 亿美元，矿机及配件外销仅 40 万美元。</p>
+    <p><strong>研究价值</strong>可验证自研矿机能否改善自营挖矿效率，并把内部部署、对外销售和人工智能云服务分开研究。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>下一份季报逐项核对自营电力及折旧成本、对外矿机交付收入和人工智能云已确认收入。观察算力扩张是否转化为毛利。</dd><dt>反证与局限</dt><dd>截至 6 月末季度，集团毛利率为负 3.7%。算力增长能带来更多产量，但电费、折旧与扩产开支可能同时上升。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="BTDR（股票代码）的披露与目录链接"><a id="PR-BTDR-01" href="https://www.sec.gov/Archives/edgar/data/1899123/000121390026110703/ea030767901ex99-1.htm">9 月公司运营更新</a><a id="PR-BTDR-02" href="https://www.sec.gov/Archives/edgar/data/1899123/000121390026086938/ea030131301ex99-1.htm">截至 6 月末财务公告</a><a href="#stock-BTDR" data-entry-link>查看完整目录条目</a></div>
+  </div>
+</li><li class="priority-company" id="priority-CIFR" data-priority="CIFR">
+  <div class="priority-identity">
+    <h4><span translate="no">CIFR（股票代码）</span>Cipher Digital（比特币矿业与算力数据中心运营商）</h4>
+    <p>挖矿与算力租赁对照</p>
+  </div>
+  <div class="priority-detail">
+    <p><strong>已披露</strong>2026 年第三季度，比特币挖矿收入 2,084.9 万美元，高性能计算租赁收入 585.2 万美元。得州敖德萨矿场继续挖矿，黑珍珠数据中心于 8 月开始分阶段交付高性能计算租户。</p>
+    <p><strong>研究价值</strong>一家公司已披露两种业务的真实收入，可跟踪矿场改建后，租赁增长能否补上矿业收入减少。</p>
+    <details>
+      <summary>展开验证问题与反证</summary>
+      <dl><dt>下一次核对</dt><dd>下一份季报核对已交付并计费的容量、实际回款、租赁毛利与敖德萨矿场收入。把签约金额和当期收入分别记录。</dd><dt>反证与局限</dt><dd>第三季度仍录得约 7,192 万美元经营亏损。净利润受认股权证负债公允价值变动影响，项目交付和融资仍是重要变量。</dd></dl>
+    </details>
+    <div class="priority-links" aria-label="CIFR（股票代码）的披露与目录链接"><a id="PR-CIFR-01" href="https://www.sec.gov/Archives/edgar/data/1819989/000181998926000050/cifr-20260930.htm">2026 年第三季度季报</a><a href="#stock-CIFR" data-entry-link>查看完整目录条目</a></div>
+  </div>
+</li></ul>
+</section>
+</section>
+  <section class="directory" aria-labelledby="directory">
+    <div class="section-lead">
+      <div>
+        <h2 id="directory" tabindex="-1">完整股票目录</h2>
+        <p>4 大类 / 11 个子类</p>
+      </div>
+      <a class="text-link" href="#audit">查看审核与剔除记录</a>
+    </div>
+    <p class="scope">2026-11-09 复核原主表的 127 个代码。按最新可核查的业务敞口更新分类，并区分挂牌合规标记与已退市。</p>
+<p class="scope">覆盖美国交易所挂牌普通股和美国存托股。目录范围排除交易所交易基金、场外股票与待上市项目。</p>
+    <form id="filters" class="filters" role="search" aria-label="筛选股票目录" hidden>
+      <div class="control search-control">
+        <label for="query">搜索股票</label>
+        <input id="query" name="q" type="search" placeholder="例如 托管、稳定币…" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="control">
+        <label for="category-filter">产业类别</label>
+        <select id="category-filter" name="category">
+          <option value="">全部类别</option><option value="treasury">加密财库</option><option value="markets">交易、经纪与金控</option><option value="infrastructure">稳定币、RWA（现实世界资产） 与基础设施</option><option value="compute">矿企与算力</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="tier">原文研究层级</label>
+        <select id="tier" name="tier">
+          <option value="">全部条目</option>
+          <option value="core">核心研究</option>
+          <option value="extended">扩展研究</option>
+        </select>
+      </div>
+      <button type="reset">清除筛选</button>
+    </form>
+    <p class="results" id="results" role="status" aria-atomic="true" hidden></p>
+    <p class="empty" id="empty" hidden>没有匹配的股票。请尝试缩短关键词或清除筛选。</p>
+    <noscript><p class="scope">可使用浏览器的页内查找定位股票代码和公司。</p></noscript>
+    <section class="category treasury" id="treasury" data-category="treasury" aria-labelledby="heading-treasury"><div class="category-heading"><div><h3 id="heading-treasury">加密财库</h3><p>持币净值、每股持币量、稀释与债务</p></div><div class="category-actions"><span class="category-count" data-category-count>40 个</span><button class="category-toggle" type="button" aria-expanded="true" hidden>−</button></div></div><details class="category-context context"><summary>查看分类口径</summary><div class="prose"><p>这类公司主要通过增发股票、融资或使用经营现金流购买加密资产，并将持币、质押或相关资产管理作为重要战略。</p>
+<p>财库公司的股价不等于加密币价：还会受到融资结构、股本稀释、每股持币量和市场溢折价影响。</p>
+</div></details><section class="subgroup" data-subgroup aria-labelledby="group-1-1"><div class="subhead"><h4 id="group-1-1">BTC（比特币） 比特币财库</h4><span class="subcount" data-count>12 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="MSTR Strategy 全球代表性的 BTC 财库企业；通过股票、优先股及债务融资积累 BTC  Nasdaq 普通股" data-ticker="MSTR" data-alias="" data-tier="core" id="stock-MSTR"><div class="identity"><strong class="ticker" translate="no">MSTR（战略公司股票代码）</strong><span class="company">Strategy（数字资产财库相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1050446/000119312526442707/mstr-20261102.htm" aria-label="查看 MSTR 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>全球代表性的 BTC（比特币） 财库企业；通过股票、优先股及债务融资积累 BTC（比特币）</dd></div></dl></li>
+<li class="entry" data-entry data-search="XXI Twenty One Capital 以 BTC 财库、资本市场服务及相关金融产品为战略核心  NYSE 普通股" data-ticker="XXI" data-alias="" data-tier="extended" id="stock-XXI"><div class="identity"><strong class="ticker" translate="no">XXI（股票代码）</strong><span class="company">Twenty One Capital（数字资产财库相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/2070457/000121390026087471/ea0299640-10q_twentyone.htm" aria-label="查看 XXI 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>以 BTC（比特币） 财库、资本市场服务及相关金融产品为战略核心</dd></div></dl></li>
+<li class="entry" data-entry data-search="ASST Strive BTC 财库结合资产管理；涉及上市财库企业整合  Nasdaq 普通股" data-ticker="ASST" data-alias="" data-tier="extended" id="stock-ASST"><div class="identity"><strong class="ticker" translate="no">ASST（股票代码）</strong><span class="company">Strive（数字资产财库相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1920406/000162828026071331/striveincq32026earningsrel.htm" aria-label="查看 ASST 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>BTC（比特币） 财库结合资产管理；涉及上市财库企业整合</dd></div></dl></li>
+<li class="entry" data-entry data-search="SVIA Silvia（原 ProCap Financial） BTC 财库与 AI 金融工具；金融产品扩张与 BTC 资产敞口并存 BRR Nasdaq 普通股" data-ticker="SVIA" data-alias="BRR" data-tier="" id="stock-SVIA"><div class="identity"><strong class="ticker" translate="no">SVIA（股票代码）</strong><span class="company">Silvia（原 ProCap Financial（西尔维亚公司原名））</span><div class="tags"><span class="tag alias">原 <span translate="no">BRR（股票代码）</span></span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/2076163/000149315226047273/form424b3.htm" aria-label="查看 SVIA 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>BTC（比特币） 财库与 AI（人工智能） 金融工具；金融产品扩张与 BTC（比特币） 资产敞口并存</dd></div></dl></li>
+<li class="entry" data-entry data-search="NAKA Nakamoto BTC 财库、比特币媒体和投资管理；部分 BTC 已质押为借款担保  Nasdaq 普通股" data-ticker="NAKA" data-alias="" data-tier="" id="stock-NAKA"><div class="identity"><strong class="ticker" translate="no">NAKA（股票代码）</strong><span class="company">Nakamoto（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://nakamoto.com/updates/nakamoto-reports-second-quarter-2026-financial-and-operating-results" aria-label="查看 NAKA 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>BTC（比特币） 财库、比特币媒体和投资管理；部分 BTC（比特币） 已质押为借款担保</dd></div></dl></li>
+<li class="entry" data-entry data-search="EMPD Empery Digital BTC 财库与资本管理；大幅减仓后回补，另投资数据中心  Nasdaq 普通股" data-ticker="EMPD" data-alias="" data-tier="" id="stock-EMPD"><div class="identity"><strong class="ticker" translate="no">EMPD（股票代码）</strong><span class="company">Empery Digital（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1829794/000168316826008381/empery_i10q-093026.htm" aria-label="查看 EMPD 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>BTC（比特币） 财库与资本管理；大幅减仓后回补，另投资数据中心</dd></div></dl></li>
+<li class="entry" data-entry data-search="NXTT Next Technology Holding BTC 财库与软件业务；已获授权减持或质押，最近季末仍披露大额 BTC 敞口  Nasdaq 普通股" data-ticker="NXTT" data-alias="" data-tier="" id="stock-NXTT"><div class="identity"><strong class="ticker" translate="no">NXTT（股票代码）</strong><span class="company">Next Technology Holding（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1784970/000121390026116604/ea0310815-10q_next.htm" aria-label="查看 NXTT 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>BTC（比特币） 财库与软件业务；已获授权减持或质押，最近季末仍披露大额 BTC（比特币） 敞口</dd></div></dl></li>
+<li class="entry" data-entry data-search="DDC DDC Enterprise（日日煮） 食品消费品业务与 BTC 财库并存，属于混合型  NYSE American 普通股" data-ticker="DDC" data-alias="" data-tier="" id="stock-DDC"><div class="identity"><strong class="ticker" translate="no">DDC（股票代码）</strong><span class="company">DDC Enterprise（日日煮）</span><div class="tags"><span class="tag" translate="no">NYSE American（纽交所美国板）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1808110/000121390026116463/ea0310538-fwp_ddc.htm" aria-label="查看 DDC 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>食品消费品业务与 BTC（比特币） 财库并存，属于混合型</dd></div></dl></li>
+<li class="entry" data-entry data-search="ZOOZ ZOOZ Strategy ZOOZ 普通股提供 BTC 财库敞口；ZOOZW 为认股权证  Nasdaq 普通股" data-ticker="ZOOZ" data-alias="" data-tier="" id="stock-ZOOZ"><div class="identity"><strong class="ticker" translate="no">ZOOZ（股票代码）</strong><span class="company">ZOOZ Strategy（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1992818/000149315226040046/ex99-1.htm" aria-label="查看 ZOOZ 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>ZOOZ（股票代码） 普通股提供 BTC（比特币） 财库敞口；ZOOZW（同一发行人的认股权证） 为认股权证</dd></div></dl></li>
+<li class="entry" data-entry data-search="DJT Trump Media &amp; Technology Group 社交媒体和金融科技业务，并持有较大规模 BTC 财库  Nasdaq 普通股" data-ticker="DJT" data-alias="" data-tier="" id="stock-DJT"><div class="identity"><strong class="ticker" translate="no">DJT（股票代码）</strong><span class="company">Trump Media &amp; Technology Group</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1849635/000143774926026777/djt20260630_10q.htm" aria-label="查看 DJT 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>社交媒体和金融科技业务，并持有较大规模 BTC（比特币） 财库</dd></div></dl></li>
+<li class="entry" data-entry data-search="SORA AsiaStrategy（原 Top Win International） 传统腕表业务与 BTC 财库并存，已披露 BTC 抵押融资安排 TOPW Nasdaq 普通股" data-ticker="SORA" data-alias="TOPW" data-tier="" id="stock-SORA"><div class="identity"><strong class="ticker" translate="no">SORA（股票代码）</strong><span class="company">AsiaStrategy（原 Top Win International（亚洲策略公司原名））</span><div class="tags"><span class="tag alias">原 <span translate="no">TOPW（股票代码）</span></span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/2033515/000121390026107204/ea030768301ex99-1.htm" aria-label="查看 SORA 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>传统腕表业务与 BTC（比特币） 财库并存，已披露 BTC（比特币） 抵押融资安排</dd></div></dl></li>
+<li class="entry" data-entry data-search="GDC GD Culture Group 持有 BTC 财库并经营 AI 及社交电商相关业务；留意持续经营与挂牌合规  Nasdaq 普通股" data-ticker="GDC" data-alias="" data-tier="" id="stock-GDC"><div class="identity"><strong class="ticker" translate="no">GDC（股票代码）</strong><span class="company">GD Culture Group（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1641398/000121390026090150/ea0301332-10q_gdculture.htm" aria-label="查看 GDC 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>持有 BTC（比特币） 财库并经营 AI（人工智能） 及社交电商相关业务；留意持续经营与挂牌合规</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>DDC（股票代码） 是日日煮（DayDayCook（日日煮消费食品品牌））。ZOOZ（股票代码） 是普通股，ZOOZW（同一发行人的认股权证） 是认股权证。SORA（股票代码） 是 AsiaStrategy（原 Top Win International（亚洲策略公司原名））的普通股代码。</p>
+</div></details></section>
+<section class="subgroup" data-subgroup aria-labelledby="group-1-2"><div class="subhead"><h4 id="group-1-2">ETH（以太坊原生代币） 以太坊财库</h4><span class="subcount" data-count>5 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="BMNR BitMine Immersion Technologies 大型 ETH 财库，重点是 ETH 积累、质押及链上收益  NYSE 普通股" data-ticker="BMNR" data-alias="" data-tier="core" id="stock-BMNR"><div class="identity"><strong class="ticker" translate="no">BMNR（股票代码）</strong><span class="company">BitMine Immersion Technologies（数字资产财库相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1829311/000149315226049572/ex99-1.htm" aria-label="查看 BMNR 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>大型 ETH（以太坊原生代币） 财库，重点是 ETH（以太坊原生代币） 积累、质押及链上收益</dd></div></dl></li>
+<li class="entry" data-entry data-search="SBET Sharplink ETH 财库，强调每股 ETH 持有量和质押收益  Nasdaq 普通股" data-ticker="SBET" data-alias="" data-tier="core" id="stock-SBET"><div class="identity"><strong class="ticker" translate="no">SBET（股票代码）</strong><span class="company">Sharplink（数字资产财库相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1981535/000149315226050483/form10-q.htm" aria-label="查看 SBET 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>ETH（以太坊原生代币） 财库，强调每股 ETH（以太坊原生代币） 持有量和质押收益</dd></div></dl></li>
+<li class="entry" data-entry data-search="BTBT Bit Digital ETH 财库、质押及数字基础设施投资，另有 AI/HPC 股权敞口  Nasdaq 普通股" data-ticker="BTBT" data-alias="" data-tier="" id="stock-BTBT"><div class="identity"><strong class="ticker" translate="no">BTBT（股票代码）</strong><span class="company">Bit Digital（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1710350/000121390026098132/ea030473001ex99-1.htm" aria-label="查看 BTBT 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>ETH（以太坊原生代币） 财库、质押及数字基础设施投资，另有 AI/HPC（人工智能与高性能计算） 股权敞口</dd></div></dl></li>
+<li class="entry" data-entry data-search="BTCS BTCS Inc. ETH 储备、验证者运营和区块链基础设施  Nasdaq 普通股" data-ticker="BTCS" data-alias="" data-tier="extended" id="stock-BTCS"><div class="identity"><strong class="ticker" translate="no">BTCS（股票代码）</strong><span class="company">BTCS Inc.（数字资产财库相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1436229/000149315226039249/form10-q.htm" aria-label="查看 BTCS 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>ETH（以太坊原生代币） 储备、验证者运营和区块链基础设施</dd></div></dl></li>
+<li class="entry" data-entry data-search="GAME GameSquare Holdings 游戏、电竞与数字媒体运营，保留有实质规模的 ETH 持仓  Nasdaq 普通股" data-ticker="GAME" data-alias="" data-tier="" id="stock-GAME"><div class="identity"><strong class="ticker" translate="no">GAME（股票代码）</strong><span class="company">GameSquare Holdings（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1714562/000149315226037832/form10-q.htm" aria-label="查看 GAME 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>游戏、电竞与数字媒体运营，保留有实质规模的 ETH（以太坊原生代币） 持仓</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>BMNR（股票代码）、SBET（股票代码） 是较典型的 ETH（以太坊原生代币） 财库；BTCS（股票代码） 的验证者运营还涉及实际链上服务，因此不能只比较持币量。</p>
+</div></details></section>
+<section class="subgroup" data-subgroup aria-labelledby="group-1-3"><div class="subhead"><h4 id="group-1-3">SOL（索拉纳原生代币） Solana（索拉纳区块链） 财库</h4><span class="subcount" data-count>6 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="FWDI Forward Industries 大型 SOL 财库，涉及 SOL 质押及链上资本市场  Nasdaq 普通股" data-ticker="FWDI" data-alias="" data-tier="core" id="stock-FWDI"><div class="identity"><strong class="ticker" translate="no">FWDI（股票代码）</strong><span class="company">Forward Industries（数字资产财库相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/38264/000168316826007543/forward_ex9901.htm" aria-label="查看 FWDI 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>大型 SOL（索拉纳原生代币） 财库，涉及 SOL（索拉纳原生代币） 质押及链上资本市场</dd></div></dl></li>
+<li class="entry" data-entry data-search="DFDV DeFi Development Corp. SOL 财库、验证者及相关生态业务  Nasdaq 普通股" data-ticker="DFDV" data-alias="" data-tier="core" id="stock-DFDV"><div class="identity"><strong class="ticker" translate="no">DFDV（股票代码）</strong><span class="company">DeFi Development Corp.（数字资产财库相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1805526/000180552626000125/dfdv-exx991_10526.htm" aria-label="查看 DFDV 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>SOL（索拉纳原生代币） 财库、验证者及相关生态业务</dd></div></dl></li>
+<li class="entry" data-entry data-search="UPXI Upexi 消费品牌与 SOL 财库、质押；纳斯达克目录显示合规缺陷标记  Nasdaq 普通股" data-ticker="UPXI" data-alias="" data-tier="extended" id="stock-UPXI"><div class="identity"><strong class="ticker" translate="no">UPXI（股票代码）</strong><span class="company">Upexi（数字资产财库相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="#audit-risk">上市合规提示</a><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1775194/000147793226005668/upxi_10k.htm" aria-label="查看 UPXI 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>消费品牌与 SOL（索拉纳原生代币） 财库、质押；纳斯达克目录显示合规缺陷标记</dd></div></dl></li>
+<li class="entry" data-entry data-search="HSDT Solana Company（原 Helius Medical） 从医疗业务转向 SOL 财库  Nasdaq 普通股" data-ticker="HSDT" data-alias="" data-tier="" id="stock-HSDT"><div class="identity"><strong class="ticker" translate="no">HSDT（股票代码）</strong><span class="company">Solana Company（原 Helius Medical）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1610853/000161085326000007/hsdt-20260630.htm" aria-label="查看 HSDT 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>从医疗业务转向 SOL（索拉纳原生代币） 财库</dd></div></dl></li>
+<li class="entry" data-entry data-search="STKE SOL Strategies Solana 验证者、质押及 SOL 资产管理  Nasdaq 普通股" data-ticker="STKE" data-alias="" data-tier="" id="stock-STKE"><div class="identity"><strong class="ticker" translate="no">STKE（股票代码）</strong><span class="company">SOL Strategies（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://solstrategies.io/investor-relations" aria-label="查看 STKE 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>Solana（索拉纳区块链） 验证者、质押及 SOL（索拉纳原生代币） 资产管理</dd></div></dl></li>
+<li class="entry" data-entry data-search="SLMT Solmate Infrastructure（原 Brera Holdings） SOL 财库、验证者及 Solana 生态基础设施  Nasdaq 普通股" data-ticker="SLMT" data-alias="" data-tier="" id="stock-SLMT"><div class="identity"><strong class="ticker" translate="no">SLMT（股票代码）</strong><span class="company">Solmate Infrastructure（原 Brera Holdings）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://solmate.com/dashboard" aria-label="查看 SLMT 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>核心业务及特点</dt><dd>SOL（索拉纳原生代币） 财库、验证者及 Solana（索拉纳区块链） 生态基础设施</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>SOL（索拉纳原生代币） 财库和验证者业务常同时存在。比较持币规模时，区分自有 SOL（索拉纳原生代币）、第三方委托及质押限制。</p>
+</div></details></section>
+<section class="subgroup" data-subgroup aria-labelledby="group-1-4"><div class="subhead"><h4 id="group-1-4">其他加密资产财库</h4><span class="subcount" data-count>17 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="PURR Hyperliquid Strategies HYPE 大型 HYPE 财库  Nasdaq 普通股" data-ticker="PURR" data-alias="" data-tier="extended" id="stock-PURR"><div class="identity"><strong class="ticker" translate="no">PURR（股票代码）</strong><span class="company">Hyperliquid Strategies（数字资产财库相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/2078856/000119312526450063/purr-ex99_2.htm" aria-label="查看 PURR 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>HYPE（超流动性交易网络代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>大型 HYPE（超流动性交易网络代币） 财库</dd></div></dl></li>
+<li class="entry" data-entry data-search="HYPD Hyperion DeFi HYPE HYPE 储备、质押及 Hyperliquid 生态业务；已部分出售代币偿债  Nasdaq 普通股" data-ticker="HYPD" data-alias="" data-tier="" id="stock-HYPD"><div class="identity"><strong class="ticker" translate="no">HYPD（股票代码）</strong><span class="company">Hyperion DeFi（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1682639/000110465926113050/tm2626852d1_8k.htm" aria-label="查看 HYPD 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>HYPE（超流动性交易网络代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>HYPE（超流动性交易网络代币） 储备、质押及 Hyperliquid 生态业务；已部分出售代币偿债</dd></div></dl></li>
+<li class="entry" data-entry data-search="BNC BNB Standard Corporation（原 CEA Industries） BNB BNB 财库  Nasdaq 普通股" data-ticker="BNC" data-alias="" data-tier="" id="stock-BNC"><div class="identity"><strong class="ticker" translate="no">BNC（股票代码）</strong><span class="company">BNB Standard Corporation（原 CEA Industries）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1482541/000148254126000058/bnc-2026x10x12xpr_website.htm" aria-label="查看 BNC 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>BNB（币安生态原生代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>BNB（币安生态原生代币） 财库</dd></div></dl></li>
+<li class="entry" data-entry data-search="NA Nano Labs BNB 芯片技术及 BNB 财库  Nasdaq 普通股" data-ticker="NA" data-alias="" data-tier="" id="stock-NA"><div class="identity"><strong class="ticker" translate="no">NA（纳米实验室股票代码）</strong><span class="company">Nano Labs（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://nanolabs.gcs-web.com/news-releases/news-release-details/nano-labs-announces-first-half-2026-financial-results" aria-label="查看 NA 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>BNB（币安生态原生代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>芯片技术及 BNB（币安生态原生代币） 财库</dd></div></dl></li>
+<li class="entry" data-entry data-search="SUIG Sui Group Holdings SUI SUI 财库及网络生态  Nasdaq 普通股" data-ticker="SUIG" data-alias="" data-tier="" id="stock-SUIG"><div class="identity"><strong class="ticker" translate="no">SUIG（股票代码）</strong><span class="company">Sui Group Holdings（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1425355/000119312526452129/suig-20260930.htm" aria-label="查看 SUIG 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>SUI（水链原生代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>SUI（水链原生代币） 财库及网络生态</dd></div></dl></li>
+<li class="entry" data-entry data-search="TONX TON Strategy GRAM（原 TON / Toncoin） Gram（原 Toncoin）储备与质押，所属生态为 TON VERB Nasdaq 普通股" data-ticker="TONX" data-alias="VERB" data-tier="" id="stock-TONX"><div class="identity"><strong class="ticker" translate="no">TONX（股票代码）</strong><span class="company">TON Strategy（数字资产财库相关公司）</span><div class="tags"><span class="tag alias">原 <span translate="no">VERB（股票代码）</span></span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1566610/000149315226037002/form10-q.htm" aria-label="查看 TONX 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>GRAM（原 TON（开放网络或其旧代币代码） / Toncoin（开放网络代币旧称））</dd></div><div class="entry-field"><dt>业务性质</dt><dd>Gram（原 Toncoin（开放网络代币旧称））储备与质押，所属生态为 TON（开放网络或其旧代币代码）</dd></div></dl></li>
+<li class="entry" data-entry data-search="TRON Tron Inc. TRX TRX 财库；由 SRM Entertainment 转型 SRM Nasdaq 普通股" data-ticker="TRON" data-alias="SRM" data-tier="" id="stock-TRON"><div class="identity"><strong class="ticker" translate="no">TRON（股票代码）</strong><span class="company">Tron Inc.（数字资产财库相关公司）</span><div class="tags"><span class="tag alias">原 <span translate="no">SRM（股票代码）</span></span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1956744/000149315226050474/form10-q.htm" aria-label="查看 TRON 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>TRX（波场网络原生代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>TRX（波场网络原生代币） 财库；由 SRM（股票代码） Entertainment 转型</dd></div></dl></li>
+<li class="entry" data-entry data-search="CYPH Cypherpunk Technologies ZEC ZEC 财库及隐私技术，另有原医药业务  Nasdaq 普通股" data-ticker="CYPH" data-alias="" data-tier="" id="stock-CYPH"><div class="identity"><strong class="ticker" translate="no">CYPH（股票代码）</strong><span class="company">Cypherpunk Technologies（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1509745/000110465926094449/cyph-20260630x10q.htm" aria-label="查看 CYPH 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>ZEC（大零币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>ZEC（大零币） 财库及隐私技术，另有原医药业务</dd></div></dl></li>
+<li class="entry" data-entry data-search="ORBS Eightco Holdings WLD、ETH WLD 与 ETH 财库，另有 OpenAI 等非加密私募股权  Nasdaq 普通股" data-ticker="ORBS" data-alias="" data-tier="" id="stock-ORBS"><div class="identity"><strong class="ticker" translate="no">ORBS（股票代码）</strong><span class="company">Eightco Holdings（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1892492/000149315226043055/ex99-1.htm" aria-label="查看 ORBS 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>WLD（世界币生态代币）、ETH（以太坊原生代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>WLD（世界币生态代币） 与 ETH（以太坊原生代币） 财库，另有 OpenAI（人工智能研究与产品公司） 等非加密私募股权</dd></div></dl></li>
+<li class="entry" data-entry data-search="TAOX TAO Synergies TAO Bittensor 财库  Nasdaq 普通股" data-ticker="TAOX" data-alias="" data-tier="" id="stock-TAOX"><div class="identity"><strong class="ticker" translate="no">TAOX（股票代码）</strong><span class="company">TAO Synergies（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1571934/000110465926095966/taox-20260630x10q.htm" aria-label="查看 TAOX 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>TAO（比特张量网络代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>Bittensor（去中心化机器学习网络） 财库</dd></div></dl></li>
+<li class="entry" data-entry data-search="TWAV TaoWeave TAO TAO 财库与质押，并投资 AI 产品运营  Nasdaq 普通股" data-ticker="TWAV" data-alias="" data-tier="" id="stock-TWAV"><div class="identity"><strong class="ticker" translate="no">TWAV（股票代码）</strong><span class="company">TaoWeave（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/746210/000143774926026577/twav20260630_10q.htm" aria-label="查看 TWAV 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>TAO（比特张量网络代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>TAO（比特张量网络代币） 财库与质押，并投资 AI（人工智能） 产品运营</dd></div></dl></li>
+<li class="entry" data-entry data-search="LITS Lite Strategy LTC LTC 作为主要储备资产，同时保留医药研发  Nasdaq 普通股" data-ticker="LITS" data-alias="" data-tier="" id="stock-LITS"><div class="identity"><strong class="ticker" translate="no">LITS（股票代码）</strong><span class="company">Lite Strategy（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1262104/000119312526449764/lits-20260930.htm" aria-label="查看 LITS 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>LTC（莱特币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>LTC（莱特币） 作为主要储备资产，同时保留医药研发</dd></div></dl></li>
+<li class="entry" data-entry data-search="USDE StablecoinX ENA ENA 财库，以及 Ethena 生态基础设施与 USDe 分销  Nasdaq 普通股" data-ticker="USDE" data-alias="" data-tier="" id="stock-USDE"><div class="identity"><strong class="ticker" translate="no">USDE（股票代码）</strong><span class="company">StablecoinX（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/2080215/000121390026089504/ea030188301ex99-1.htm" aria-label="查看 USDE 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>ENA（以太纳协议治理代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>ENA（以太纳协议治理代币） 财库，以及 Ethena（合成美元及其治理代币协议） 生态基础设施与 USDe（以太纳合成美元产品） 分销</dd></div></dl></li>
+<li class="entry" data-entry data-search="SDEV Stablecoin Development Corporation SKY Sky Protocol 代币及质押  NYSE American 普通股" data-ticker="SDEV" data-alias="" data-tier="" id="stock-SDEV"><div class="identity"><strong class="ticker" translate="no">SDEV（股票代码）</strong><span class="company">Stablecoin Development Corporation（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE American（纽交所美国板）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1389545/000143774926033940/sdev20260930_10q.htm" aria-label="查看 SDEV 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>SKY（天空协议治理代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>Sky Protocol（去中心化稳定币协议） 代币及质押</dd></div></dl></li>
+<li class="entry" data-entry data-search="AVX AVAX One Technology AVAX AVAX 财库与原生质押，同时布局算力基础设施  Nasdaq 普通股" data-ticker="AVX" data-alias="" data-tier="" id="stock-AVX"><div class="identity"><strong class="ticker" translate="no">AVX（股票代码）</strong><span class="company">AVAX One Technology（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1826397/000149315226046080/ex99-1.htm" aria-label="查看 AVX 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>AVAX（雪崩链原生代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>AVAX（雪崩链原生代币） 财库与原生质押，同时布局算力基础设施</dd></div></dl></li>
+<li class="entry" data-entry data-search="AVAT Avalanche Treasury Corp. AVAX AVAX 财库、质押和网络参与  Nasdaq 普通股" data-ticker="AVAT" data-alias="" data-tier="" id="stock-AVAT"><div class="identity"><strong class="ticker" translate="no">AVAT（股票代码）</strong><span class="company">Avalanche Treasury Corp.（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.avat.com/investor-relations" aria-label="查看 AVAT 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>AVAX（雪崩链原生代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>AVAX（雪崩链原生代币） 财库、质押和网络参与</dd></div></dl></li>
+<li class="entry" data-entry data-search="BNKK Bonk Inc. BONK BONK 财库与数字资产基础设施，另有消费品牌  Nasdaq 普通股" data-ticker="BNKK" data-alias="" data-tier="" id="stock-BNKK"><div class="identity"><strong class="ticker" translate="no">BNKK（股票代码）</strong><span class="company">Bonk Inc.（数字资产财库相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1760903/000149315226038241/form10-q.htm" aria-label="查看 BNKK 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要资产或生态</dt><dd>BONK（索拉纳生态迷因代币）</dd></div><div class="entry-field"><dt>业务性质</dt><dd>BONK（索拉纳生态迷因代币） 财库与数字资产基础设施，另有消费品牌</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>以上主要覆盖从 BTC（比特币）、ETH（以太坊原生代币） 扩展到公链、DeFi（去中心化金融） 协议及特定代币的财库公司。后半部分包含不少由原有小市值上市公司转型的企业，业务落地程度和流动性差异很大。</p>
+<p>这里有两个特别容易误判的例子：</p>
+<ul>
+<li><strong>USDE（股票代码） 不是直接发行 USDe（以太纳合成美元产品） 稳定币的上市公司</strong>。StablecoinX（数字资产财库相关公司） 持有的是 Ethena（合成美元及其治理代币协议） 的 ENA（以太纳协议治理代币） 代币。</li>
+<li><strong>SDEV（股票代码） 也不是与 CRCL（圆环网络集团股票代码） 相同的稳定币发行商</strong>。其 2026 年第三季度 SEC（美国证券交易委员会） 文件显示，它主要持有 SKY（天空协议治理代币） 代币并参与质押和治理。</li>
+</ul>
+<p>因此，对这类股票的研究应首先判断它究竟是一家有持续收费业务的企业，还是主要依靠股票融资持有某个代币的财库载体。</p>
+</div></details></section></section>
+<section class="category markets" id="markets" data-category="markets" aria-labelledby="heading-markets"><div class="category-heading"><div><h3 id="heading-markets">交易、经纪与金控</h3><p>交易量、托管资产、收入结构与资质</p></div><div class="category-actions"><span class="category-count" data-category-count>24 个</span><button class="category-toggle" type="button" aria-expanded="true" hidden>−</button></div></div><details class="category-context context"><summary>查看分类口径</summary><div class="prose"><p>这一类的投资逻辑与财库公司不同。核心不只是币价上涨，而是<strong>整个加密金融市场的交易、经纪、托管和资产管理活动能否持续扩大</strong>。</p>
+</div></details><section class="subgroup" data-subgroup aria-labelledby="group-2-1"><div class="subhead"><h4 id="group-2-1">加密原生及重要业务参与者</h4><span class="subcount" data-count>18 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="COIN Coinbase Global 现货及衍生品交易、机构托管、质押、USDC 生态、Base 核心型  Nasdaq 普通股" data-ticker="COIN" data-alias="" data-tier="core" id="stock-COIN"><div class="identity"><strong class="ticker" translate="no">COIN（币基公司股票代码）</strong><span class="company">Coinbase Global（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1679788/000167978826000122/coin-20260930.htm" aria-label="查看 COIN 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>现货及衍生品交易、机构托管、质押、USDC（美元稳定币） 生态、Base（币基公司孵化的二层区块链）</dd></div><div class="entry-field"><dt>属性</dt><dd>核心型</dd></div></dl></li>
+<li class="entry" data-entry data-search="BLSH Bullish 机构数字资产交易所、流动性服务、CoinDesk 数据与指数 核心型  NYSE 普通股" data-ticker="BLSH" data-alias="" data-tier="core" id="stock-BLSH"><div class="identity"><strong class="ticker" translate="no">BLSH（股票代码）</strong><span class="company">Bullish（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://investors.bullish.com/news-releases/news-release-details/bullish-launches-tokenized-equity-trading" aria-label="查看 BLSH 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>机构数字资产交易所、流动性服务、CoinDesk（数字资产信息与指数品牌） 数据与指数</dd></div><div class="entry-field"><dt>属性</dt><dd>核心型</dd></div></dl></li>
+<li class="entry" data-entry data-search="GEMI Gemini Space Station 加密交易所、托管及其他金融产品，2026 年收缩英国、欧盟及澳大利亚等地区服务 核心型  Nasdaq 普通股" data-ticker="GEMI" data-alias="" data-tier="extended" id="stock-GEMI"><div class="identity"><strong class="ticker" translate="no">GEMI（股票代码）</strong><span class="company">Gemini Space Station（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://investors.gemini.com/news-releases/news-release-details/gemini-reports-second-quarter-2026-results" aria-label="查看 GEMI 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>加密交易所、托管及其他金融产品，2026 年收缩英国、欧盟及澳大利亚等地区服务</dd></div><div class="entry-field"><dt>属性</dt><dd>核心型</dd></div></dl></li>
+<li class="entry" data-entry data-search="CNCK Coincheck Group 日本 Coincheck 加密交易所，以及机构交易、托管、质押和数字资产管理 核心型  Nasdaq 普通股" data-ticker="CNCK" data-alias="" data-tier="extended" id="stock-CNCK"><div class="identity"><strong class="ticker" translate="no">CNCK（股票代码）</strong><span class="company">Coincheck Group（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.coincheckgroup.com/sec-filings/all-sec-filings/content/0001913847-26-000002/q1-2027financialresultsdoc.htm" aria-label="查看 CNCK 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>日本 Coincheck 加密交易所，以及机构交易、托管、质押和数字资产管理</dd></div><div class="entry-field"><dt>属性</dt><dd>核心型</dd></div></dl></li>
+<li class="entry" data-entry data-search="BTGO BitGo Holdings 机构级数字资产托管、钱包、质押、清算和流动性服务 核心型  NYSE 普通股" data-ticker="BTGO" data-alias="" data-tier="core" id="stock-BTGO"><div class="identity"><strong class="ticker" translate="no">BTGO（股票代码）</strong><span class="company">BitGo Holdings（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1740604/000174060426000050/btgo-20260630.htm" aria-label="查看 BTGO 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>机构级数字资产托管、钱包、质押、清算和流动性服务</dd></div><div class="entry-field"><dt>属性</dt><dd>核心型</dd></div></dl></li>
+<li class="entry" data-entry data-search="GLXY Galaxy Digital 机构数字资产交易、融资、资管及质押，与 Helios AI 数据中心并行 混合型  Nasdaq 普通股" data-ticker="GLXY" data-alias="" data-tier="core" id="stock-GLXY"><div class="identity"><strong class="ticker" translate="no">GLXY（股票代码）</strong><span class="company">Galaxy Digital（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://galaxydigital.gcs-web.com/news-releases/news-release-details/galaxy-announces-third-quarter-2026-financial-results" aria-label="查看 GLXY 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>机构数字资产交易、融资、资管及质押，与 Helios（银河数字的算力数据中心园区） AI（人工智能） 数据中心并行</dd></div><div class="entry-field"><dt>属性</dt><dd>混合型</dd></div></dl></li>
+<li class="entry" data-entry data-search="ETOR eToro Group 股票、加密货币等多资产社交投资平台 混合型  Nasdaq 普通股" data-ticker="ETOR" data-alias="" data-tier="" id="stock-ETOR"><div class="identity"><strong class="ticker" translate="no">ETOR（股票代码）</strong><span class="company">eToro Group（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.etoro.com/news-and-analysis/press-releases/etoro-reports-second-quarter-2026-results/" aria-label="查看 ETOR 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>股票、加密货币等多资产社交投资平台</dd></div><div class="entry-field"><dt>属性</dt><dd>混合型</dd></div></dl></li>
+<li class="entry" data-entry data-search="HOOD Robinhood Markets 股票和加密交易、Bitstamp 机构交易及 WonderFi 加拿大加密业务 混合型  Nasdaq 普通股" data-ticker="HOOD" data-alias="" data-tier="extended" id="stock-HOOD"><div class="identity"><strong class="ticker" translate="no">HOOD（股票代码）</strong><span class="company">Robinhood Markets（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://investors.robinhood.com/news-releases/news-release-details/robinhood-reports-third-quarter-2026-results" aria-label="查看 HOOD 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>股票和加密交易、Bitstamp（加密交易平台） 机构交易及 WonderFi（加拿大数字资产平台运营商） 加拿大加密业务</dd></div><div class="entry-field"><dt>属性</dt><dd>混合型</dd></div></dl></li>
+<li class="entry" data-entry data-search="XYZ Block Inc. Cash App BTC 服务、支付、Bitkey、比特币生态技术 混合型  NYSE 普通股" data-ticker="XYZ" data-alias="" data-tier="" id="stock-XYZ"><div class="identity"><strong class="ticker" translate="no">XYZ（股票代码）</strong><span class="company">Block Inc.（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1512673/000162828026069524/xyz-20260930.htm" aria-label="查看 XYZ 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>Cash App（布洛克公司的个人金融应用） BTC（比特币） 服务、支付、Bitkey（布洛克公司的自托管硬件钱包）、比特币生态技术</dd></div><div class="entry-field"><dt>属性</dt><dd>混合型</dd></div></dl></li>
+<li class="entry" data-entry data-search="BULL Webull 股票、期权及美国等适用市场的加密交易 混合型  Nasdaq 普通股" data-ticker="BULL" data-alias="" data-tier="" id="stock-BULL"><div class="identity"><strong class="ticker" translate="no">BULL（股票代码）</strong><span class="company">Webull（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.webull.com/help/faq/11094-Getting-Started-with-Crypto-Trading" aria-label="查看 BULL 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>股票、期权及美国等适用市场的加密交易</dd></div><div class="entry-field"><dt>属性</dt><dd>混合型</dd></div></dl></li>
+<li class="entry" data-entry data-search="FUTU Futu Holdings（富途） 综合证券经纪及香港持牌虚拟资产平台 PantherTrade 混合型  Nasdaq ADS" data-ticker="FUTU" data-alias="" data-tier="" id="stock-FUTU"><div class="identity"><strong class="ticker" translate="no">FUTU（股票代码）</strong><span class="company">Futu Holdings（富途）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><span class="tag" translate="no">ADS（美国存托股）</span><a class="tag audit-link" href="https://www.futuhk.com/en/about-us/newsroom/futu-securities-fully-integrates-proprietary-licensed-vatp-pioneering" aria-label="查看 FUTU 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>综合证券经纪及香港持牌虚拟资产平台 PantherTrade（富途旗下香港虚拟资产交易平台）</dd></div><div class="entry-field"><dt>属性</dt><dd>混合型</dd></div></dl></li>
+<li class="entry" data-entry data-search="TIGR UP Fintech Holding（老虎证券） 综合证券经纪及香港持牌主体的虚拟资产交易 混合型  Nasdaq ADS" data-ticker="TIGR" data-alias="" data-tier="" id="stock-TIGR"><div class="identity"><strong class="ticker" translate="no">TIGR（股票代码）</strong><span class="company">UP Fintech Holding（老虎证券）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><span class="tag" translate="no">ADS（美国存托股）</span><a class="tag audit-link" href="https://www.itiger.com/hk/en/invest/virtual-assets?tp=1" aria-label="查看 TIGR 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>综合证券经纪及香港持牌主体的虚拟资产交易</dd></div><div class="entry-field"><dt>属性</dt><dd>混合型</dd></div></dl></li>
+<li class="entry" data-entry data-search="BKKT Bakkt, Inc. 数字资产交易基础设施、稳定币结算与跨境支付 转型型  NYSE 普通股" data-ticker="BKKT" data-alias="" data-tier="" id="stock-BKKT"><div class="identity"><strong class="ticker" translate="no">BKKT（股票代码）</strong><span class="company">Bakkt, Inc.（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1820302/000162828026055275/bakkt-20260630.htm" aria-label="查看 BKKT 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>数字资产交易基础设施、稳定币结算与跨境支付</dd></div><div class="entry-field"><dt>属性</dt><dd>转型型</dd></div></dl></li>
+<li class="entry" data-entry data-search="MATH Metalpha Technology 数字资产财富管理、衍生品和结构化产品 核心型  Nasdaq 普通股" data-ticker="MATH" data-alias="" data-tier="" id="stock-MATH"><div class="identity"><strong class="ticker" translate="no">MATH（股票代码）</strong><span class="company">Metalpha Technology（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1682241/000121390026086126/ea0299197-20f_metalpha.htm" aria-label="查看 MATH 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>数字资产财富管理、衍生品和结构化产品</dd></div><div class="entry-field"><dt>属性</dt><dd>核心型</dd></div></dl></li>
+<li class="entry" data-entry data-search="ANTA Antalpha Platform BTC 产业链融资、数字资产抵押贷款、风险管理 核心型  Nasdaq 普通股" data-ticker="ANTA" data-alias="" data-tier="" id="stock-ANTA"><div class="identity"><strong class="ticker" translate="no">ANTA（股票代码）</strong><span class="company">Antalpha Platform（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://ir.antalpha.com/news-releases/news-release-details/antalpha-reports-second-quarter-2026-results" aria-label="查看 ANTA 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>BTC（比特币） 产业链融资、数字资产抵押贷款、风险管理</dd></div><div class="entry-field"><dt>属性</dt><dd>核心型</dd></div></dl></li>
+<li class="entry" data-entry data-search="CSHR CoinShares PLC 数字资产管理、ETP、机构投资产品 核心型  Nasdaq 普通股" data-ticker="CSHR" data-alias="" data-tier="extended" id="stock-CSHR"><div class="identity"><strong class="ticker" translate="no">CSHR（股票代码）</strong><span class="company">CoinShares PLC（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://investor.coinshares.com/pressreleases/coinshares-announces-first-half-2026-results" aria-label="查看 CSHR 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>数字资产管理、ETP（交易所交易产品）、机构投资产品</dd></div><div class="entry-field"><dt>属性</dt><dd>核心型</dd></div></dl></li>
+<li class="entry" data-entry data-search="DEFT DeFi Technologies Valour 数字资产 ETP、机构交易、流动性和投资服务 核心型  Nasdaq 普通股" data-ticker="DEFT" data-alias="" data-tier="extended" id="stock-DEFT"><div class="identity"><strong class="ticker" translate="no">DEFT（股票代码）</strong><span class="company">DeFi Technologies（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="#audit-risk">上市合规提示</a><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1888274/000127956926000850/ex991.htm" aria-label="查看 DEFT 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>Valour（数字资产交易所交易产品品牌） 数字资产 ETP（交易所交易产品）、机构交易、流动性和投资服务</dd></div><div class="entry-field"><dt>属性</dt><dd>核心型</dd></div></dl></li>
+<li class="entry" data-entry data-search="PDC Perpetuals.com Ltd. AI 辅助交易技术、欧洲多边交易设施相关技术许可及 RWA 代币化基础设施 小型平台  Nasdaq ADS" data-ticker="PDC" data-alias="" data-tier="" id="stock-PDC"><div class="identity"><strong class="ticker" translate="no">PDC（股票代码）</strong><span class="company">Perpetuals.com Ltd.（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><span class="tag" translate="no">ADS（美国存托股）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1944399/000121390026101514/ea0305669-20fa1_perpetuals.htm" aria-label="查看 PDC 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>主要业务</dt><dd>AI（人工智能） 辅助交易技术、欧洲多边交易设施相关技术许可及 RWA（现实世界资产） 代币化基础设施</dd></div><div class="entry-field"><dt>属性</dt><dd>小型平台</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>资料交叉来源：交易与经纪行业数据库、BitGo 和 CoinShares 的上市公告，以及公司 SEC（美国证券交易委员会） 披露。</p>
+<p>有几家公司在 2025—2026 年发生了值得单独关注的变化：</p>
+<p><strong>Coinbase（COIN（币基公司股票代码））</strong></p>
+<p>同时覆盖交易、机构托管、稳定币与区块链网络，属于多条加密产业链的综合平台。</p>
+<p><strong>Bullish（BLSH（股票代码））</strong></p>
+<p>2026 年取得直布罗陀监管机构关于代币化证券交易的批准，并在 8 月宣布开展代币化股票交易。它不再只是传统的加密现货交易所。</p>
+<p><strong>BitGo（BTGO（股票代码））</strong></p>
+<p>2026 年 1 月在纽交所上市，旗下 BitGo Bank &amp; Trust, N.A. 持有美国联邦层面的国家信托银行资质，其托管和金融基础设施模式与交易手续费型业务明显不同。</p>
+<p><strong>Robinhood（HOOD（股票代码））</strong></p>
+<p>2025 年完成收购 Bitstamp（加密交易平台），2026 年 6 月又完成收购 WonderFi（加拿大数字资产平台运营商），已经拥有跨多个市场的加密金融布局，但股票业务仍然很重要。</p>
+</div></details></section>
+<section class="subgroup" data-subgroup aria-labelledby="group-2-2"><div class="subhead"><h4 id="group-2-2">传统金融市场中拥有加密交易基础设施的企业</h4><span class="subcount" data-count>6 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="CME CME Group 受监管的 BTC、ETH 等加密期货、期权及指数衍生品  Nasdaq 普通股" data-ticker="CME" data-alias="" data-tier="" id="stock-CME"><div class="identity"><strong class="ticker" translate="no">CME（芝加哥商品交易所集团股票代码）</strong><span class="company">CME Group（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.cmegroup.com/articles/2026/trading-crypto-as-an-asset-class-the-case-for-nasdaq-cme-crypto-index-futures.html" aria-label="查看 CME 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>加密相关业务</dt><dd>受监管的 BTC（比特币）、ETH（以太坊原生代币） 等加密期货、期权及指数衍生品</dd></div></dl></li>
+<li class="entry" data-entry data-search="ICE Intercontinental Exchange 已投资 OKX、Polymarket；旗下纽交所筹备链上证券交易和结算平台  NYSE 普通股" data-ticker="ICE" data-alias="" data-tier="" id="stock-ICE"><div class="identity"><strong class="ticker" translate="no">ICE（股票代码）</strong><span class="company">Intercontinental Exchange（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1571949/000157194926000015/ice-20260930.htm" aria-label="查看 ICE 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>加密相关业务</dt><dd>已投资 OKX（欧易数字资产交易平台）、Polymarket（预测市场平台）；旗下纽交所筹备链上证券交易和结算平台</dd></div></dl></li>
+<li class="entry" data-entry data-search="NDAQ Nasdaq 数字资产指数及数据；特定证券代币化交易规则获批，实施与 DTC 试点相关  Nasdaq 普通股" data-ticker="NDAQ" data-alias="" data-tier="" id="stock-NDAQ"><div class="identity"><strong class="ticker" translate="no">NDAQ（股票代码）</strong><span class="company">Nasdaq（纳斯达克交易所）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.nasdaq.com/products/global-indexes/thematic/crypto" aria-label="查看 NDAQ 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>加密相关业务</dt><dd>数字资产指数及数据；特定证券代币化交易规则获批，实施与 DTC（美国证券存管机构） 试点相关</dd></div></dl></li>
+<li class="entry" data-entry data-search="CBOE Cboe Global Markets 加密相关衍生品及 ETP 上市交易基础设施  Cboe BZX 普通股" data-ticker="CBOE" data-alias="" data-tier="" id="stock-CBOE"><div class="identity"><strong class="ticker" translate="no">CBOE（芝加哥期权交易所集团股票代码）</strong><span class="company">Cboe Global Markets（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">Cboe BZX（芝加哥期权交易所旗下股票市场）</span><a class="tag audit-link" href="https://www.cboe.com/tradable-products/cryptocurrency-derivatives/" aria-label="查看 CBOE 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>加密相关业务</dt><dd>加密相关衍生品及 ETP（交易所交易产品） 上市交易基础设施</dd></div></dl></li>
+<li class="entry" data-entry data-search="IBKR Interactive Brokers 综合经纪平台，通过 Paxos 或 zerohash 提供加密交易入口  Nasdaq 普通股" data-ticker="IBKR" data-alias="" data-tier="" id="stock-IBKR"><div class="identity"><strong class="ticker" translate="no">IBKR（股票代码）</strong><span class="company">Interactive Brokers（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.interactivebrokers.com/en/general/about/mediaRelations/7-15-26.php" aria-label="查看 IBKR 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>加密相关业务</dt><dd>综合经纪平台，通过 Paxos（数字资产信托与发行机构） 或 zerohash（数字资产交易与托管服务商） 提供加密交易入口</dd></div></dl></li>
+<li class="entry" data-entry data-search="VIRT Virtu Financial 电子做市、流动性提供及数字资产市场相关业务  NYSE 普通股" data-ticker="VIRT" data-alias="" data-tier="" id="stock-VIRT"><div class="identity"><strong class="ticker" translate="no">VIRT（股票代码）</strong><span class="company">Virtu Financial（交易、托管或机构金融相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://ir.virtu.com/news-releases/news-release-details/virtu-announces-third-quarter-2026-results" aria-label="查看 VIRT 的审核来源">披露</a></div></div><dl class="entry-fields single"><div class="entry-field"><dt>加密相关业务</dt><dd>电子做市、流动性提供及数字资产市场相关业务</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>CME（芝加哥商品交易所集团股票代码） 已在 2026 年推出 Nasdaq（纳斯达克交易所） CME（芝加哥商品交易所集团股票代码） 加密指数期货。ICE（股票代码） 和 Nasdaq（纳斯达克交易所） 则是机构级市场基础设施的重要参与者，但集团整体收入不能等同于加密收入。</p>
+<p>**监管方面的注意点：**美国上市不等于该公司的所有加密交易服务都获得美国监管许可。例如 BLSH（股票代码） 的不同业务分别受到不同司法辖区监管；BTGO（股票代码） 的信托银行资质也不意味着它所有产品都没有监管风险。</p>
+</div></details></section></section>
+<section class="category infrastructure" id="infrastructure" data-category="infrastructure" aria-labelledby="heading-infrastructure"><div class="category-heading"><div><h3 id="heading-infrastructure">稳定币、RWA（现实世界资产） 与基础设施</h3><p>发行规模、平台资产、手续费与网络效应</p></div><div class="category-actions"><span class="category-count" data-category-count>23 个</span><button class="category-toggle" type="button" aria-expanded="true" hidden>−</button></div></div><details class="category-context context"><summary>查看分类口径</summary><div class="prose"><p>这一组需要分成三条不同赛道：</p>
+<ul>
+<li><strong>Stablecoin（稳定币）</strong>：负责数字美元的发行、流通、支付和结算。</li>
+<li><strong>RWA（现实世界资产代币化）</strong>：将股票、债券、基金、贷款、黄金等资产权益以链上形式发行或管理。</li>
+<li><strong>Infrastructure（基础设施）</strong>：为机构提供钱包、资产托管、清算、跨链服务及区块链金融技术。</li>
+</ul>
+</div></details><section class="subgroup" data-subgroup aria-labelledby="group-3-1"><div class="subhead"><h4 id="group-3-1">加密原生稳定币、RWA（现实世界资产） 和基础设施公司</h4><span class="subcount" data-count>9 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="FRMM Forum Markets（原 ETHZilla） 航空发动机收益权等 RWA 代币化，另有航空租赁和 AI 算力合资业务 代币发行规模、现金流与租赁收入来源 ETHZ Nasdaq 普通股" data-ticker="FRMM" data-alias="ETHZ" data-tier="" id="stock-FRMM"><div class="identity"><strong class="ticker" translate="no">FRMM（股票代码）</strong><span class="company">Forum Markets（原 ETHZilla（论坛市场公司原名））</span><div class="tags"><span class="tag alias">原 <span translate="no">ETHZ（股票代码）</span></span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1690080/000121390026090100/ea0301343-10q_forum.htm" aria-label="查看 FRMM 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>航空发动机收益权等 RWA（现实世界资产） 代币化，另有航空租赁和 AI（人工智能） 算力合资业务</dd></div><div class="entry-field"><dt>主要研究方向</dt><dd>代币发行规模、现金流与租赁收入来源</dd></div></dl></li>
+<li class="entry" data-entry data-search="CRCL Circle Internet Group USDC、EURC 稳定币发行及支付网络 稳定币规模、储备收益、渠道分成、支付应用  NYSE 普通股" data-ticker="CRCL" data-alias="" data-tier="core" id="stock-CRCL"><div class="identity"><strong class="ticker" translate="no">CRCL（圆环网络集团股票代码）</strong><span class="company">Circle Internet Group（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1876042/000187604226000311/crcl-20260930.htm" aria-label="查看 CRCL 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>USDC（美元稳定币）、EURC（欧元稳定币） 稳定币发行及支付网络</dd></div><div class="entry-field"><dt>主要研究方向</dt><dd>稳定币规模、储备收益、渠道分成、支付应用</dd></div></dl></li>
+<li class="entry" data-entry data-search="FIGR Figure Technology Solutions 链上信贷资产发放和代币化、Provenance 生态、注册收益型证券 YLDS 贷款发放量、链上资产规模、融资效率及盈利  Nasdaq 普通股" data-ticker="FIGR" data-alias="" data-tier="core" id="stock-FIGR"><div class="identity"><strong class="ticker" translate="no">FIGR（股票代码）</strong><span class="company">Figure Technology Solutions（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/2064124/000149315226046036/ex99-1.htm" aria-label="查看 FIGR 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>链上信贷资产发放和代币化、Provenance（信贷资产登记与结算区块链） 生态、注册收益型证券 YLDS（登记为证券的收益型美元产品）</dd></div><div class="entry-field"><dt>主要研究方向</dt><dd>贷款发放量、链上资产规模、融资效率及盈利</dd></div></dl></li>
+<li class="entry" data-entry data-search="SECZ Securitize 证券代币化、链上基金发行、数字证券交易和登记 RWA 发行规模、资产管理机构合作、平台收费  NYSE 普通股" data-ticker="SECZ" data-alias="" data-tier="core" id="stock-SECZ"><div class="identity"><strong class="ticker" translate="no">SECZ（股票代码）</strong><span class="company">Securitize（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://investors.securitize.io/news/news-details/2026/Securitize-Expands-Onchain-U-S--Stock-Offering-to-25-Equities/default.aspx" aria-label="查看 SECZ 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>证券代币化、链上基金发行、数字证券交易和登记</dd></div><div class="entry-field"><dt>主要研究方向</dt><dd>RWA（现实世界资产） 发行规模、资产管理机构合作、平台收费</dd></div></dl></li>
+<li class="entry" data-entry data-search="OWLS OBOOK Holdings（OwlTing） OwlPay 稳定币结算、法币出入金及跨境支付；仍在早期商业化 支付通道、交易量、金融机构接入  Nasdaq 普通股" data-ticker="OWLS" data-alias="" data-tier="extended" id="stock-OWLS"><div class="identity"><strong class="ticker" translate="no">OWLS（股票代码）</strong><span class="company">OBOOK Holdings（OwlTing）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/2025416/000119312526424656/owls-ex99_1.htm" aria-label="查看 OWLS 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>OwlPay（稳定币支付产品） 稳定币结算、法币出入金及跨境支付；仍在早期商业化</dd></div><div class="entry-field"><dt>主要研究方向</dt><dd>支付通道、交易量、金融机构接入</dd></div></dl></li>
+<li class="entry" data-entry data-search="STEX Streamex 黄金等现实资产的代币化及交易平台 黄金代币 GLDY、代币化资产规模、流动性  Nasdaq 普通股" data-ticker="STEX" data-alias="" data-tier="extended" id="stock-STEX"><div class="identity"><strong class="ticker" translate="no">STEX（股票代码）</strong><span class="company">Streamex（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="#audit-risk">上市合规提示</a><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1530766/000149315226038293/form10-q.htm" aria-label="查看 STEX 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>黄金等现实资产的代币化及交易平台</dd></div><div class="entry-field"><dt>主要研究方向</dt><dd>黄金代币 GLDY（黄金收益代币产品）、代币化资产规模、流动性</dd></div></dl></li>
+<li class="entry" data-entry data-search="USBC USBC Inc. 与 Vast Bank 合作开发银行存款代币化技术，初步商业推出尚待落实；另有 BTC 财库 存款代币产品落地、合作银行、数字资产风险  NYSE American 普通股" data-ticker="USBC" data-alias="" data-tier="" id="stock-USBC"><div class="identity"><strong class="ticker" translate="no">USBC（股票代码）</strong><span class="company">USBC Inc.（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE American（纽交所美国板）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1074828/000107482826000107/usbc-20260930.htm" aria-label="查看 USBC 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>与 Vast Bank（美国合作存款银行） 合作开发银行存款代币化技术，初步商业推出尚待落实；另有 BTC（比特币） 财库</dd></div><div class="entry-field"><dt>主要研究方向</dt><dd>存款代币产品落地、合作银行、数字资产风险</dd></div></dl></li>
+<li class="entry" data-entry data-search="EXOD Exodus Movement 自托管钱包、资产交换及数字资产软件服务 钱包用户、交换收入、产品渗透率  NYSE American 普通股" data-ticker="EXOD" data-alias="" data-tier="" id="stock-EXOD"><div class="identity"><strong class="ticker" translate="no">EXOD（股票代码）</strong><span class="company">Exodus Movement（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE American（纽交所美国板）</span><a class="tag audit-link" href="https://www.exodus.com/investors" aria-label="查看 EXOD 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>自托管钱包、资产交换及数字资产软件服务</dd></div><div class="entry-field"><dt>主要研究方向</dt><dd>钱包用户、交换收入、产品渗透率</dd></div></dl></li>
+<li class="entry" data-entry data-search="FLD Fold Holdings BTC 支付奖励、消费卡及比特币金融服务 用户与支付交易量、奖励经济性、BTC 储备  Nasdaq 普通股" data-ticker="FLD" data-alias="" data-tier="" id="stock-FLD"><div class="identity"><strong class="ticker" translate="no">FLD（股票代码）</strong><span class="company">Fold Holdings（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="#audit-risk">上市合规提示</a><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1889123/000119312526344668/fld-20260630.htm" aria-label="查看 FLD 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>BTC（比特币） 支付奖励、消费卡及比特币金融服务</dd></div><div class="entry-field"><dt>主要研究方向</dt><dd>用户与支付交易量、奖励经济性、BTC（比特币） 储备</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>这一组按金融产品、支付或代币化业务归类。USBC（股票代码） 的存款代币化由合作银行承接存款，FLD（股票代码） 也有 BTC（比特币） 财库敞口。</p>
+<p>其中值得注意的两个新变化：</p>
+<p><strong>Securitize（SECZ（股票代码））</strong></p>
+<p>2026 年 7 月上市，11 月 2 日宣布将链上美股产品扩展至 25 只，覆盖传统大型上市公司的股份权益。它的长期逻辑是数字证券基础设施收费，而不是自己囤积加密币。</p>
+<p><strong>Figure Technology Solutions（FIGR（股票代码））</strong></p>
+<p>重点是把现实信贷资产的发放、融资和转让流程接入区块链。其 YLDS（登记为证券的收益型美元产品） 是具有证券属性的收益型产品，不能简单当成与 USDC（美元稳定币） 完全相同的支付稳定币。</p>
+</div></details></section>
+<section class="subgroup" data-subgroup aria-labelledby="group-3-2"><div class="subhead"><h4 id="group-3-2">传统金融公司：稳定币支付、链上结算及 RWA（现实世界资产）</h4><span class="subcount" data-count>14 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="SOFI SoFi Technologies SoFi Bank 发行 SoFiUSD，开展银行和支付结算应用 混合型，业务落地较明确  Nasdaq 普通股" data-ticker="SOFI" data-alias="" data-tier="extended" id="stock-SOFI"><div class="identity"><strong class="ticker" translate="no">SOFI（股票代码）</strong><span class="company">SoFi Technologies（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://investors.sofi.com/news/news-details/2026/SoFi-Becomes-First-National-Bank-to-Go-Live-with-Stablecoin-Settlement-across-Mastercards-Global-Payments-Network/default.aspx" aria-label="查看 SOFI 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>SoFi Bank 发行 SoFiUSD（索菲银行美元稳定币），开展银行和支付结算应用</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>混合型，业务落地较明确</dd></div></dl></li>
+<li class="entry" data-entry data-search="PYPL PayPal PYUSD 支付和商户应用；发行方为 Paxos Trust Company, N.A. 混合型  Nasdaq 普通股" data-ticker="PYPL" data-alias="" data-tier="extended" id="stock-PYPL"><div class="identity"><strong class="ticker" translate="no">PYPL（股票代码）</strong><span class="company">PayPal（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.paxos.com/pyusd" aria-label="查看 PYPL 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>PYUSD（贝宝支付生态使用的美元稳定币） 支付和商户应用；发行方为 Paxos Trust Company, N.A.（贝宝美元稳定币的发行信托机构）</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>混合型</dd></div></dl></li>
+<li class="entry" data-entry data-search="WU Western Union USDPT 跨境支付、Stablecard 与现金兑付网络；Anchorage Digital Bank 负责发行 混合型  NYSE 普通股" data-ticker="WU" data-alias="" data-tier="" id="stock-WU"><div class="identity"><strong class="ticker" translate="no">WU（股票代码）</strong><span class="company">Western Union（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://ir.westernunion.com/news/archived-press-releases/press-release-details/2026/Western-Union-Launches-Stablecard-in-Partnership-with-Rain/default.aspx" aria-label="查看 WU 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>USDPT（西联支付生态使用的美元稳定币） 跨境支付、Stablecard（西联汇款稳定币支付卡） 与现金兑付网络；Anchorage Digital Bank（数字资产银行与稳定币发行方） 负责发行</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>混合型</dd></div></dl></li>
+<li class="entry" data-entry data-search="FISV Fiserv 数字资产结算平台已上线 Roughrider Coin，FIUSD 的公开上线待确认 大型支付科技集团 FI Nasdaq 普通股" data-ticker="FISV" data-alias="FI" data-tier="" id="stock-FISV"><div class="identity"><strong class="ticker" translate="no">FISV（股票代码）</strong><span class="company">Fiserv（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag alias">原 <span translate="no">FI（股票代码）</span></span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://investors.fiserv.com/news-releases/news-release-details/fiserv-digital-asset-platform-goes-live-financial-institution" aria-label="查看 FISV 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>数字资产结算平台已上线 Roughrider Coin（北达科他州银行主导的稳定币项目），FIUSD（费哲数字资产平台拟推出的美元稳定币） 的公开上线待确认</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>大型支付科技集团</dd></div></dl></li>
+<li class="entry" data-entry data-search="V Visa USDC 等稳定币清算、发卡和支付网络基础设施 大型支付网络  NYSE 普通股" data-ticker="V" data-alias="" data-tier="" id="stock-V"><div class="identity"><strong class="ticker" translate="no">V（维萨股票代码）</strong><span class="company">Visa（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1876042/000187604226000309/finalq3epr-110326.htm" aria-label="查看 V 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>USDC（美元稳定币） 等稳定币清算、发卡和支付网络基础设施</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>大型支付网络</dd></div></dl></li>
+<li class="entry" data-entry data-search="MA Mastercard 稳定币结算网络、支付风控，及 BVNK 稳定币基础设施 大型支付网络  NYSE 普通股" data-ticker="MA" data-alias="" data-tier="" id="stock-MA"><div class="identity"><strong class="ticker" translate="no">MA（股票代码）</strong><span class="company">Mastercard（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.mastercard.com/us/en/news-and-trends/press/2026/october/Mastercard-brings-risk-intelligence-to-stablecoin-payments.html" aria-label="查看 MA 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>稳定币结算网络、支付风控，及 BVNK（稳定币支付基础设施公司） 稳定币基础设施</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>大型支付网络</dd></div></dl></li>
+<li class="entry" data-entry data-search="JPM JPMorgan Chase JPM Coin（JPMD）机构存款代币、链上支付及资产代币化 大型银行  NYSE 普通股" data-ticker="JPM" data-alias="" data-tier="" id="stock-JPM"><div class="identity"><strong class="ticker" translate="no">JPM（股票代码）</strong><span class="company">JPMorgan Chase（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.jpmorgan.com/payments/newsroom/jpm-coin-live-on-ethereum" aria-label="查看 JPM 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>JPM Coin（JPMD（摩根大通机构存款代币））机构存款代币、链上支付及资产代币化</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>大型银行</dd></div></dl></li>
+<li class="entry" data-entry data-search="BNY BNY（纽约梅隆银行） 数字资产托管、代币化存款、机构结算和资产服务 大型托管银行 BK NYSE 普通股" data-ticker="BNY" data-alias="BK" data-tier="extended" id="stock-BNY"><div class="identity"><strong class="ticker" translate="no">BNY（纽约梅隆银行股票代码）</strong><span class="company">BNY（纽约梅隆银行）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag alias">原 <span translate="no">BK（股票代码）</span></span><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.bny.com/corporate/global/en/about-us/newsroom/press-release/bny-completes-tokenized-us-treasury-triparty-repo-workflow-with-citadel-securities.html" aria-label="查看 BNY 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>数字资产托管、代币化存款、机构结算和资产服务</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>大型托管银行</dd></div></dl></li>
+<li class="entry" data-entry data-search="BLK BlackRock BUIDL 等代币化基金、数字资产投资产品 大型资管集团  NYSE 普通股" data-ticker="BLK" data-alias="" data-tier="" id="stock-BLK"><div class="identity"><strong class="ticker" translate="no">BLK（股票代码）</strong><span class="company">BlackRock（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://investors.securitize.io/news/news-details/2026/Tempo-expands-onchain-yield-offering-with-BlackRocks-BUIDL-fund/default.aspx" aria-label="查看 BLK 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>BUIDL（贝莱德代币化流动性基金份额） 等代币化基金、数字资产投资产品</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>大型资管集团</dd></div></dl></li>
+<li class="entry" data-entry data-search="BEN Franklin Templeton（富兰克林邓普顿） FOBXX 货币市场基金的 BENJI 链上份额及基金代币化 大型资管集团  NYSE 普通股" data-ticker="BEN" data-alias="" data-tier="" id="stock-BEN"><div class="identity"><strong class="ticker" translate="no">BEN（股票代码）</strong><span class="company">Franklin Templeton（富兰克林邓普顿）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.franklintempleton.com/corporate/about-us/corporate-name-change" aria-label="查看 BEN 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>FOBXX（富兰克林链上货币市场基金代码） 货币市场基金的 BENJI（富兰克林基金链上份额） 链上份额及基金代币化</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>大型资管集团</dd></div></dl></li>
+<li class="entry" data-entry data-search="WT WisdomTree WTGXX 代币化基金及数字资产投资产品 资管与数字金融混合  NYSE 普通股" data-ticker="WT" data-alias="" data-tier="" id="stock-WT"><div class="identity"><strong class="ticker" translate="no">WT（股票代码）</strong><span class="company">WisdomTree（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://ir.wisdomtree.com/news-events/press-releases/detail/807/wisdomtree-introduces-wisdomtree-onchain-as-tokenized" aria-label="查看 WT 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>WTGXX（智慧树代币化货币市场基金代码） 代币化基金及数字资产投资产品</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>资管与数字金融混合</dd></div></dl></li>
+<li class="entry" data-entry data-search="BR Broadridge Financial Solutions 机构证券代币化、回购和证券融资基础设施 金融市场基础设施  NYSE 普通股" data-ticker="BR" data-alias="" data-tier="" id="stock-BR"><div class="identity"><strong class="ticker" translate="no">BR（博德里奇股票代码）</strong><span class="company">Broadridge Financial Solutions（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.broadridge.com/press-release/2026/broadridges-distributed-ledger-repo-processes-7-point-5-trillion-in-september" aria-label="查看 BR 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>机构证券代币化、回购和证券融资基础设施</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>金融市场基础设施</dd></div></dl></li>
+<li class="entry" data-entry data-search="FIS Fidelity National Information Services 建设银行代币化存款网络 Project Keystone，另有与 Circle 的 USDC 支付合作 大型金融科技集团  NYSE 普通股" data-ticker="FIS" data-alias="" data-tier="" id="stock-FIS"><div class="identity"><strong class="ticker" translate="no">FIS（股票代码）</strong><span class="company">Fidelity National Information Services（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://www.fisglobal.com/about-us/media-room/press-release/2026/fis-and-leading-financial-institutions-to-build-their-own-digital-tokenized-money-network" aria-label="查看 FIS 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>建设银行代币化存款网络 Project Keystone（银行存款代币化网络项目），另有与 Circle（圆环网络集团） 的 USDC（美元稳定币） 支付合作</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>大型金融科技集团</dd></div></dl></li>
+<li class="entry" data-entry data-search="STT State Street 机构数字资产托管与代币化平台、与 Galaxy 合作的 SWEEP 链上基金 大型托管及资管集团  NYSE 普通股" data-ticker="STT" data-alias="" data-tier="" id="stock-STT"><div class="identity"><strong class="ticker" translate="no">STT（股票代码）</strong><span class="company">State Street（稳定币、代币化或金融基础设施相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://investors.statestreet.com/investor-news-events/press-releases/news-details/2026/State-Street-Investment-Management-and-Galaxy-Digital-Bring-Cash-Management-Onchain/default.aspx" aria-label="查看 STT 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>稳定币 / RWA（现实世界资产） 业务</dt><dd>机构数字资产托管与代币化平台、与 Galaxy（银河数字金融公司） 合作的 SWEEP（道富与银河数字的链上私募流动性基金） 链上基金</dd></div><div class="entry-field"><dt>加密业务敞口</dt><dd>大型托管及资管集团</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>这些公司虽然参与数字金融，但多数仍然依靠传统金融主营业务盈利。因此，不能因为 Visa（稳定币、代币化或金融基础设施相关公司）、Mastercard（稳定币、代币化或金融基础设施相关公司） 或 JPMorgan 使用了稳定币，就将它们视为和 CRCL（圆环网络集团股票代码） 一样的加密纯概念股票。</p>
+<p><strong>三个特别需要纠正的关系：</strong></p>
+<ol>
+<li><strong>PYUSD（贝宝支付生态使用的美元稳定币） 与 PayPal（稳定币、代币化或金融基础设施相关公司）</strong>：PayPal（稳定币、代币化或金融基础设施相关公司） 推动产品及分销，但其美元稳定币由 Paxos（数字资产信托与发行机构） 发行。</li>
+<li><strong>USDPT（西联支付生态使用的美元稳定币） 与 WU（股票代码）</strong>：Western Union（稳定币、代币化或金融基础设施相关公司） 推动跨境支付网络，但 USDPT（西联支付生态使用的美元稳定币） 的法律发行方是 Anchorage Digital Bank（数字资产银行与稳定币发行方）。</li>
+<li><strong>JPMD（摩根大通机构存款代币） 与 JPM（股票代码）</strong>：JPMD（摩根大通机构存款代币） 是存款代币（Deposit Token（银行存款代币）），与面向公众发行的普通美元稳定币，在法律权利、发行主体和适用客户上有区别。</li>
+</ol>
+<p>从业务纯度角度，<strong>CRCL（圆环网络集团股票代码）、FIGR（股票代码）、SECZ（股票代码）、OWLS（股票代码）、STEX（股票代码）</strong>更适合作为此赛道的核心研究池；<strong>SOFI（股票代码）、PYPL（股票代码）、WU（股票代码）、FISV（股票代码）、V（维萨股票代码）、MA（股票代码）、BNY（纽约梅隆银行股票代码）</strong>适合放入传统金融融合研究池。</p>
+</div></details></section></section>
+<section class="category compute" id="compute" data-category="compute" aria-labelledby="heading-compute"><div class="category-heading"><div><h3 id="heading-compute">矿企与算力</h3><p>算力、电力成本、矿业产量与 AI（人工智能） 收入</p></div><div class="category-actions"><span class="category-count" data-category-count>26 个</span><button class="category-toggle" type="button" aria-expanded="true" hidden>−</button></div></div><details class="category-context context"><summary>查看分类口径</summary><div class="prose"><p>矿业敞口来自自营挖矿、第三方矿业托管、算力销售或设备。部分仍有矿业业务的公司也运营或开发 AI/HPC（人工智能与高性能计算） 基础设施。</p>
+</div></details><section class="subgroup" data-subgroup aria-labelledby="group-4-1"><div class="subhead"><h4 id="group-4-1">加密挖矿与矿业运营</h4><span class="subcount" data-count>15 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="MARA MARA Holdings 大型 BTC 矿企，持有 BTC 储备，同时扩展能源与数字基础设施 挖矿成本、储备、债务、算力  Nasdaq 普通股" data-ticker="MARA" data-alias="" data-tier="core" id="stock-MARA"><div class="identity"><strong class="ticker" translate="no">MARA（股票代码）</strong><span class="company">MARA Holdings（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1507605/000150760526000022/mara-20260630.htm" aria-label="查看 MARA 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>大型 BTC（比特币） 矿企，持有 BTC（比特币） 储备，同时扩展能源与数字基础设施</dd></div><div class="entry-field"><dt>研究重点</dt><dd>挖矿成本、储备、债务、算力</dd></div></dl></li>
+<li class="entry" data-entry data-search="RIOT Riot Platforms BTC 挖矿及能源数据中心，拓展 HPC 自有算力、电力资产、AI 转型  Nasdaq 普通股" data-ticker="RIOT" data-alias="" data-tier="core" id="stock-RIOT"><div class="identity"><strong class="ticker" translate="no">RIOT（股票代码）</strong><span class="company">Riot Platforms（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1167419/000110465926122417/riot-20260930x10q.htm" aria-label="查看 RIOT 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>BTC（比特币） 挖矿及能源数据中心，拓展 HPC（高性能计算）</dd></div><div class="entry-field"><dt>研究重点</dt><dd>自有算力、电力资产、AI（人工智能） 转型</dd></div></dl></li>
+<li class="entry" data-entry data-search="CLSK CleanSpark 工业化 BTC 挖矿，逐步探索 AI/HPC 单位挖矿成本、算力增长、资本开支  Nasdaq 普通股" data-ticker="CLSK" data-alias="" data-tier="core" id="stock-CLSK"><div class="identity"><strong class="ticker" translate="no">CLSK（股票代码）</strong><span class="company">CleanSpark（比特币自营矿企）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://investors.cleanspark.com/news/news-details/2026/CleanSpark-Releases-September-2026-Operational-Update/default.aspx" aria-label="查看 CLSK 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>工业化 BTC（比特币） 挖矿，逐步探索 AI/HPC（人工智能与高性能计算）</dd></div><div class="entry-field"><dt>研究重点</dt><dd>单位挖矿成本、算力增长、资本开支</dd></div></dl></li>
+<li class="entry" data-entry data-search="BTDR Bitdeer Technologies BTC 挖矿、矿机研发、托管和数据中心 自有矿机、算力、资本开支  Nasdaq 普通股" data-ticker="BTDR" data-alias="" data-tier="core" id="stock-BTDR"><div class="identity"><strong class="ticker" translate="no">BTDR（股票代码）</strong><span class="company">Bitdeer Technologies（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag core">核心研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1899123/000121390026110703/ea030767901ex99-1.htm" aria-label="查看 BTDR 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>BTC（比特币） 挖矿、矿机研发、托管和数据中心</dd></div><div class="entry-field"><dt>研究重点</dt><dd>自有矿机、算力、资本开支</dd></div></dl></li>
+<li class="entry" data-entry data-search="HIVE HIVE Digital Technologies BTC 挖矿及 GPU 云计算业务 挖矿收入和 AI 算力收入结构  Nasdaq 普通股" data-ticker="HIVE" data-alias="" data-tier="" id="stock-HIVE"><div class="identity"><strong class="ticker" translate="no">HIVE（股票代码）</strong><span class="company">HIVE Digital Technologies（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1720424/000106299326004970/exhibit99-1.htm" aria-label="查看 HIVE 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>BTC（比特币） 挖矿及 GPU（图形处理器） 云计算业务</dd></div><div class="entry-field"><dt>研究重点</dt><dd>挖矿收入和 AI（人工智能） 算力收入结构</dd></div></dl></li>
+<li class="entry" data-entry data-search="ABTC American Bitcoin Corp. BTC 挖矿及 BTC 财库战略，与 Hut 8 存在业务联系 持币、矿场效率、关联交易  Nasdaq 普通股" data-ticker="ABTC" data-alias="" data-tier="" id="stock-ABTC"><div class="identity"><strong class="ticker" translate="no">ABTC（股票代码）</strong><span class="company">American Bitcoin Corp.（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1755953/000119312526447413/abtc-20260930.htm" aria-label="查看 ABTC 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>BTC（比特币） 挖矿及 BTC（比特币） 财库战略，与 Hut 8（矿业、设备或算力相关公司） 存在业务联系</dd></div><div class="entry-field"><dt>研究重点</dt><dd>持币、矿场效率、关联交易</dd></div></dl></li>
+<li class="entry" data-entry data-search="FUFU BitFuFu 云挖矿、算力服务及自营挖矿 云算力需求、合同履约、自营利润  Nasdaq 普通股" data-ticker="FUFU" data-alias="" data-tier="" id="stock-FUFU"><div class="identity"><strong class="ticker" translate="no">FUFU（股票代码）</strong><span class="company">BitFuFu（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1921158/000121390026116602/ea031104401ex99-1.htm" aria-label="查看 FUFU 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>云挖矿、算力服务及自营挖矿</dd></div><div class="entry-field"><dt>研究重点</dt><dd>云算力需求、合同履约、自营利润</dd></div></dl></li>
+<li class="entry" data-entry data-search="CANG Cango 从原有汽车金融相关业务转向 BTC 挖矿 矿机运营效率、融资与转型  NYSE 普通股" data-ticker="CANG" data-alias="" data-tier="" id="stock-CANG"><div class="identity"><strong class="ticker" translate="no">CANG（股票代码）</strong><span class="company">Cango（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">NYSE（纽约证券交易所）</span><a class="tag audit-link" href="https://ir-image.cangoonline.com/ir-documents/4763635-1-1_Proof.html" aria-label="查看 CANG 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>从原有汽车金融相关业务转向 BTC（比特币） 挖矿</dd></div><div class="entry-field"><dt>研究重点</dt><dd>矿机运营效率、融资与转型</dd></div></dl></li>
+<li class="entry" data-entry data-search="ARBK Argo Blockchain BTC 挖矿及相关设施，部分美国托管合同结束，并探索 AI 基础设施。 资产负债、融资能力、经营持续性  Nasdaq ADS" data-ticker="ARBK" data-alias="" data-tier="" id="stock-ARBK"><div class="identity"><strong class="ticker" translate="no">ARBK（股票代码）</strong><span class="company">Argo Blockchain（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><span class="tag" translate="no">ADS（美国存托股）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1841675/000110465926105069/tm2624343d1_6k.htm" aria-label="查看 ARBK 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>BTC（比特币） 挖矿及相关设施，部分美国托管合同结束，并探索 AI（人工智能） 基础设施。</dd></div><div class="entry-field"><dt>研究重点</dt><dd>资产负债、融资能力、经营持续性</dd></div></dl></li>
+<li class="entry" data-entry data-search="NIPG NIP Group 电竞及游戏与 BTC 挖矿并行，第三批矿机交易仍待交割。 新业务贡献与资本开支  Nasdaq ADS" data-ticker="NIPG" data-alias="" data-tier="" id="stock-NIPG"><div class="identity"><strong class="ticker" translate="no">NIPG（股票代码）</strong><span class="company">NIP Group（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><span class="tag" translate="no">ADS（美国存托股）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1966233/000149315226047700/ex99-1.htm" aria-label="查看 NIPG 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>电竞及游戏与 BTC（比特币） 挖矿并行，第三批矿机交易仍待交割。</dd></div><div class="entry-field"><dt>研究重点</dt><dd>新业务贡献与资本开支</dd></div></dl></li>
+<li class="entry" data-entry data-search="BTCT BTC Digital BTC 挖矿、矿机销售及托管，同时持有多种数字资产。 设备投入、盈利能力  Nasdaq 普通股" data-ticker="BTCT" data-alias="" data-tier="" id="stock-BTCT"><div class="identity"><strong class="ticker" translate="no">BTCT（股票代码）</strong><span class="company">BTC Digital（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1796514/000121390026097689/ea030471501ex99-1.htm" aria-label="查看 BTCT 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>BTC（比特币） 挖矿、矿机销售及托管，同时持有多种数字资产。</dd></div><div class="entry-field"><dt>研究重点</dt><dd>设备投入、盈利能力</dd></div></dl></li>
+<li class="entry" data-entry data-search="ABTS Abits Group 数字资产挖矿 挖矿运营、持续上市能力  Nasdaq 普通股" data-ticker="ABTS" data-alias="" data-tier="" id="stock-ABTS"><div class="identity"><strong class="ticker" translate="no">ABTS（股票代码）</strong><span class="company">Abits Group（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.nasdaq.com/press-release/abits-group-inc-reports-unaudited-financial-results-first-half-2026-2026-10-15" aria-label="查看 ABTS 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>数字资产挖矿</dd></div><div class="entry-field"><dt>研究重点</dt><dd>挖矿运营、持续上市能力</dd></div></dl></li>
+<li class="entry" data-entry data-search="BGDE Big Digital Energy 数字资产挖矿、矿业托管及能源管理，并开发 AI/HPC 基础设施。 业务规模、项目进展  Nasdaq 普通股" data-ticker="BGDE" data-alias="" data-tier="" id="stock-BGDE"><div class="identity"><strong class="ticker" translate="no">BGDE（股票代码）</strong><span class="company">Big Digital Energy（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1218683/000121390026116537/ea031094201_ex99-1.htm" aria-label="查看 BGDE 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>数字资产挖矿、矿业托管及能源管理，并开发 AI/HPC（人工智能与高性能计算） 基础设施。</dd></div><div class="entry-field"><dt>研究重点</dt><dd>业务规模、项目进展</dd></div></dl></li>
+<li class="entry" data-entry data-search="PWCM PowerCompute BTC 挖矿及 BTC 财库，同时探索 GPU 算力业务。 持续经营、融资风险  Nasdaq 普通股" data-ticker="PWCM" data-alias="" data-tier="" id="stock-PWCM"><div class="identity"><strong class="ticker" translate="no">PWCM（股票代码）</strong><span class="company">PowerCompute（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.power-compute.com/investors/news-events/press-releases/detail/196/powercompute-reports-second-quarter-2026-financial-results" aria-label="查看 PWCM 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>BTC（比特币） 挖矿及 BTC（比特币） 财库，同时探索 GPU（图形处理器） 算力业务。</dd></div><div class="entry-field"><dt>研究重点</dt><dd>持续经营、融资风险</dd></div></dl></li>
+<li class="entry" data-entry data-search="BVC BitVentures 早期 BTC 挖矿与数字资产业务。 业务纯度、收入质量  Nasdaq 普通股" data-ticker="BVC" data-alias="" data-tier="" id="stock-BVC"><div class="identity"><strong class="ticker" translate="no">BVC（股票代码）</strong><span class="company">BitVentures（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1785680/000143774926032751/sant20260630_20f.htm" aria-label="查看 BVC 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>早期 BTC（比特币） 挖矿与数字资产业务。</dd></div><div class="entry-field"><dt>研究重点</dt><dd>业务纯度、收入质量</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>这些公司覆盖从大型工业化矿企到微型矿业上市公司。后半部分公司的流动性、经营规模和持续上市风险可能非常不同，不应与 MARA（股票代码）、RIOT（股票代码）、CLSK（股票代码） 采用相同的估值假设。</p>
+</div></details></section>
+<section class="subgroup" data-subgroup aria-labelledby="group-4-2"><div class="subhead"><h4 id="group-4-2">兼有矿业敞口与 AI/HPC（人工智能与高性能计算） 业务</h4><span class="subcount" data-count>7 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="HUT Hut 8 能源、数据中心及通过 American Bitcoin 合并的挖矿与 BTC 储备。 向 AI/HPC 数据中心与能源运营扩展  Nasdaq 普通股" data-ticker="HUT" data-alias="" data-tier="extended" id="stock-HUT"><div class="identity"><strong class="ticker" translate="no">HUT（股票代码）</strong><span class="company">Hut 8（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1964789/000110465926122347/tm2628741d1_ex99-1.htm" aria-label="查看 HUT 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>当前定位</dt><dd>能源、数据中心及通过 American Bitcoin（比特币） 合并的挖矿与 BTC（比特币） 储备。</dd></div><div class="entry-field"><dt>转型特征</dt><dd>向 AI/HPC（人工智能与高性能计算） 数据中心与能源运营扩展</dd></div></dl></li>
+<li class="entry" data-entry data-search="CIFR Cipher Digital 运营 Odessa BTC 矿场，同时经营 HPC 数据中心租赁。 转向长期 AI/HPC 基础设施合同  Nasdaq 普通股" data-ticker="CIFR" data-alias="" data-tier="extended" id="stock-CIFR"><div class="identity"><strong class="ticker" translate="no">CIFR（股票代码）</strong><span class="company">Cipher Digital（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1819989/000181998926000050/cifr-20260930.htm" aria-label="查看 CIFR 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>当前定位</dt><dd>运营 Odessa（得州敖德萨矿场） BTC（比特币） 矿场，同时经营 HPC（高性能计算） 数据中心租赁。</dd></div><div class="entry-field"><dt>转型特征</dt><dd>转向长期 AI/HPC（人工智能与高性能计算） 基础设施合同</dd></div></dl></li>
+<li class="entry" data-entry data-search="APLD Applied Digital HPC 数据中心及持续运营的加密矿业托管。 加密矿业基础设施出身，现更偏 AI  Nasdaq 普通股" data-ticker="APLD" data-alias="" data-tier="extended" id="stock-APLD"><div class="identity"><strong class="ticker" translate="no">APLD（股票代码）</strong><span class="company">Applied Digital（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1144879/000114487926000059/apld-20260831.htm" aria-label="查看 APLD 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>当前定位</dt><dd>HPC（高性能计算） 数据中心及持续运营的加密矿业托管。</dd></div><div class="entry-field"><dt>转型特征</dt><dd>加密矿业基础设施出身，现更偏 AI（人工智能）</dd></div></dl></li>
+<li class="entry" data-entry data-search="SLNH Soluna Holdings 可再生能源驱动的数据中心及计算业务 BTC 挖矿与 AI 计算并存  Nasdaq 普通股" data-ticker="SLNH" data-alias="" data-tier="" id="stock-SLNH"><div class="identity"><strong class="ticker" translate="no">SLNH（股票代码）</strong><span class="company">Soluna Holdings（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/64463/000162828026056702/slnh-20260630.htm" aria-label="查看 SLNH 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>当前定位</dt><dd>可再生能源驱动的数据中心及计算业务</dd></div><div class="entry-field"><dt>转型特征</dt><dd>BTC（比特币） 挖矿与 AI（人工智能） 计算并存</dd></div></dl></li>
+<li class="entry" data-entry data-search="ZSQR Z Squared DOGE、LTC 等 Scrypt 币挖矿，同时开发 AI 基础设施。 仍需验证规模和转型成效  Nasdaq 普通股" data-ticker="ZSQR" data-alias="" data-tier="" id="stock-ZSQR"><div class="identity"><strong class="ticker" translate="no">ZSQR（股票代码）</strong><span class="company">Z Squared（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1759186/000118518526003508/zsqr10q063026.htm" aria-label="查看 ZSQR 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>当前定位</dt><dd>DOGE（狗狗币）、LTC（莱特币） 等 Scrypt（工作量证明所用哈希算法） 币挖矿，同时开发 AI（人工智能） 基础设施。</dd></div><div class="entry-field"><dt>转型特征</dt><dd>仍需验证规模和转型成效</dd></div></dl></li>
+<li class="entry" data-entry data-search="AIBZ Bitzero Holdings BTC 挖矿贡献经营现金流，同时建设并招商 HPC/AI 数据中心。 挖矿基础设施与其他算力结合  Nasdaq 普通股" data-ticker="AIBZ" data-alias="" data-tier="" id="stock-AIBZ"><div class="identity"><strong class="ticker" translate="no">AIBZ（股票代码）</strong><span class="company">Bitzero Holdings（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/2100457/000106299326004758/exhibit99-1.htm" aria-label="查看 AIBZ 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>当前定位</dt><dd>BTC（比特币） 挖矿贡献经营现金流，同时建设并招商 HPC/AI（高性能计算与人工智能） 数据中心。</dd></div><div class="entry-field"><dt>转型特征</dt><dd>挖矿基础设施与其他算力结合</dd></div></dl></li>
+<li class="entry" data-entry data-search="SAIH SAIHEAT 液冷、余热回收与 BTC 矿业；拟并购 AI 推理公司 Canopy Wave。 热能利用及算力基础设施模式  Nasdaq 普通股" data-ticker="SAIH" data-alias="" data-tier="" id="stock-SAIH"><div class="identity"><strong class="ticker" translate="no">SAIH（股票代码）</strong><span class="company">SAIHEAT（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1847075/000121390026050380/ea0286826-20f_saiheat.htm" aria-label="查看 SAIH 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>当前定位</dt><dd>液冷、余热回收与 BTC（比特币） 矿业；拟并购 AI（人工智能） 推理公司 Canopy Wave（拟并购的人工智能推理公司）。</dd></div><div class="entry-field"><dt>转型特征</dt><dd>热能利用及算力基础设施模式</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>这一组仍有可核验的挖矿、矿业托管或相关资产敞口。研究时分别看矿业收入和 AI/HPC（人工智能与高性能计算） 的实际租赁、服务收入，区分已投运、已签约与规划容量。</p>
+</div></details></section>
+<section class="subgroup" data-subgroup aria-labelledby="group-4-3"><div class="subhead"><h4 id="group-4-3">矿机、ASIC（专用集成电路） 芯片和算力硬件</h4><span class="subcount" data-count>4 个</span></div><ul class="entries" role="list"><li class="entry" data-entry data-search="CAN Canaan（嘉楠科技） Avalon BTC ASIC 矿机、自营挖矿 矿机制造商代表  Nasdaq ADS" data-ticker="CAN" data-alias="" data-tier="extended" id="stock-CAN"><div class="identity"><strong class="ticker" translate="no">CAN（嘉楠科技股票代码）</strong><span class="company">Canaan（嘉楠科技）</span><div class="tags"><span class="tag extended">扩展研究</span><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><span class="tag" translate="no">ADS（美国存托股）</span><a class="tag audit-link" href="#audit-risk">上市合规提示</a><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1780652/000110465926116011/tm2627656d1_ex99-1.htm" aria-label="查看 CAN 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>Avalon（嘉楠科技矿机系列） BTC（比特币） ASIC（专用集成电路） 矿机、自营挖矿</dd></div><div class="entry-field"><dt>特点</dt><dd>矿机制造商代表</dd></div></dl></li>
+<li class="entry" data-entry data-search="BGIN Bgin Blockchain ICERIVER 等加密挖矿设备、ASIC 及相关业务 矿机研发及设备销售  Nasdaq 普通股" data-ticker="BGIN" data-alias="" data-tier="" id="stock-BGIN"><div class="identity"><strong class="ticker" translate="no">BGIN（股票代码）</strong><span class="company">Bgin Blockchain（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1945565/000121390026103511/ea030571701ex99-1.htm" aria-label="查看 BGIN 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>ICERIVER（矿机设备品牌） 等加密挖矿设备、ASIC（专用集成电路） 及相关业务</dd></div><div class="entry-field"><dt>特点</dt><dd>矿机研发及设备销售</dd></div></dl></li>
+<li class="entry" data-entry data-search="ICG Intchains Group 山寨币 ASIC 矿机、矿业基础设施，以及 ETH 财库和质押。 面向特定 PoW 算法及加密生态  Nasdaq ADS" data-ticker="ICG" data-alias="" data-tier="" id="stock-ICG"><div class="identity"><strong class="ticker" translate="no">ICG（股票代码）</strong><span class="company">Intchains Group（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><span class="tag" translate="no">ADS（美国存托股）</span><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1895597/000149315226039480/ex99-1.htm" aria-label="查看 ICG 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>山寨币 ASIC（专用集成电路） 矿机、矿业基础设施，以及 ETH（以太坊原生代币） 财库和质押。</dd></div><div class="entry-field"><dt>特点</dt><dd>面向特定 PoW（工作量证明） 算法及加密生态</dd></div></dl></li>
+<li class="entry" data-entry data-search="AGMH AGM Group Holdings 数字资产矿机及技术产品 规模较小，需核实实际交付和盈利  Nasdaq 普通股" data-ticker="AGMH" data-alias="" data-tier="" id="stock-AGMH"><div class="identity"><strong class="ticker" translate="no">AGMH（股票代码）</strong><span class="company">AGM Group Holdings（矿业、设备或算力相关公司）</span><div class="tags"><span class="tag" translate="no">Nasdaq（纳斯达克交易所）</span><a class="tag audit-link" href="#audit-risk">上市合规提示</a><a class="tag audit-link" href="https://www.sec.gov/Archives/edgar/data/1705402/000118518526003323/agmh20f123125.htm" aria-label="查看 AGMH 的审核来源">披露</a></div></div><dl class="entry-fields"><div class="entry-field"><dt>核心业务</dt><dd>数字资产矿机及技术产品</dd></div><div class="entry-field"><dt>特点</dt><dd>规模较小，需核实实际交付和盈利</dd></div></dl></li></ul><details class="context"><summary>查看分类补充说明</summary><div class="prose"><p>另外，<strong>BTDR（股票代码）</strong> 同时拥有矿机设计、设备、矿场和算力服务业务，虽然已列于 4.1，但应当与 CAN（嘉楠科技股票代码）、BGIN（股票代码） 一起做设备技术竞争力对比。</p>
+<p>这里要区分两种竞争力：矿企主要比拼低价能源和运营效率，矿机企业则要比拼芯片效率、制造成本、机器迭代速度及客户需求。</p>
+</div></details></section></section>
+</section>
+<section class="reference" id="audit"><h2>最终审核｜2026-11-09</h2><div class="prose"><p>本轮 <strong>127 → 113</strong>。移出 <strong>14</strong> 个，重分类 <strong>1</strong> 个。</p>
+<p><strong>挂牌审核</strong>　逐个匹配 Nasdaq Trader（纳斯达克挂牌数据平台） 的两份 2026-11-09 03:02 目录快照，核对证券名称、交易所、证券类型与 ETF（交易所交易基金） 标记。127 个代码均能匹配到美国交易所的普通股或 ADS（美国存托股）。 <a href="https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqlisted.txt">Nasdaq（纳斯达克交易所） 挂牌目录</a>、<a href="https://www.nasdaqtrader.com/dynamic/SymDir/otherlisted.txt">其他交易所挂牌目录</a>、<a href="https://www.nyse.com/regulation/delistings">NYSE（纽约证券交易所） 退市公告</a>、<a href="https://www.nasdaq.com/market-activity/stocks/issuers-pending-suspension-delisting">Nasdaq（纳斯达克交易所） 停牌与退市公告</a></p>
+<p><strong>业务审核</strong>　优先用 SEC（美国证券交易委员会） 申报、交易所及公司投资者关系披露。已退出、停止相关运营，或公司已实际收缩原业务并明确将运营重心转出加密的条目移出。仍将加密业务或资产作为重要组成的混合型公司，以及开展具体产品的传统金融机构，可以保留。同属加密产业链的业务变化以重分类处理。</p>
+<p><strong>证据口径</strong>　表中的日期对应相邻证据的披露日期或所标注报告期。保留结论基于截至审核日可查披露，各公司报告周期不同。交易所快照描述挂牌身份，盘中交易、券商覆盖与后续状态会变化。</p>
+<h3>本轮剔除</h3>
+<div class="table-scroll" role="region" aria-label="本轮剔除表" tabindex="0"><table>
+<thead>
+<tr>
+<th>代码</th>
+<th>原分类</th>
+<th>剔除依据</th>
+<th>证据日期 / 来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>KULR（股票代码）</strong></td>
+<td>BTC（比特币） 比特币财库</td>
+<td>截至 9 月 11 日的交易出售全部剩余约 764 枚 BTC（比特币）；该 8-K（美国重大事项报告） 确认披露时已无 BTC（比特币） 持仓。</td>
+<td>2026-09-11 / <a href="https://www.sec.gov/Archives/edgar/data/1662684/000110465926107130/tm2625303d1_8k.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>SQNS（股票代码）</strong></td>
+<td>BTC（比特币） 比特币财库</td>
+<td>售出最后 314 枚 BTC（比特币），完成退出 BTC（比特币） 财库，重心回到半导体业务。</td>
+<td>2026-09-24 / <a href="https://www.sec.gov/Archives/edgar/data/1383395/000138339526000110/septemberbitcointreasuryex.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>SKYA（股票代码）</strong></td>
+<td>SOL（索拉纳原生代币） Solana（索拉纳区块链） 财库</td>
+<td>三季报披露 10 月出售 SOL（索拉纳原生代币） 持仓，业务重点转为 AI（人工智能） 智能体金融平台。</td>
+<td>2026-11-06 / <a href="https://www.sec.gov/Archives/edgar/data/1737995/000149315226050470/form10-q.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>AMBR（股票代码）</strong></td>
+<td>加密原生及重要业务参与者</td>
+<td>管理层宣布将战略重心转向专用 AI（人工智能） 代理。二季度数字资产平台收入约 660 万美元、总收入 1390 万美元，且 10 月仍运营数字财富服务，属于战略转型而非清空加密业务。</td>
+<td>2026-09-03 / <a href="https://ir.ambr.io/news-releases/news-release-details/amber-international-holding-limited-accelerates-specialized-ai">主要披露</a>、<a href="https://www.ambr.io/insights/important-notice-introducing-whale-fin-wallet-ambre-your-new-digital-wealth-service">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>NCTY（股票代码）</strong></td>
+<td>以 BTC（比特币） 挖矿为主要业务的公司</td>
+<td>二季度加密挖矿收入为零，8 月已出售 1,472 台矿机，经营重点转向 AI（人工智能） 游戏平台 the9bit（第九城市运营的游戏平台）；仍持有 BTC（比特币） 和 9BIT（第九城市合作的游戏生态代币）。</td>
+<td>2026-08-24 / <a href="https://www.sec.gov/Archives/edgar/data/1296774/000110465926099964/tm2623121d2_ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>SOS（股票代码）</strong></td>
+<td>以 BTC（比特币） 挖矿为主要业务的公司</td>
+<td>半年经营说明披露自营加密挖矿暂停，商品贸易占营收 97.6%，仅剩约 95 万美元托管收入。</td>
+<td>2026-10-07 / <a href="https://www.sec.gov/Archives/edgar/data/1346610/000121390026107574/ea030605701ex99-2.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>OLB（股票代码）</strong></td>
+<td>以 BTC（比特币） 挖矿为主要业务的公司</td>
+<td>主要收入来自商户支付，二季度挖矿仅约 7.3 万美元；母公司拟分拆 DMINT（拟分拆的矿业子公司），截至所核验披露分拆仍有条件。</td>
+<td>2026-08-14 / <a href="https://www.sec.gov/Archives/edgar/data/1314196/000118518526003553/olbgroup10q063026.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>IREN（股票代码）</strong></td>
+<td>正在转向 AI/HPC（人工智能与高性能计算） 的矿业和算力公司</td>
+<td>截至 9 月末季度 AI（人工智能） 云收入 2 亿美元，占总营收约 88%；BTC（比特币） 挖矿剩约 2,800 万美元，年报预计 2026 年底基本完成向 AI（人工智能） 转移。</td>
+<td>2026-11-05 / <a href="https://www.sec.gov/Archives/edgar/data/1878848/000187884826000065/irenreportsq1-fy27result.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>WULF（股票代码）</strong></td>
+<td>正在转向 AI/HPC（人工智能与高性能计算） 的矿业和算力公司</td>
+<td>公司在三季报明确把 HPC（高性能计算） 租赁列为运营重心，并缩减、改用部分矿场。HPC（高性能计算） 租赁占季度营收约 83%，仍有约 1,324 万美元的挖矿收入。</td>
+<td>2026-11-06 / <a href="https://www.sec.gov/Archives/edgar/data/1083301/000162828026071671/wulf-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>CORZ（股票代码）</strong></td>
+<td>正在转向 AI/HPC（人工智能与高性能计算） 的矿业和算力公司</td>
+<td>三季度高密度数据中心托管约占营收 92%；季报预计矿业托管于 2026 年底结束，并明确正在收缩自营挖矿。</td>
+<td>2026-11-05 / <a href="https://www.sec.gov/Archives/edgar/data/1839341/000183934126000030/core-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>IOND（股票代码）</strong></td>
+<td>正在转向 AI/HPC（人工智能与高性能计算） 的矿业和算力公司</td>
+<td>连续两个季度约九成营收来自数字基础设施租赁；Q3（第三季度） 仍有挖矿收入及 BTC（比特币） 储备，期后已售约四分之一持仓。</td>
+<td>2026-11-04 / <a href="https://www.sec.gov/Archives/edgar/data/2007691/000200769126000020/ionicdigitalq32026ex991.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>KEEL（股票代码）</strong></td>
+<td>正在转向 AI/HPC（人工智能与高性能计算） 的矿业和算力公司</td>
+<td>已停止美国挖矿并于第三季度售罄 BTC（比特币） 财库；魁北克矿业仍有过渡收入，战略重心已转向 HPC/AI（高性能计算与人工智能）。</td>
+<td>2026-11-05 / <a href="https://www.sec.gov/Archives/edgar/data/1812477/000181247726000040/keel-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>DGXX（股票代码）</strong></td>
+<td>正在转向 AI/HPC（人工智能与高性能计算） 的矿业和算力公司</td>
+<td>季报明确重心由 BTC（比特币） 挖矿转向 AI（人工智能），二季度自营仅约 3 BTC（比特币），挖矿与质押收入约 16 万美元。仍有存量托管和数字资产，部分原托管场地已改建 AI（人工智能） 基础设施。</td>
+<td>2026-08-14 / <a href="https://www.sec.gov/Archives/edgar/data/1854368/000121390026089940/ea0301731-10q_digipower.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>EBON（股票代码）</strong></td>
+<td>矿机、ASIC（专用集成电路） 芯片和算力硬件</td>
+<td>20-F（外国发行人年度报告） 显示 2024 和 2025 年区块链产品销售收入均为零，公司已把业务重心转向金融科技与可再生能源。</td>
+<td>2026-04-24 / <a href="https://www.sec.gov/Archives/edgar/data/1799290/000121390026047509/ea0286394-20f_ebang.htm">主要披露</a></td>
+</tr>
+</tbody></table></div>
+<h3>分类更正</h3>
+<div class="table-scroll" role="region" aria-label="分类更正表" tabindex="0"><table>
+<thead>
+<tr>
+<th>代码</th>
+<th>原分类</th>
+<th>现分类</th>
+<th>依据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>FRMM（股票代码）</strong></td>
+<td>ETH（以太坊原生代币） 以太坊财库</td>
+<td>加密原生稳定币、RWA（现实世界资产） 和基础设施公司</td>
+<td>持续经营包括现实资产结构化与链上代币化，二季报披露已发行航空发动机收益权代币，期末仅收款 1 万美元；10 月另推进 AI（人工智能） 算力合资项目。由 ETH（以太坊原生代币） 财库转入 RWA（现实世界资产），标为早期混合型。 <a href="https://www.sec.gov/Archives/edgar/data/1690080/000121390026090100/ea0301343-10q_forum.htm">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1690080/000121390026112303/ea030957801ex99-1.htm">补充披露</a></td>
+</tr>
+</tbody></table></div>
+<h3>其他更正</h3>
+<p><strong>代码与证券类型</strong>　DDC（股票代码） 是日日煮（DayDayCook（日日煮消费食品品牌）），ZOOZ（股票代码） 是普通股，ZOOZW（同一发行人的认股权证） 是权证，SORA（股票代码） 是 AsiaStrategy（原 Top Win International（亚洲策略公司原名））。BVC（股票代码） 现挂牌的是普通股。Bakkt 10 月的 Form 25（证券退市申报表） 涉及权证，BKKT（股票代码） 普通股仍挂牌。 <a href="https://www.sec.gov/Archives/edgar/data/1808110/000121390026116463/ea0310538-fwp_ddc.htm">DDC（股票代码） 披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1992818/000149315226040046/ex99-1.htm">ZOOZ（股票代码） 披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/2033515/000121390026107204/ea030768301ex99-1.htm">SORA（股票代码） 披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1785680/000143774926032751/sant20260630_20f.htm">BVC（股票代码） 披露</a>、<a href="https://investors.bakkt.com/node/12076/html">BKKT（股票代码） 披露</a></p>
+<p><strong>公司与挂牌名称</strong>　BNC（股票代码） 更新为 BNB Standard Corporation（原 CEA Industries），SLMT（股票代码） 更新为 Solmate Infrastructure（原 Brera Holdings），BEN（股票代码） 更新为 Franklin Templeton（富兰克林邓普顿），CBOE（芝加哥期权交易所集团股票代码） 挂牌地为 Cboe BZX（芝加哥期权交易所旗下股票市场）。 <a href="https://www.sec.gov/Archives/edgar/data/1482541/000148254126000058/bnc-2026x10x12xpr_website.htm">BNC（股票代码） 披露</a>、<a href="https://solmate.com/dashboard">SLMT（股票代码） 披露</a>、<a href="https://www.franklintempleton.com/corporate/about-us/corporate-name-change">BEN（股票代码） 披露</a>、<a href="https://www.cboe.com/tradable-products/cryptocurrency-derivatives/">CBOE（芝加哥期权交易所集团股票代码） 披露</a></p>
+<p><strong>业务口径</strong>　ZSQR（股票代码） 挖 DOGE（狗狗币）、LTC（莱特币） 等 Scrypt（工作量证明所用哈希算法） 币。USBC（股票代码） 是存款代币化技术提供方，Vast Bank（美国合作存款银行） 是存款主体。FISV（股票代码） 的数字资产平台已有 Roughrider Coin（北达科他州银行主导的稳定币项目） 案例，FIUSD（费哲数字资产平台拟推出的美元稳定币） 的公开上线待确认。 <a href="https://www.sec.gov/Archives/edgar/data/1759186/000118518526003508/zsqr10q063026.htm">ZSQR（股票代码） 披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1074828/000107482826000107/usbc-20260930.htm">USBC（股票代码） 披露</a>、<a href="https://investors.fiserv.com/news-releases/news-release-details/fiserv-digital-asset-platform-goes-live-financial-institution">FISV（股票代码） 披露</a></p>
+<p><strong>转型边界</strong>　CIFR（股票代码） 最新季度挖矿收入仍高于 HPC（高性能计算） 租赁，APLD（股票代码） 继续把矿业托管列为核心业务，SAIH（股票代码） 的 AI（人工智能） 并购仍待交割。按现有披露保留为有加密敞口的混合型公司。 <a href="https://www.sec.gov/Archives/edgar/data/1819989/000181998926000050/cifr-20260930.htm">CIFR（股票代码） 披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1144879/000114487926000059/apld-20260831.htm">APLD（股票代码） 披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1847075/000121390026104816/ea0306713-6k_saiheat.htm">SAIH（股票代码） 披露</a></p>
+<h3 id="audit-risk">持续上市风险</h3>
+<p>Nasdaq（纳斯达克交易所） 目录中 <strong>UPXI（股票代码）、DEFT（股票代码）、STEX（股票代码）、FLD（股票代码）、OLB（股票代码）、CAN（嘉楠科技股票代码）、AGMH（股票代码）</strong> 标记为 D，表示未满足一项或多项持续上市标准。其中本次留在主表的有 <strong>UPXI（股票代码）、DEFT（股票代码）、STEX（股票代码）、FLD（股票代码）、CAN（嘉楠科技股票代码）、AGMH（股票代码）</strong>。 <a href="https://www.nasdaqtrader.com/Trader.aspx?id=SymbolDirDefs">Nasdaq（纳斯达克交易所） 字段定义</a></p>
+<ul>
+<li><strong>UPXI（股票代码）</strong>　最低买价初始整改期至 2027-01-26。 <a href="https://ir.upexi.com/sec-filings/all-sec-filings/content/0001477932-26-004640/upxi_8k.htm">UPXI（股票代码） 合规披露</a></li>
+<li><strong>DEFT（股票代码）</strong>　Nasdaq（纳斯达克交易所） 最低买价合规补救期限为 2027-03-01。 <a href="https://www.sec.gov/Archives/edgar/data/1888274/000127956926000850/ex991.htm">DEFT（股票代码） 合规披露</a></li>
+<li><strong>STEX（股票代码）</strong>　Nasdaq（纳斯达克交易所） 最低买价合规补救期限为 2027-04-05。 <a href="https://www.sec.gov/Archives/edgar/data/1530766/000149315226046604/form8-k.htm">STEX（股票代码） 合规披露</a></li>
+<li><strong>FLD（股票代码）</strong>　Nasdaq（纳斯达克交易所） 最低买价初始合规期至 2027-01-11。 <a href="https://www.sec.gov/Archives/edgar/data/1889123/000119312526307957/fld-20260714.htm">FLD（股票代码） 合规披露</a></li>
+<li><strong>CAN（嘉楠科技股票代码）</strong>　Nasdaq（纳斯达克交易所） 财务状态 D；最低买价整改期至 2027-01-11。 <a href="https://www.sec.gov/Archives/edgar/data/1780652/000110465926083751/tm2620565d1_ex99-1.htm">CAN（嘉楠科技股票代码） 合规披露</a></li>
+<li><strong>AGMH（股票代码）</strong>　最低买价初始整改期至 2027-04-07。 <a href="https://www.sec.gov/Archives/edgar/data/1705402/000118518526004716/agmh6k101226.htm">AGMH（股票代码） 合规披露</a></li>
+</ul>
+<h3>逐项证据</h3><details class="context audit-ledger"><summary>加密财库 · 40 个</summary><div class="table-scroll" role="region" aria-label="加密财库审核证据" tabindex="0"><table>
+<thead>
+<tr>
+<th>代码</th>
+<th>挂牌 / 证券</th>
+<th>业务审核依据</th>
+<th>证据日期 / 来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>MSTR（战略公司股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>11 月 2 日提交的 8-K（美国重大事项报告） 披露截至 11 月 1 日持有约 849,327 枚 BTC（比特币），并继续通过普通股融资增持。</td>
+<td>2026-11-02 / <a href="https://www.sec.gov/Archives/edgar/data/1050446/000119312526442707/mstr-20261102.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>XXI（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>二季报列示 BTC（比特币） 及相关财库活动。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/2070457/000121390026087471/ea0299640-10q_twentyone.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>ASST（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季度收购 8,136 枚 BTC（比特币），财库战略持续。</td>
+<td>2026-11-06 / <a href="https://www.sec.gov/Archives/edgar/data/1920406/000162828026071331/striveincq32026earningsrel.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>SVIA（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>10 月招股书仍把 BTC（比特币） 列为主要资产，并披露 2,700 枚 BTC（比特币） 用作可转债担保，另经营 AI（人工智能） 金融产品。</td>
+<td>2026-10-06 / <a href="https://www.sec.gov/Archives/edgar/data/2076163/000149315226047273/form424b3.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>NAKA（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季报仍持有 4,467 枚 BTC（比特币），其中 3,805 枚作为借款抵押，并运营比特币原生业务。</td>
+<td>2026-08-13 / <a href="https://nakamoto.com/updates/nakamoto-reports-second-quarter-2026-financial-and-operating-results">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>EMPD（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季报披露年内前九月出售 3,170 枚 BTC（比特币），10 月至 11 月 5 日回补 131 枚，余额 1,067 枚。同期投资 AI（人工智能） 数据中心，BTC（比特币） 仍有实质敞口。</td>
+<td>2026-11-05 / <a href="https://www.sec.gov/Archives/edgar/data/1829794/000168316826008381/empery_i10q-093026.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>NXTT（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季报列示期末 5,833 枚 BTC（比特币），账面价值约 4.88 亿美元。10 月 30 日董事会授权出售或质押，授权和实际成交分别核对。</td>
+<td>2026-11-06 / <a href="https://www.sec.gov/Archives/edgar/data/1784970/000121390026116604/ea0310815-10q_next.htm">主要披露</a>、<a href="https://www.nasdaq.com/press-release/next-technology-holding-inc-announces-board-authorization-sell-or-pledge-bitcoin">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>DDC（股票代码）</strong></td>
+<td>NYSE American（纽交所美国板） / 普通股</td>
+<td>公司 11 月投资者材料仍披露 2,899 枚 BTC（比特币） 和实体消费品业务。</td>
+<td>2026-11-04 / <a href="https://www.sec.gov/Archives/edgar/data/1808110/000121390026116463/ea0310538-fwp_ddc.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>ZOOZ（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>中期申报显示约 1,047 枚 BTC（比特币）。普通股为 ZOOZ（股票代码），ZOOZW（同一发行人的认股权证） 是权证。</td>
+<td>2026-08-25 / <a href="https://www.sec.gov/Archives/edgar/data/1992818/000149315226040046/ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>DJT（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季报披露仍持有 4,260.73 枚 BTC（比特币），保留为混合型。 与核聚变公司 TAE（拟与特朗普媒体合并的核聚变公司） 的拟议合并仍待股东表决与交割。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/1849635/000143774926026777/djt20260630_10q.htm">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1849635/000143774926035284/djt20261105_425.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>SORA（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>10 月披露的半年报列示 6 月末 30 枚 BTC（比特币） 用作借款抵押；9 月另披露作为出借方的 BTC（比特币） 抵押授信。</td>
+<td>2026-10-06 / <a href="https://www.sec.gov/Archives/edgar/data/2033515/000121390026107204/ea030768301ex99-1.htm">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/2033515/000121390026097811/ea030480001ex99-1.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>GDC（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季报披露 BTC（比特币） 公允价值约 4.51 亿美元。7 月 29 日收到恢复最低买价合规通知，当前挂牌快照标记 N。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/1641398/000121390026090150/ea0301332-10q_gdculture.htm">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1641398/000121390026083981/ea0300047-8k_gdculture.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>BMNR（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>11 月初仍持有约 606 万枚 ETH（以太坊原生代币），披露继续累积并开展质押。</td>
+<td>2026-11-02 / <a href="https://www.sec.gov/Archives/edgar/data/1829311/000149315226049572/ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>SBET（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季报确认 ETH（以太坊原生代币） 储备与质押持续。</td>
+<td>2026-11-06 / <a href="https://www.sec.gov/Archives/edgar/data/1981535/000149315226050483/form10-q.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BTBT（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>9 月投资者材料仍将 ETH（以太坊原生代币） 财库与质押作为投资组合的重要组成，另有 AI/HPC（人工智能与高性能计算） 股权敞口。</td>
+<td>2026-09-08 / <a href="https://www.sec.gov/Archives/edgar/data/1710350/000121390026098132/ea030473001ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BTCS（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季报披露 ETH（以太坊原生代币） 储备、质押和以太坊区块构建收入。</td>
+<td>2026-08-19 / <a href="https://www.sec.gov/Archives/edgar/data/1436229/000149315226039249/form10-q.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>GAME（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>ETH（以太坊原生代币） 基金份额缩减主要含赎回后直接持币；二季末直接持有 14,840.04 枚 ETH（以太坊原生代币），另有基金中 240.47 枚 ETH（以太坊原生代币）。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/1714562/000149315226037832/form10-q.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>FWDI（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>10 月财库更新披露 SOL（索拉纳原生代币） 及等价敞口继续扩大。</td>
+<td>2026-10-01 / <a href="https://www.sec.gov/Archives/edgar/data/38264/000168316826007543/forward_ex9901.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>DFDV（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>10 月披露继续围绕 SOL（索拉纳原生代币） 财库和生态策略开展业务。</td>
+<td>2026-10-05 / <a href="https://www.sec.gov/Archives/edgar/data/1805526/000180552626000125/dfdv-exx991_10526.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>UPXI（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股 / D</td>
+<td>年度报告继续披露 SOL（索拉纳原生代币） 及质押。11 月 9 日交易所目录列示合规标记 D，仍挂牌。 最低买价初始整改期至 2027-01-26。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/1775194/000147793226005668/upxi_10k.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>HSDT（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季报仍披露财库资产主要集中于 SOL（索拉纳原生代币） 或 SOL（索拉纳原生代币） 间接敞口。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/1610853/000161085326000007/hsdt-20260630.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>STKE（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>公司更新持续披露 Solana（索拉纳区块链） 验证者、链上业务和 SOL（索拉纳原生代币） 财库。</td>
+<td>2026-09-15 / <a href="https://solstrategies.io/investor-relations">主要披露</a>、<a href="https://cms.solstrategies.io/wp-content/uploads/2026/05/2026-Q2-Management-Discussion-and-Analysis.pdf">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>SLMT（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>发行人 11 月 7 日财库快照仍披露 SOL（索拉纳原生代币） 相关敞口。</td>
+<td>2026-11-07 / <a href="https://solmate.com/dashboard">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>PURR（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季末持有约 3,850 万枚 HYPE（超流动性交易网络代币），较上季继续增加。</td>
+<td>2026-11-05 / <a href="https://www.sec.gov/Archives/edgar/data/2078856/000119312526450063/purr-ex99_2.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>HYPD（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季度出售约 20 万枚 HYPE（超流动性交易网络代币） 及流动质押代币用于清偿旧债；期末仍披露 185 万枚 HYPE（超流动性交易网络代币） 总敞口。</td>
+<td>2026-09-30 / <a href="https://www.sec.gov/Archives/edgar/data/1682639/000110465926113050/tm2626852d1_8k.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BNC（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>10 月公告确认发行人现名 BNB Standard Corporation（原 CEA Industries），继续管理 BNB（币安生态原生代币） 财库。</td>
+<td>2026-10-12 / <a href="https://www.sec.gov/Archives/edgar/data/1482541/000148254126000058/bnc-2026x10x12xpr_website.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>NA（纳米实验室股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>半年报持续披露 BNB（币安生态原生代币） 财库与 Web3（基于区块链的互联网应用） 芯片业务。</td>
+<td>2026-08-28 / <a href="https://nanolabs.gcs-web.com/news-releases/news-release-details/nano-labs-announces-first-half-2026-financial-results">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>SUIG（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季报披露继续持有 SUI（水链原生代币），并参与链上业务。</td>
+<td>2026-11-06 / <a href="https://www.sec.gov/Archives/edgar/data/1425355/000119312526452129/suig-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>TONX（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季报仍确认 TON（开放网络或其旧代币代码） 网络原生代币财库；报告将代币称为 Gram（开放网络原生代币），原名 Toncoin（开放网络代币旧称）。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/1566610/000149315226037002/form10-q.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>TRON（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季报继续披露 TRX（波场网络原生代币） 财库，与原有商品业务并存。</td>
+<td>2026-11-06 / <a href="https://www.sec.gov/Archives/edgar/data/1956744/000149315226050474/form10-q.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>CYPH（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季报确认 ZEC（大零币） 财库及隐私技术战略，原生物医药业务另行列示。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/1509745/000110465926094449/cyph-20260630x10q.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>ORBS（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>9 月 16 日仍披露约 3.02 亿枚 WLD（世界币生态代币） 和 16,278 枚 ETH（以太坊原生代币），并投资非加密私募股权。</td>
+<td>2026-09-16 / <a href="https://www.sec.gov/Archives/edgar/data/1892492/000149315226043055/ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>TAOX（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季报继续披露 TAO（比特张量网络代币） 财库及质押。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/1571934/000110465926095966/taox-20260630x10q.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>TWAV（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季报将 TAO（比特张量网络代币） 列为主要资产。公司正扩展 AI（人工智能） 产品运营，现有 TAO（比特张量网络代币） 敞口仍有实质性。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/746210/000143774926026577/twav20260630_10q.htm">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/746210/000143774926032268/twav20261006_8k.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>LITS（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季报确认仍将 LTC（莱特币） 作为主要储备资产，同时维持医药业务。</td>
+<td>2026-11-05 / <a href="https://www.sec.gov/Archives/edgar/data/1262104/000119312526449764/lits-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>USDE（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>经营 Ethena（合成美元及其治理代币协议） 相关基础设施和分销服务，并持有 ENA（以太纳协议治理代币） 敞口；USDE（股票代码） 是证券代码。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/2080215/000121390026089504/ea030188301ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>SDEV（股票代码）</strong></td>
+<td>NYSE American（纽交所美国板） / 普通股</td>
+<td>三季报确认 SKY（天空协议治理代币） 持仓、质押及治理，属于协议代币敞口。</td>
+<td>2026-09-30 / <a href="https://www.sec.gov/Archives/edgar/data/1389545/000143774926033940/sdev20260930_10q.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>AVX（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>10 月披露维持 AVAX（雪崩链原生代币） 战略财库与原生质押，同时布局算力。</td>
+<td>2026-10-07 / <a href="https://www.sec.gov/Archives/edgar/data/1826397/000149315226046080/ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>AVAT（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>11 月发布初步三季度财务和财库指标，继续开展 Avalanche（雪崩区块链） 生态与 AVAX（雪崩链原生代币） 财库业务。</td>
+<td>2026-11-05 / <a href="https://www.avat.com/investor-relations">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BNKK（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季报列示 BONK（索拉纳生态迷因代币） 数字资产，发行人也经营消费品牌。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/1760903/000149315226038241/form10-q.htm">主要披露</a></td>
+</tr>
+</tbody></table></div>
+</details>
+<details class="context audit-ledger"><summary>交易、经纪与金控 · 24 个</summary><div class="table-scroll" role="region" aria-label="交易、经纪与金控审核证据" tabindex="0"><table>
+<thead>
+<tr>
+<th>代码</th>
+<th>挂牌 / 证券</th>
+<th>业务审核依据</th>
+<th>证据日期 / 来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>COIN（币基公司股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季度 10-Q（美国季度报告） 披露加密交易、衍生品、托管和稳定币等持续经营业务。</td>
+<td>2026-10-29 / <a href="https://www.sec.gov/Archives/edgar/data/1679788/000167978826000122/coin-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BLSH（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>Bullish（交易、托管或机构金融相关公司） Exchange 在直布罗陀监管框架下完成自身股票链上权益的交易，以美元稳定币结算。</td>
+<td>2026-08-12 / <a href="https://investors.bullish.com/news-releases/news-release-details/bullish-launches-tokenized-equity-trading">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>GEMI（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季度仍有加密交易所收入和成交量。公司退出英国、欧盟及部分欧洲司法辖区和澳大利亚业务，属于地区收缩。</td>
+<td>2026-08-13 / <a href="https://investors.gemini.com/news-releases/news-release-details/gemini-reports-second-quarter-2026-results">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/2055592/000205559226000008/gemi-20260205.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>CNCK（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>财报披露日本零售加密交易、机构交易执行、托管、质押和数字资产管理。</td>
+<td>2026-08-06 / <a href="https://www.coincheckgroup.com/sec-filings/all-sec-filings/content/0001913847-26-000002/q1-2027financialresultsdoc.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BTGO（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>季报披露数字资产托管、质押和机构交易；国家信托银行资质由子公司 BitGo Bank &amp; Trust, N.A. 持有。</td>
+<td>2026-08-12 / <a href="https://www.sec.gov/Archives/edgar/data/1740604/000174060426000050/btgo-20260630.htm">主要披露</a>、<a href="https://investors.bitgo.com/news/news-details/2026/BitGo-Holdings-Named-to-2026-Fortune-500-in-First-Year-as-a-Public-Company/default.aspx">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>GLXY（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季度数字资产部门调整后毛利约 7100 万美元，AI（人工智能） 数据中心约 7900 万美元。保留为加密金融和 AI（人工智能） 数据中心的混合敞口。</td>
+<td>2026-10-27 / <a href="https://galaxydigital.gcs-web.com/news-releases/news-release-details/galaxy-announces-third-quarter-2026-financial-results">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>ETOR（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季度财报确认用户持续交易加密资产，平台亦提供股票及其他资产交易。</td>
+<td>2026-08-11 / <a href="https://www.etoro.com/news-and-analysis/press-releases/etoro-reports-second-quarter-2026-results/">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>HOOD（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季度披露加密交易收入和 Bitstamp（加密交易平台） 成交量，WonderFi（加拿大数字资产平台运营商） 已于 6 月 1 日完成收购。</td>
+<td>2026-10-27 / <a href="https://investors.robinhood.com/news-releases/news-release-details/robinhood-reports-third-quarter-2026-results">主要披露</a>、<a href="https://investors.robinhood.com/events/event-details/robinhood-closes-acquisition-wonderfi">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>XYZ（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>三季度 Bitcoin（比特币） 生态占 Cash App（布洛克公司的个人金融应用） 收入 43%，占其毛利 3%，以混合型敞口保留。</td>
+<td>2026-11-03 / <a href="https://www.sec.gov/Archives/edgar/data/1512673/000162828026069524/xyz-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BULL（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>核查时 Webull（交易、托管或机构金融相关公司） 美国平台仍提供 BTC（比特币）、ETH（以太坊原生代币）、SOL（索拉纳原生代币） 等现货服务。</td>
+<td>2026-11-09 / <a href="https://www.webull.com/help/faq/11094-Getting-Started-with-Crypto-Trading">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>FUTU（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / ADS（美国存托股）</td>
+<td>香港持牌虚拟资产平台 PantherTrade（富途旗下香港虚拟资产交易平台） 已开展全面持牌运营。</td>
+<td>2026-03-26 / <a href="https://www.futuhk.com/en/about-us/newsroom/futu-securities-fully-integrates-proprietary-licensed-vatp-pioneering">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>TIGR（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / ADS（美国存托股）</td>
+<td>核查时香港子公司产品页仍提供虚拟资产交易，境内外合规要求按当地持牌主体区分。</td>
+<td>2026-11-09 / <a href="https://www.itiger.com/hk/en/invest/virtual-assets?tp=1">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BKKT（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>二季度几乎全部加密服务收入仍来自数字资产买卖，DTR（巴克特收购的结算基础设施公司） 并入后加入稳定币结算及法币出入金。法定名称于 1 月改为 Bakkt, Inc.（交易、托管或机构金融相关公司）。 2026-10-15 的 Form 25（证券退市申报表） 涉及纽约证券交易所挂牌权证，BKKT（股票代码） A 类普通股仍在 NYSE（纽约证券交易所） 挂牌。</td>
+<td>2026-08-10 / <a href="https://www.sec.gov/Archives/edgar/data/1820302/000162828026055275/bakkt-20260630.htm">主要披露</a>、<a href="https://investors.bakkt.com/node/12076/html">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>MATH（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>20-F（外国发行人年度报告） 披露数字资产和衍生品交易、结构化产品等业务，Nasdaq（纳斯达克交易所） 为普通股。</td>
+<td>2026-08-06 / <a href="https://www.sec.gov/Archives/edgar/data/1682241/000121390026086126/ea0299197-20f_metalpha.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>ANTA（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季度披露服务数字资产机构的融资、抵押贷款和风控；AI（人工智能） 工具用于辅助数字资产客户。</td>
+<td>2026-08-19 / <a href="https://ir.antalpha.com/news-releases/news-release-details/antalpha-reports-second-quarter-2026-results">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>CSHR（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>半年报披露数字资产管理、ETP（交易所交易产品） 和资本市场业务。CSHR（股票代码） 为普通股，CSHRW（同一发行人的认股权证） 为认股权证。</td>
+<td>2026-09-14 / <a href="https://investor.coinshares.com/pressreleases/coinshares-announces-first-half-2026-results">主要披露</a>、<a href="https://investor.coinshares.com/faq">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>DEFT（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股 / D</td>
+<td>Valour（数字资产交易所交易产品品牌） 加密资产 ETP（交易所交易产品） 和 Stillman Digital（机构数字资产交易服务商） 机构交易继续经营。普通股在 Nasdaq（纳斯达克交易所） 挂牌。 Nasdaq（纳斯达克交易所） 最低买价合规补救期限为 2027-03-01。</td>
+<td>2026-09-03 / <a href="https://www.sec.gov/Archives/edgar/data/1888274/000127956926000850/ex991.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>PDC（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / ADS（美国存托股）</td>
+<td>收购后重心转向 AI（人工智能） 辅助交易基础设施。20-F/A（外国发行人年度报告修订） 披露塞浦路斯受监管多边交易设施相关技术许可及 RWA（现实世界资产） 基础设施，UpsideOnly（游戏化交易分析平台） 是单独的游戏化分析平台。 UpsideOnly（游戏化交易分析平台） 不按持牌交易所归类。</td>
+<td>2026-09-18 / <a href="https://www.sec.gov/Archives/edgar/data/1944399/000121390026101514/ea0305669-20fa1_perpetuals.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>CME（芝加哥商品交易所集团股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>CME（芝加哥商品交易所集团股票代码） 已上线 Nasdaq（纳斯达克交易所） CME（芝加哥商品交易所集团股票代码） 加密指数期货及微型合约，另有 BTC（比特币）、ETH（以太坊原生代币） 期货及期权。</td>
+<td>2026-06-08 / <a href="https://www.cmegroup.com/articles/2026/trading-crypto-as-an-asset-class-the-case-for-nasdaq-cme-crypto-index-futures.html">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>ICE（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>三季度 10-Q（美国季度报告） 披露 OKX（欧易数字资产交易平台） 和 Polymarket（预测市场平台） 投资。纽交所链上证券平台仍在筹备，另有待监管批准的 Hyperliquid 永续市场合作。</td>
+<td>2026-10-29 / <a href="https://www.sec.gov/Archives/edgar/data/1571949/000157194926000015/ice-20260930.htm">主要披露</a>、<a href="https://ir.theice.com/press/news-details/2026/The-New-York-Stock-Exchange-Develops-Tokenized-Securities-Platform/default.aspx">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>NDAQ（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>已运营 Nasdaq（纳斯达克交易所） CME（芝加哥商品交易所集团股票代码） 加密指数；SEC（美国证券交易委员会） 2026 年 3 月批准特定证券代币化交易规则，实施与 DTC（美国证券存管机构） 试点相关。</td>
+<td>2026-11-09 / <a href="https://www.nasdaq.com/products/global-indexes/thematic/crypto">主要披露</a>、<a href="https://www.sec.gov/rules-regulations/self-regulatory-organization-rulemaking/sr-nasdaq-2025-072">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>CBOE（芝加哥期权交易所集团股票代码）</strong></td>
+<td>Cboe BZX（芝加哥期权交易所旗下股票市场） / 普通股</td>
+<td>交易所继续提供受监管的加密期权及期货。CBOE（芝加哥期权交易所集团股票代码） 普通股挂牌地为 Cboe BZX（芝加哥期权交易所旗下股票市场）。</td>
+<td>2026-11-09 / <a href="https://www.cboe.com/tradable-products/cryptocurrency-derivatives/">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1374310/000162828026068447/cboe-20260930.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>IBKR（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>加密交易与托管由合作商 Paxos（数字资产信托与发行机构） 或 zerohash（数字资产交易与托管服务商） 提供，7 月新增可交易代币。</td>
+<td>2026-07-14 / <a href="https://www.interactivebrokers.com/en/general/about/mediaRelations/7-15-26.php">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>VIRT（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>三季度财报明确在加密资产等多类市场做市，集团未单列加密业务利润；普通股在 NYSE（纽约证券交易所） 挂牌。</td>
+<td>2026-11-05 / <a href="https://ir.virtu.com/news-releases/news-release-details/virtu-announces-third-quarter-2026-results">主要披露</a></td>
+</tr>
+</tbody></table></div>
+</details>
+<details class="context audit-ledger"><summary>稳定币、RWA（现实世界资产） 与基础设施 · 23 个</summary><div class="table-scroll" role="region" aria-label="稳定币、RWA 与基础设施审核证据" tabindex="0"><table>
+<thead>
+<tr>
+<th>代码</th>
+<th>挂牌 / 证券</th>
+<th>业务审核依据</th>
+<th>证据日期 / 来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>FRMM（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>持续经营包括现实资产结构化与链上代币化，二季报披露已发行航空发动机收益权代币，期末仅收款 1 万美元；10 月另推进 AI（人工智能） 算力合资项目。由 ETH（以太坊原生代币） 财库转入 RWA（现实世界资产），标为早期混合型。</td>
+<td>2026-06-30 / <a href="https://www.sec.gov/Archives/edgar/data/1690080/000121390026090100/ea0301343-10q_forum.htm">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1690080/000121390026112303/ea030957801ex99-1.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>CRCL（圆环网络集团股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>三季度 10-Q（美国季度报告） 披露 USDC（美元稳定币）、EURC（欧元稳定币）、Circle Mint（稳定币机构铸造与赎回服务）、支付网络与 Arc（支付结算区块链） 等产品。</td>
+<td>2026-11-04 / <a href="https://www.sec.gov/Archives/edgar/data/1876042/000187604226000311/crcl-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>FIGR（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>仍披露链上信贷资产运营数据；YLDS（登记为证券的收益型美元产品） 为 SEC（美国证券交易委员会） 注册的收益型证券。</td>
+<td>2026-10-06 / <a href="https://www.sec.gov/Archives/edgar/data/2064124/000149315226046036/ex99-1.htm">主要披露</a>、<a href="https://investors.figure.com/">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>SECZ（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>公司将可供符合资格投资者使用的链上美股范围扩至 25 只，仍从事证券代币化。</td>
+<td>2026-11-02 / <a href="https://investors.securitize.io/news/news-details/2026/Securitize-Expands-Onchain-U-S--Stock-Offering-to-25-Equities/default.aspx">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>OWLS（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>OwlPay Harbor（稳定币出入金与结算产品） 已支持部分客户生产环境的跨境稳定币结算，商业化仍属早期。</td>
+<td>2026-10-19 / <a href="https://www.sec.gov/Archives/edgar/data/2025416/000119312526424656/owls-ex99_1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>STEX（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股 / D</td>
+<td>10-Q（美国季度报告） 披露 GLDY（黄金收益代币产品） 上线后已产生黄金租赁收入，规模仍小。普通股在 Nasdaq（纳斯达克交易所） 挂牌。 Nasdaq（纳斯达克交易所） 最低买价合规补救期限为 2027-04-05。</td>
+<td>2026-08-14 / <a href="https://www.sec.gov/Archives/edgar/data/1530766/000149315226038293/form10-q.htm">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1530766/000149315226046604/form8-k.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>USBC（股票代码）</strong></td>
+<td>NYSE American（纽交所美国板） / 普通股</td>
+<td>三季度 10-Q（美国季度报告） 披露 Vast Bank（美国合作存款银行） 作为存款主体，USBC（股票代码） 提供代币化技术；面向合作伙伴的初步商业阶段预计四季度开展。</td>
+<td>2026-11-06 / <a href="https://www.sec.gov/Archives/edgar/data/1074828/000107482826000107/usbc-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>EXOD（股票代码）</strong></td>
+<td>NYSE American（纽交所美国板） / 普通股</td>
+<td>投资者关系页面确认非托管钱包、兑换与加密支付仍在运营，普通股在 NYSE American（纽交所美国板） 挂牌。</td>
+<td>2026-11-09 / <a href="https://www.exodus.com/investors">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>FLD（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股 / D</td>
+<td>公司仍运营比特币奖励、银行卡及支付业务，Nasdaq（纳斯达克交易所） 普通股仍挂牌。 Nasdaq（纳斯达克交易所） 最低买价初始合规期至 2027-01-11。</td>
+<td>2026-08-11 / <a href="https://www.sec.gov/Archives/edgar/data/1889123/000119312526344668/fld-20260630.htm">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1889123/000119312526307957/fld-20260714.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>SOFI（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>SoFi Bank 发行 SoFiUSD（索菲银行美元稳定币），借记卡和信用卡项目已接入 Mastercard（稳定币、代币化或金融基础设施相关公司） 稳定币结算。</td>
+<td>2026-09-22 / <a href="https://investors.sofi.com/news/news-details/2026/SoFi-Becomes-First-National-Bank-to-Go-Live-with-Stablecoin-Settlement-across-Mastercards-Global-Payments-Network/default.aspx">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>PYPL（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>核查时 Paxos（数字资产信托与发行机构） 页面将 Paxos Trust Company, N.A.（贝宝美元稳定币的发行信托机构） 列为 PYUSD（贝宝支付生态使用的美元稳定币） 发行方，PayPal（稳定币、代币化或金融基础设施相关公司） 提供支付和分发场景。</td>
+<td>2026-11-09 / <a href="https://www.paxos.com/pyusd">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>WU（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>Western Union（稳定币、代币化或金融基础设施相关公司） 已推出由 USDPT（西联支付生态使用的美元稳定币） 支持的 Stablecard（西联汇款稳定币支付卡）；USDPT（西联支付生态使用的美元稳定币） 由 Anchorage Digital Bank（数字资产银行与稳定币发行方） 在 Solana（索拉纳区块链） 发行。</td>
+<td>2026-08-04 / <a href="https://ir.westernunion.com/news/archived-press-releases/press-release-details/2026/Western-Union-Launches-Stablecard-in-Partnership-with-Rain/default.aspx">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>FISV（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>其数字资产平台已上线，首个案例为由 VersaBank USA（参与发行与托管的美国银行） 支持发行与托管的 Roughrider Coin（北达科他州银行主导的稳定币项目）。原拟 FIUSD（费哲数字资产平台拟推出的美元稳定币） 的公开上线仍待确认。</td>
+<td>2026-10-01 / <a href="https://investors.fiserv.com/news-releases/news-release-details/fiserv-digital-asset-platform-goes-live-financial-institution">主要披露</a>、<a href="https://bnd.nd.gov/bank-of-north-dakota-launches-roughrider-coin-credits-collaboration-and-controlled-innovation/">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>V（维萨股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>Visa（稳定币、代币化或金融基础设施相关公司） 已为部分美国银行开放 USDC（美元稳定币） 结算；Circle（圆环网络集团） 三季度披露 Visa（稳定币、代币化或金融基础设施相关公司） 稳定币预融资进入商业部署。</td>
+<td>2026-11-04 / <a href="https://www.sec.gov/Archives/edgar/data/1876042/000187604226000309/finalq3epr-110326.htm">主要披露</a>、<a href="https://corporate.visa.com/en/sites/visa-perspectives/press-releases/visa-launches-stablecoin-settlement-in-the-united-states.html">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>MA（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>Mastercard（稳定币、代币化或金融基础设施相关公司） 已与 SoFiUSD（索菲银行美元稳定币） 推进实时结算，并在 10 月披露稳定币支付风险工具及已收购 BVNK（稳定币支付基础设施公司）。</td>
+<td>2026-10-19 / <a href="https://www.mastercard.com/us/en/news-and-trends/press/2026/october/Mastercard-brings-risk-intelligence-to-stablecoin-payments.html">主要披露</a>、<a href="https://investors.sofi.com/news/news-details/2026/SoFi-Becomes-First-National-Bank-to-Go-Live-with-Stablecoin-Settlement-across-Mastercards-Global-Payments-Network/default.aspx">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>JPM（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>Kinexys（摩根大通机构区块链平台） 的机构存款代币 JPM Coin（JPMD（摩根大通机构存款代币））扩至 Ethereum（以太坊区块链）；法律属性为银行存款代币。</td>
+<td>2026-10-19 / <a href="https://www.jpmorgan.com/payments/newsroom/jpm-coin-live-on-ethereum">主要披露</a>、<a href="https://www.jpmorgan.com/payments/newsroom/jpm-coin-usd-deposit-token-institutional-clients">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>BNY（纽约梅隆银行股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>近期完成代币化美国国债三方回购流程，持续运营机构数字资产托管。</td>
+<td>2026-10-13 / <a href="https://www.bny.com/corporate/global/en/about-us/newsroom/press-release/bny-completes-tokenized-us-treasury-triparty-repo-workflow-with-citadel-securities.html">主要披露</a>、<a href="https://www.bny.com/corporate/global/en/solutions/platforms/digital-assets.html">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>BLK（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>BlackRock（稳定币、代币化或金融基础设施相关公司） 旗下 BUIDL（贝莱德代币化流动性基金份额） 继续通过 Securitize（稳定币、代币化或金融基础设施相关公司） 拓展链上分发；BLK（股票代码） 是资管公司普通股。</td>
+<td>2026-07-30 / <a href="https://investors.securitize.io/news/news-details/2026/Tempo-expands-onchain-yield-offering-with-BlackRocks-BUIDL-fund/default.aspx">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BEN（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>法定名称已改为 Franklin Templeton（富兰克林邓普顿）, Inc.，代码 BEN（股票代码）；FOBXX（富兰克林链上货币市场基金代码） 基金份额可通过 BENJI（富兰克林基金链上份额） 表征。</td>
+<td>2026-08-17 / <a href="https://www.franklintempleton.com/corporate/about-us/corporate-name-change">主要披露</a>、<a href="https://www.franklintempleton.com/.well-known/stellar.toml">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>WT（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>披露代币化基金生态资产逾 12 亿美元，并通过 WisdomTree（稳定币、代币化或金融基础设施相关公司） Onchain（链上） 提供 WTGXX（智慧树代币化货币市场基金代码） 等代币化基金。</td>
+<td>2026-09-29 / <a href="https://ir.wisdomtree.com/news-events/press-releases/detail/807/wisdomtree-introduces-wisdomtree-onchain-as-tokenized">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BR（博德里奇股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>DLR（分布式账本回购平台） 分布式账本回购平台在 9 月实际处理回购交易，属于机构链上证券融资基础设施。</td>
+<td>2026-10-08 / <a href="https://www.broadridge.com/press-release/2026/broadridges-distributed-ledger-repo-processes-7-point-5-trillion-in-september">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>FIS（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>与银行共同建设 Project Keystone（银行存款代币化网络项目） 代币化存款网络，并与 Circle（圆环网络集团） 公告 USDC（美元稳定币） 支付合作，按技术平台与项目敞口归类。</td>
+<td>2026-04-30 / <a href="https://www.fisglobal.com/about-us/media-room/press-release/2026/fis-and-leading-financial-institutions-to-build-their-own-digital-tokenized-money-network">主要披露</a>、<a href="https://www.fisglobal.com/about-us/media-room/press-release/2025/fis-partners-with-circle-to-unlock-stablecoin-money-movement">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>STT（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>State Street（稳定币、代币化或金融基础设施相关公司） 与 Galaxy（银河数字金融公司） 已发布 SWEEP（道富与银河数字的链上私募流动性基金） 代币化私募流动性基金，持续提供机构数字资产平台。</td>
+<td>2026-05-05 / <a href="https://investors.statestreet.com/investor-news-events/press-releases/news-details/2026/State-Street-Investment-Management-and-Galaxy-Digital-Bring-Cash-Management-Onchain/default.aspx">主要披露</a></td>
+</tr>
+</tbody></table></div>
+</details>
+<details class="context audit-ledger"><summary>矿企与算力 · 26 个</summary><div class="table-scroll" role="region" aria-label="矿企与算力审核证据" tabindex="0"><table>
+<thead>
+<tr>
+<th>代码</th>
+<th>挂牌 / 证券</th>
+<th>业务审核依据</th>
+<th>证据日期 / 来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>MARA（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季度季报披露约 44 万台矿机及约 70.3 EH/s（每秒 10¹⁸ 次哈希运算） 通电算力，AI/HPC（人工智能与高性能计算） 项目与实质 BTC（比特币） 挖矿并行。</td>
+<td>2026-08-06 / <a href="https://www.sec.gov/Archives/edgar/data/1507605/000150760526000022/mara-20260630.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>RIOT（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季度仍在各设施部署 BTC（比特币） 矿机，另有已签署的 Corsicana（得州科西卡纳算力园区） AI（人工智能） 租赁，属于双业务。</td>
+<td>2026-11-04 / <a href="https://www.sec.gov/Archives/edgar/data/1167419/000110465926122417/riot-20260930x10q.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>CLSK（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>公司发布 2026 年 9 月 BTC（比特币） 挖矿运营数据，数据中心扩展与存量挖矿并行。</td>
+<td>2026-10-09 / <a href="https://investors.cleanspark.com/news/news-details/2026/CleanSpark-Releases-September-2026-Operational-Update/default.aspx">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BTDR（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>9 月运营更新仍披露自营矿业、托管和 SEALMINER（比特小鹿自研矿机系列） 矿机，也发展 AI（人工智能） 云业务。</td>
+<td>2026-10-19 / <a href="https://www.sec.gov/Archives/edgar/data/1899123/000121390026110703/ea030767901ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>HIVE（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>公司披露 8 月 21 日起平均日产约 12 BTC（比特币），评估部分场地转作 AI（人工智能），集团仍有实质矿业。</td>
+<td>2026-09-10 / <a href="https://www.sec.gov/Archives/edgar/data/1720424/000106299326004970/exhibit99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>ABTC（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季度报告披露 BTC（比特币） 自挖和买入，9 月末持有 8,427 BTC（比特币）；Hut 8（矿业、设备或算力相关公司） 合并子公司。</td>
+<td>2026-11-04 / <a href="https://www.sec.gov/Archives/edgar/data/1755953/000119312526447413/abtc-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>FUFU（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>10 月产出 137 BTC（比特币），其中自营 67、云挖矿 70。</td>
+<td>2026-11-06 / <a href="https://www.sec.gov/Archives/edgar/data/1921158/000121390026116602/ea031104401ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>CANG（股票代码）</strong></td>
+<td>NYSE（纽约证券交易所） / 普通股</td>
+<td>二季度 BTC（比特币） 挖矿贡献约 4,740 万美元，占总营收约 93%，同时试点 AI（人工智能） 基础设施。</td>
+<td>2026-08-31 / <a href="https://ir-image.cangoonline.com/ir-documents/4763635-1-1_Proof.html">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>ARBK（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / ADS（美国存托股）</td>
+<td>仍以挖矿及数字基础设施为业务。部分美国托管合同结束，矿机迁往加拿大场地，董事会探索 AI（人工智能） 基建。</td>
+<td>2026-09-03 / <a href="https://www.sec.gov/Archives/edgar/data/1841675/000110465926105069/tm2624343d1_6k.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>NIPG（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / ADS（美国存托股）</td>
+<td>电竞与 BTC（比特币） 矿业并行，已签第三批矿机收购，预计交割后达约 13.85 EH/s（每秒 10¹⁸ 次哈希运算）；该目标仍以交割为条件。</td>
+<td>2026-10-20 / <a href="https://www.sec.gov/Archives/edgar/data/1966233/000149315226047700/ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BTCT（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>公司确认仍开展加密挖矿、矿场建设及数据中心运营，9 月恢复 Nasdaq（纳斯达克交易所） 最低买价合规。合作方亦披露矿机托管协议。</td>
+<td>2026-09-04 / <a href="https://www.sec.gov/Archives/edgar/data/1796514/000121390026097689/ea030471501ex99-1.htm">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1557798/000168316826007038/tianci_ex9901.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>ABTS（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>2026 年上半年仍披露矿业经营和矿机处置，经营重点为自营 BTC（比特币） 挖矿和托管。</td>
+<td>2026-10-15 / <a href="https://www.nasdaq.com/press-release/abits-group-inc-reports-unaudited-financial-results-first-half-2026-2026-10-15">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BGDE（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>三季度仍有约 240 万美元数字托管及 20 万美元数字资产挖矿收入，合作矿业已投运约 20 MW（兆瓦），AI（人工智能） 项目仍在开发。</td>
+<td>2026-11-05 / <a href="https://www.sec.gov/Archives/edgar/data/1218683/000121390026116537/ea031094201_ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>PWCM（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>二季度数字挖矿收入约 201 万美元，占营收约 95%；AI/HPC（人工智能与高性能计算） 为新增业务。</td>
+<td>2026-08-14 / <a href="https://www.power-compute.com/investors/news-events/press-releases/detail/196/powercompute-reports-second-quarter-2026-financial-results">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BVC（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>2026 财年 20-F（外国发行人年度报告） 披露自营 BTC（比特币） 挖矿收入约 9 万美元，业务尚处早期；美国挂牌证券已从 ADS（美国存托股） 转为普通股。</td>
+<td>2026-10-16 / <a href="https://www.sec.gov/Archives/edgar/data/1785680/000143774926032751/sant20260630_20f.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>HUT（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>Q3（第三季度） 仍合并 American Bitcoin（比特币），保有比特币财库和实际 ASIC（专用集成电路） 挖矿敞口，AI（人工智能） 数据中心在建。</td>
+<td>2026-11-04 / <a href="https://www.sec.gov/Archives/edgar/data/1964789/000110465926122347/tm2628741d1_ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>CIFR（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>Odessa（得州敖德萨矿场） 仍有 207 MW（兆瓦） 比特币矿场，三季度挖矿营收约 2,080 万美元，高于 HPC（高性能计算） 租赁约 590 万美元；Black Pearl（黑珍珠数据中心） 已转向 HPC（高性能计算）。</td>
+<td>2026-11-02 / <a href="https://www.sec.gov/Archives/edgar/data/1819989/000181998926000050/cifr-20260930.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>APLD（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>季度 HPC（高性能计算） 托管收入约 2.63 亿美元，矿业托管仍有约 3,780 万美元收入及两个满载设施、合计 286 MW（兆瓦），管理层仍将两项列为核心业务。 HPC（高性能计算） 收入占大头，作为有实质矿业托管收入的混合型保留。</td>
+<td>2026-10-07 / <a href="https://www.sec.gov/Archives/edgar/data/1144879/000114487926000059/apld-20260831.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>SLNH（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>6 月末自营 BTC（比特币） 挖矿项目合计约 24 MW（兆瓦），另有在营第三方矿业托管；并发展 HPC（高性能计算）。</td>
+<td>2026-08-13 / <a href="https://www.sec.gov/Archives/edgar/data/64463/000162828026056702/slnh-20260630.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>ZSQR（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>合并后的主体是 DOGE（狗狗币）、LTC（莱特币） 等 Scrypt（工作量证明所用哈希算法） 币挖矿，旧清单写成 BTC（比特币） 挖矿有误；另有 AI（人工智能） 园区开发。</td>
+<td>2026-08-13 / <a href="https://www.sec.gov/Archives/edgar/data/1759186/000118518526003508/zsqr10q063026.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>AIBZ（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>公司披露仍由比特币挖矿带来经营现金流，北欧 HPC/AI（高性能计算与人工智能） 租赁处于招商及发展阶段。</td>
+<td>2026-09-01 / <a href="https://www.sec.gov/Archives/edgar/data/2100457/000106299326004758/exhibit99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>SAIH（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>20-F（外国发行人年度报告） 披露有 734 台 BTC（比特币） 矿机和矿池、托管、设备业务。向 AI（人工智能） 推理转型的 Canopy Wave（拟并购的人工智能推理公司） 合并获股东批准，当前交易仍以交割为条件。 拟更名和改用 CWAV（股票代码） 的条件尚未全部完成，维持 SAIH（股票代码）。</td>
+<td>2026-04-30 / <a href="https://www.sec.gov/Archives/edgar/data/1847075/000121390026050380/ea0286826-20f_saiheat.htm">主要披露</a>、<a href="https://www.sec.gov/Archives/edgar/data/1847075/000121390026104816/ea0306713-6k_saiheat.htm">补充披露</a></td>
+</tr>
+<tr>
+<td><strong>CAN（嘉楠科技股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / ADS（美国存托股） / D</td>
+<td>9 月报告披露实际挖矿及矿机业务。ADS（美国存托股） 的最低买价整改期延至 2027-01-11，仍挂牌。 Nasdaq（纳斯达克交易所） 财务状态 D；最低买价整改期至 2027-01-11。</td>
+<td>2026-10-15 / <a href="https://www.sec.gov/Archives/edgar/data/1780652/000110465926116011/tm2627656d1_ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>BGIN（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股</td>
+<td>2026 上半年仍确认矿机相关销售、自营挖矿及托管收入。</td>
+<td>2026-09-25 / <a href="https://www.sec.gov/Archives/edgar/data/1945565/000121390026103511/ea030571701ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>ICG（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / ADS（美国存托股）</td>
+<td>半年业绩披露仍是山寨币挖矿芯片及质押基础设施公司，并保持现有数字资产储备。</td>
+<td>2026-08-20 / <a href="https://www.sec.gov/Archives/edgar/data/1895597/000149315226039480/ex99-1.htm">主要披露</a></td>
+</tr>
+<tr>
+<td><strong>AGMH（股票代码）</strong></td>
+<td>Nasdaq（纳斯达克交易所） / 普通股 / D</td>
+<td>年报披露矿机及标准化计算设备仍是主要收入来源，2025 年出售过个别子公司；10 月收最低买价不合规通知，仍挂牌。 最低买价初始整改期至 2027-04-07。</td>
+<td>2026-08-07 / <a href="https://www.sec.gov/Archives/edgar/data/1705402/000118518526003323/agmh20f123125.htm">主要披露</a></td>
+</tr>
+</tbody></table></div>
+</details></div></section>
+<section class="reference" id="research"><h2>原文研究层级</h2><div class="prose"><p>如果目的是长期建立加密货币产业链研究框架，以下沿用原对话的研究层级，并按本次审核结果移除已剔除代码。</p>
+<div class="table-scroll" role="region" aria-label="原文研究层级表格" tabindex="0"><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>第一层：核心研究</th>
+<th>第二层：扩展研究</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>① 加密财库</strong></td>
+<td>MSTR（战略公司股票代码）、BMNR（股票代码）、SBET（股票代码）、FWDI（股票代码）、DFDV（股票代码）</td>
+<td>XXI（股票代码）、ASST（股票代码）、BTCS（股票代码）、UPXI（股票代码）、PURR（股票代码）</td>
+</tr>
+<tr>
+<td><strong>② 交易、经纪与金控</strong></td>
+<td>COIN（币基公司股票代码）、BLSH（股票代码）、BTGO（股票代码）、GLXY（股票代码）</td>
+<td>GEMI（股票代码）、CNCK（股票代码）、HOOD（股票代码）、CSHR（股票代码）、DEFT（股票代码）</td>
+</tr>
+<tr>
+<td><strong>③ 稳定币、RWA（现实世界资产） 与基础设施</strong></td>
+<td>CRCL（圆环网络集团股票代码）、FIGR（股票代码）、SECZ（股票代码）</td>
+<td>OWLS（股票代码）、STEX（股票代码）、SOFI（股票代码）、PYPL（股票代码）、BNY（纽约梅隆银行股票代码）</td>
+</tr>
+<tr>
+<td><strong>④ 矿企及算力</strong></td>
+<td>MARA（股票代码）、RIOT（股票代码）、CLSK（股票代码）、BTDR（股票代码）</td>
+<td>HUT（股票代码）、CIFR（股票代码）、CAN（嘉楠科技股票代码）、APLD（股票代码）</td>
+</tr>
+</tbody></table></div>
+<p>其中，按<strong>制度变化直接受益、主营业务纯度、可研究的商业模式</strong>三个维度看，我会特别关注：</p>
+<ul>
+<li><strong>COIN（币基公司股票代码）、BLSH（股票代码）、BTGO（股票代码）</strong>：加密金融市场基础设施。</li>
+<li><strong>CRCL（圆环网络集团股票代码）、FIGR（股票代码）、SECZ（股票代码）</strong>：稳定币、链上信贷、证券代币化。</li>
+<li><strong>MSTR（战略公司股票代码）、BMNR（股票代码）、FWDI（股票代码）</strong>：三种代表性加密资产财库。</li>
+<li><strong>MARA（股票代码）、CLSK（股票代码）、BTDR（股票代码）</strong>：工业化挖矿、能源和矿机设备。</li>
+</ul>
+<p>如果你的目标是寻找美国加密金融制度完善后可能出现的长期受益龙头，<strong>第二类和第三类尤其值得深入研究</strong>。它们有机会依赖交易、托管、发行、结算和服务收费建立经营性收入，而不是主要依赖代币价格上涨。</p>
+</div></section>
+<section class="reference" id="notes"><h2>代码变更与纳入边界</h2><div class="prose"><h3>前一轮剔除｜2026-11-09</h3>
+<ul>
+<li><strong>FGNX（股票代码） → FGC（股票代码）</strong>（FG Communities Holdings（原 FG Nexus（前数字资产财库公司）））。移出 ETH（以太坊原生代币） 财库。公司披露于 2026 年第二季度退出数字资产业务，转向以预制住宅社区为重点的房地产投资。 <a href="https://www.sec.gov/Archives/edgar/data/1591890/000149315226050524/form10-q.htm">FG Communities Holdings（预制住宅社区投资公司） 10-Q（美国季度报告）</a></li>
+<li><strong>ANY（股票代码） → DRK（股票代码）</strong>（DarkHorse Technologies（原 Sphere 3D（暗马科技原公司名）））。移出矿企与算力主表。公司出售爱荷华州矿场并将战略重心转向 AI/HPC（人工智能与高性能计算） 基础设施。2026 年第三季度仍披露比特币挖矿收入，转型期间也保留矿业托管敞口。 <a href="https://www.sec.gov/Archives/edgar/data/1591956/000159195626000030/drk-20260930.htm">DarkHorse Technologies（矿业转向数据中心的公司） 10-Q（美国季度报告）</a></li>
+</ul>
+<h3>1. 旧代码不能直接沿用</h3>
+<div class="table-scroll" role="region" aria-label="代码变更与纳入边界表格" tabindex="0"><table>
+<thead>
+<tr>
+<th>旧代码</th>
+<th>当前代码</th>
+<th>公司变化</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BITF（股票代码）</td>
+<td><strong>KEEL（股票代码）</strong></td>
+<td>Bitfarms（基尔基础设施公司原名） 转为 Keel Infrastructure，已移出主表</td>
+</tr>
+<tr>
+<td>STSS（股票代码）</td>
+<td><strong>SKYA（股票代码）</strong></td>
+<td>Sharps Technology（天际人工智能公司原名） 转为 SkyAI（人工智能金融平台公司），已移出主表</td>
+</tr>
+<tr>
+<td>BRR（股票代码）</td>
+<td><strong>SVIA（股票代码）</strong></td>
+<td>ProCap Financial（西尔维亚公司原名） 后续更名</td>
+</tr>
+<tr>
+<td>BK（股票代码）</td>
+<td><strong>BNY（纽约梅隆银行股票代码）</strong></td>
+<td>纽约梅隆银行于 2026 年 5 月 21 日更换代码</td>
+</tr>
+<tr>
+<td>FI（股票代码）</td>
+<td><strong>FISV（股票代码）</strong></td>
+<td>Fiserv（稳定币、代币化或金融基础设施相关公司） 于 2025 年 11 月 11 日转至 Nasdaq（纳斯达克交易所）</td>
+</tr>
+<tr>
+<td>SRM（股票代码）</td>
+<td><strong>TRON（股票代码）</strong></td>
+<td>公司转向 TRX（波场网络原生代币） 财库战略</td>
+</tr>
+<tr>
+<td>TOPW（股票代码）</td>
+<td><strong>SORA（股票代码）</strong></td>
+<td>原 Top Win International（亚洲策略公司原名），现 AsiaStrategy（原 Top Win International）</td>
+</tr>
+<tr>
+<td>ETHZ（股票代码）</td>
+<td><strong>FRMM（股票代码）</strong></td>
+<td>原 ETHZilla（论坛市场公司原名），现 Forum Markets（原 ETHZilla），归入 RWA（现实世界资产）</td>
+</tr>
+<tr>
+<td>VERB（股票代码）</td>
+<td><strong>TONX（股票代码）</strong></td>
+<td>现 TON Strategy Company（开放网络代币财库公司），财库为 TON（开放网络或其旧代币代码） 网络原生代币 GRAM（开放网络原生代币）</td>
+</tr>
+</tbody></table></div>
+<p>BNY（纽约梅隆银行股票代码） 的代码变更已由公司公告和 SEC（美国证券交易委员会） 10-Q（美国季度报告） 确认；Fiserv（稳定币、代币化或金融基础设施相关公司） 的变更也可在 Nasdaq（纳斯达克交易所） 官方公告中核实。</p>
+<h3>2. 持币不等于主营加密业务</h3>
+<p>MSTR（战略公司股票代码）、BMNR（股票代码） 属于以数字资产为主要价值支点的财库公司；DJT（股票代码）、GAME（股票代码） 等有自己的其他业务。BLK（股票代码）、V（维萨股票代码）、MA（股票代码） 等虽然参与代币化与稳定币基础设施，但整体收益依然主要由传统业务决定。</p>
+<h3>3. 代币化资产不等于发行该资产的企业参与了加密业务</h3>
+<p>例如 SECZ（股票代码） 提供苹果、微软、英伟达等股票的链上权益产品，但相关上市公司未必主动发行、赞助或认可这些代币化产品。因此 <strong>AAPL（苹果公司股票代码）、MSFT（微软股票代码）、NVDA（英伟达股票代码） 等不能仅凭被代币化就列为加密公司</strong>。</p>
+<h3>4. 这是一份产业链股票池，而不是全部美股的实时保证清单</h3>
+<p>2026 年 11 月 9 日的挂牌快照及逐项业务披露见最终审核。由于 2026 年加密财库和微盘公司频繁发生更名、增发、重组和业务转换，小市值代码在实际交易前仍需核对最新上市状态、股票类别与流动性。</p>
+</div></section>
+<section class="reference" id="criteria"><h2>分类与筛选标准</h2><div class="prose"><div class="table-scroll" role="region" aria-label="分类与筛选标准表格" tabindex="0"><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>核心业务</th>
+<th>最重要的观察指标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>① 加密财库公司</td>
+<td>持有 BTC（比特币）、ETH（以太坊原生代币）、SOL（索拉纳原生代币） 等数字资产</td>
+<td>持币净值、每股持币量、稀释、债务</td>
+</tr>
+<tr>
+<td>② 交易所、机构经纪与综合金控</td>
+<td>交易、做市、经纪、托管、数字资产金融服务</td>
+<td>交易量、托管资产、收入结构、监管资质</td>
+</tr>
+<tr>
+<td>③ 稳定币、RWA（现实世界资产） 与基础设施</td>
+<td>稳定币发行、现实资产代币化、结算、钱包及链上服务</td>
+<td>发行规模、平台资产、手续费、网络效应</td>
+</tr>
+<tr>
+<td>④ 矿企与算力基础</td>
+<td>BTC（比特币） 挖矿、矿机、能源、数据中心、AI/HPC（人工智能与高性能计算）</td>
+<td>算力、能源成本、BTC（比特币） 产量、AI（人工智能） 收入占比</td>
+</tr>
+</tbody></table></div>
+<p>表格中使用三个业务属性：</p>
+<ul>
+<li><strong>核心型</strong>：数字资产就是主要业务或主要资产。</li>
+<li><strong>混合型</strong>：存在真实加密业务，但也有重要的其他业务。</li>
+<li><strong>转型型</strong>：原有业务正在转向加密财库、AI（人工智能） 或其他新方向，经营确定性需要单独评估。</li>
+</ul>
+<p>一家公司可能同时属于多个类别，例如 MARA（股票代码） 既挖矿又持有大量 BTC（比特币），Coinbase（币基交易平台运营公司） 既是交易所又有稳定币业务。以下以主要投资逻辑为主分类，避免重复计算。</p>
+</div></section>
+<section class="reference" id="sources"><h2>来源与核查</h2><div class="prose"><p><a href="chatgpt-conversation://6af09756-f390-83ee-83a3-a8915bf2b41d">ChatGPT（对话研究工具） 原对话</a></p>
+<h3>原文的数据入口</h3>
+<ul>
+<li><a href="https://wholefinance.com/group/crypto-economy">Crypto Economy（加密经济公司库） — 美股加密经济公司总库</a>：跨类别核对股票代码。</li>
+<li><a href="https://wholefinance.com/group/bitcoin-mining">Bitcoin Mining（比特币挖矿公司库） — 美股挖矿与算力公司</a>：核对矿业公司与转型企业。</li>
+<li><a href="https://www.sec.gov/edgar/search/">SEC EDGAR（美国证交会申报库） — 美国上市公司原始披露</a>：核查财务、股权、增发、数字资产持仓。</li>
+<li><a href="https://www.theblock.co/treasuries">The Block（数字资产资讯和研究机构） — 加密财库持仓数据</a>：追踪数字资产财库及历史持仓变化。</li>
+<li><a href="https://www.nasdaq.com/market-activity/stocks">Nasdaq（纳斯达克交易所） — 股票代码及行情信息</a>：核对上市交易代码。</li>
+</ul>
+<p>**最终建议：**把这份清单做成长期更新的美股 Crypto 股票池，并固定保留四个主分类，同时为每家公司加上“主营纯度、业务成熟度、监管受益程度、数字资产敞口、股本稀释风险”五个字段。这样既能够持续发现新上市公司，也能及时识别那些已经从加密行业转向 AI（人工智能） 或其他业务的企业，而不会因为旧标签误判投资逻辑。</p>
+<h3>归档抽查｜官方资料</h3>
+<ul>
+<li><strong>SVIA（股票代码）</strong>　Silvia（原 ProCap Financial） 的 8-K（美国重大事项报告） 记录 BRR（股票代码） 于 2026 年 9 月 22 日改为 SVIA（股票代码）。 <a href="https://www.sec.gov/Archives/edgar/data/2076163/000149315226043753/form8-k.htm">Silvia（原 ProCap Financial） 8-K（美国重大事项报告）</a></li>
+<li><strong>SKYA（股票代码）</strong>　SkyAI（人工智能金融平台公司） 披露普通股于 2026 年 5 月 28 日由 STSS（股票代码） 切换为 SKYA（股票代码）。 <a href="https://www.sec.gov/Archives/edgar/data/1737995/000149315226050470/R10.htm">SkyAI（人工智能金融平台公司） 季报附注</a></li>
+<li><strong>USDE（股票代码）</strong>　StablecoinX（数字资产财库相关公司） 披露所持有或有权收取的 ENA（以太纳协议治理代币） 代币及其锁定安排变化。 <a href="https://www.sec.gov/Archives/edgar/data/2080215/000121390026100751/ea0305686-8k_stablecoinx.htm">StablecoinX（数字资产财库相关公司） 8-K（美国重大事项报告）</a></li>
+<li><strong>SDEV（股票代码）</strong>　Stablecoin Development 披露 SKY（天空协议治理代币） 持仓、质押和治理权。 <a href="https://www.sec.gov/Archives/edgar/data/1389545/000143774926033940/sdev20260930_10q.htm">Stablecoin Development 10-Q（美国季度报告）</a></li>
+<li><strong>SECZ（股票代码）</strong>　Securitize（稳定币、代币化或金融基础设施相关公司） 披露于 2026 年 7 月 2 日开始在纽交所交易，并于 11 月宣布把链上美股产品扩展至 25 只。 <a href="https://www.sec.gov/Archives/edgar/data/2094496/000162828026056164/exhibit991-secz2q26earning.htm">SEC（美国证券交易委员会） 披露</a>、<a href="https://investors.securitize.io/news/news-details/2026/Securitize-Expands-Onchain-U-S--Stock-Offering-to-25-Equities/">Securitize（稳定币、代币化或金融基础设施相关公司） 公告</a></li>
+<li><strong>BNY（纽约梅隆银行股票代码）</strong>　纽约梅隆银行公布从 BK（股票代码） 切换至 BNY（纽约梅隆银行股票代码） 的生效日期为 2026 年 5 月 21 日。 <a href="https://www.bny.com/corporate/global/en/about-us/newsroom/press-release/bny-announces-planned-change-of-stock-ticker-symbol-to-bny-130465.html">BNY（纽约梅隆银行股票代码） 公告</a></li>
+<li><strong>FISV（股票代码）</strong>　Fiserv（稳定币、代币化或金融基础设施相关公司） 公布迁至 Nasdaq（纳斯达克交易所） 并重新使用 FISV（股票代码），日期为 2025 年 11 月 11 日。 <a href="https://investors.fiserv.com/news-releases/news-release-details/fiserv-announces-transfer-stock-exchange-listing-nasdaq">Fiserv（稳定币、代币化或金融基础设施相关公司） 公告</a></li>
+<li><strong>IOND（股票代码）</strong>　Ionic Digital（数字基础设施公司） 公布于 2026 年 7 月 28 日完成 Nasdaq（纳斯达克交易所） 直接上市。 <a href="https://www.nasdaq.com/press-release/ionic-digital-debuts-nasdaq-marking-its-first-day-trading-2026-07-28">公司上市公告</a></li>
+<li><strong>KEEL（股票代码）</strong>　Keel 公告说明 BITF（股票代码） 与 KEEL（股票代码） 的衔接，三季度申报披露了美国挖矿业务退出。 <a href="https://ir.keelinfra.com/news-releases/news-release-details/bitfarms-officially-rebrands-keel-infrastructure-completes-us">Keel 公告</a>、<a href="https://www.sec.gov/Archives/edgar/data/1812477/000181247726000040/keel-20260930.htm">Keel 10-Q（美国季度报告）</a></li>
+</ul>
+</div></section>
+  </main>
+</div>
+<footer class="shell footer">
+  <span>原研究基准 <time datetime="2026-11-08">2026年11月8日</time></span>
+  <a href="#top">返回顶部</a>
+</footer>
+<script>
+const form = document.querySelector('#filters');
+const query = document.querySelector('#query');
+const categoryFilter = document.querySelector('#category-filter');
+const tier = document.querySelector('#tier');
+const results = document.querySelector('#results');
+const empty = document.querySelector('#empty');
+const format = new Intl.NumberFormat('zh-CN');
+
+const normalize = text => text.normalize('NFKC').trim().toLowerCase();
+const categories = Array.from(document.querySelectorAll('[data-category]'), element => ({
+  element,
+  count: element.querySelector('[data-category-count]'),
+  subgroups: Array.from(element.querySelectorAll('[data-subgroup]'), subgroup => ({
+    element: subgroup,
+    count: subgroup.querySelector('[data-count]'),
+    entries: Array.from(subgroup.querySelectorAll('[data-entry]'), entry => ({
+      element: entry,
+      ticker: normalize(entry.dataset.ticker),
+      aliases: entry.dataset.alias.split(' ').filter(Boolean).map(normalize),
+      search: normalize(entry.dataset.search),
+      tier: entry.dataset.tier
+    }))
+  }))
+}));
+const entries = categories.flatMap(category => category.subgroups.flatMap(subgroup => subgroup.entries));
+const isTicker = (entry, value) => entry.ticker === value || entry.aliases.includes(value);
+
+function setCategoryExpanded(element, expanded) {
+  const button = element.querySelector('.category-toggle');
+  element.toggleAttribute('data-collapsed', !expanded);
+  button.setAttribute('aria-expanded', String(expanded));
+  button.setAttribute('aria-label', (expanded ? '收起' : '展开') + element.querySelector('h3').textContent);
+  button.textContent = expanded ? '−' : '＋';
+}
+
+function expandTarget(hash) {
+  const target = document.getElementById(hash.slice(1));
+  const category = target?.closest('[data-category]');
+  if (category) setCategoryExpanded(category, true);
+}
+
+for (const {element} of categories) {
+  const button = element.querySelector('.category-toggle');
+  setCategoryExpanded(element, false);
+  button.hidden = false;
+  button.addEventListener('click', () => setCategoryExpanded(element, element.hasAttribute('data-collapsed')));
+}
+
+function render() {
+  const value = normalize(query.value).replace(/^\$/, '');
+  const words = value ? value.split(/\s+/) : [];
+  const exact = words.length === 1 && entries.some(entry => isTicker(entry, value));
+  let visible = 0;
+
+  for (const category of categories) {
+    const categoryMatches = !categoryFilter.value || categoryFilter.value === category.element.dataset.category;
+    let categoryCount = 0;
+    for (const subgroup of category.subgroups) {
+      let subgroupCount = 0;
+      for (const entry of subgroup.entries) {
+        const textMatches = exact ? isTicker(entry, value) : words.every(word => entry.search.includes(word));
+        const matches = categoryMatches && textMatches && (!tier.value || tier.value === entry.tier);
+        entry.element.hidden = !matches;
+        if (matches) subgroupCount++;
+      }
+      subgroup.count.textContent = format.format(subgroupCount) + ' 个';
+      subgroup.element.hidden = subgroupCount === 0;
+      categoryCount += subgroupCount;
+    }
+    category.count.textContent = format.format(categoryCount) + ' 个';
+    category.element.hidden = categoryCount === 0;
+    if (categoryCount && (value || categoryFilter.value || tier.value)) setCategoryExpanded(category.element, true);
+    visible += categoryCount;
+  }
+
+  results.textContent = '显示 ' + format.format(visible) + ' / ' + format.format(entries.length) + ' 个代码';
+  empty.hidden = visible > 0;
+}
+
+function readUrl() {
+  const url = new URL(location.href);
+  query.value = url.searchParams.get('q') || '';
+  for (const control of [categoryFilter, tier]) {
+    const saved = url.searchParams.get(control.name);
+    control.value = Array.from(control.options).some(option => option.value === saved) ? saved : '';
+  }
+}
+
+function apply() {
+  render();
+  const url = new URL(location.href);
+  for (const control of [query, categoryFilter, tier]) {
+    if (control.value.trim()) url.searchParams.set(control.name, control.value.trim());
+    else url.searchParams.delete(control.name);
+  }
+  if (url.href !== location.href) {
+    try { history.replaceState(null, '', url); }
+    catch { /* The directory still filters in viewers that restrict file URL history. */ }
+  }
+}
+
+form.addEventListener('input', apply);
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  apply();
+});
+form.addEventListener('reset', event => {
+  event.preventDefault();
+  query.value = '';
+  categoryFilter.value = '';
+  tier.value = '';
+  apply();
+});
+document.querySelectorAll('[data-category-link], [data-entry-link]').forEach(link => {
+  link.addEventListener('click', event => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (query.value || categoryFilter.value || tier.value) form.reset();
+    expandTarget(link.hash);
+  });
+});
+window.addEventListener('popstate', () => {
+  readUrl();
+  render();
+});
+readUrl();
+render();
+expandTarget(location.hash);
+window.addEventListener('hashchange', () => expandTarget(location.hash));
+form.hidden = false;
+results.hidden = false;
+
+</script>
+</body>
+</html>

@@ -14,8 +14,11 @@ status: 观察中
 price: 135
 target_buy_price: "$90-$110 或 SBC/EBITDA<40%"
 target_sell_price: "$320-$350(加密狂热期泡沫止盈) 或 USDC分成恶化/份额流失证伪清仓"
+target_position_pct: 8
+next_risk_date: "2027-02-12"
 macro_score: 60
 quality_score: 64
+timing_score: 54
 vitality_score: 68
 score_rate: 61
 traps_hit: 1

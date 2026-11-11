@@ -14,8 +14,11 @@ status: 观察中
 price: 68
 target_buy_price: "$40 或 USDC增速>30%"
 target_sell_price: "$120(PE>60x泡沫止盈) 或 USDC份额<15%/分成恶化证伪清仓"
+target_position_pct: 5
+next_risk_date: "2027-02-18"
 macro_score: 55
 quality_score: 63
+timing_score: 52
 vitality_score: 62
 score_rate: 60
 traps_hit: 2

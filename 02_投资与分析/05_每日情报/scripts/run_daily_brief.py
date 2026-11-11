@@ -41,7 +41,9 @@ SESSION_LABEL = "早报 (08:30 美股收盘深度复盘 & 贝叶斯审计)" if I
 # 仓库根目录定位
 SCRIPT_DIR = Path(__file__).resolve().parent
 VAULT_ROOT = SCRIPT_DIR.parents[2]  # E:\obsidian仓库\坤哥的第二大脑
+RESEARCH_DIR = VAULT_ROOT / "02_投资与分析" / "03_个股研究与股票池"
 RECORDS_DIR = VAULT_ROOT / "02_投资与分析" / "04_交易记录"
+POOL_DIRS = [RESEARCH_DIR, RECORDS_DIR]
 METHOD_DIR = VAULT_ROOT / "02_投资与分析" / "01_方法论"
 DAILY_DIR = VAULT_ROOT / "02_投资与分析" / "05_每日情报"
 
@@ -137,38 +139,55 @@ def compute_technical_indicators(hist_df):
 
 
 def load_portfolio_targets():
-    """从 04_交易记录 文件夹读取所有活跃标的笔记（排除索引、雷达池、交易流水与已放弃标的）"""
+    """从 03_个股研究与股票池（及兼容 04_交易记录）读取所有活跃标的笔记（排除索引、模板与已放弃标的）"""
     targets = []
-    skip_files = {"股票池.md", "投资决策日志.md", "新物种与候选猎物雷达池.md"}
-    for md_file in sorted(RECORDS_DIR.glob("*.md")):
-        if md_file.name in skip_files:
+    skip_files = {
+        "股票池.md",
+        "投资决策日志.md",
+        "新物种与候选猎物雷达池.md",
+        "_选股分析模板.md",
+        "_交易记录模板.md",
+    }
+    seen_tickers = set()
+    for folder in POOL_DIRS:
+        if not folder.exists():
             continue
-        meta, body = parse_markdown_frontmatter(md_file)
-        if "ticker" not in meta or "action" in meta:
-            continue
-        status_str = str(meta.get("status", "观察中")).strip()
-        if "放弃" in status_str:
-            continue
-        targets.append({
-            "file_name": md_file.stem,
-            "ticker": str(meta.get("ticker", "")),
-            "company": str(meta.get("company", md_file.stem)),
-            "asset_type": str(meta.get("asset_type", "股票")),
-            "pool_type": str(meta.get("pool_type", "💎皇冠明珠复利池")),
-            "macro_bucket": str(meta.get("macro_bucket", "")),
-            "sector": str(meta.get("sector", "")),
-            "status": status_str,
-            "recorded_price": meta.get("price", ""),
-            "target_buy_price": str(meta.get("target_buy_price", "")),
-            "target_sell_price": str(meta.get("target_sell_price", "")),
-            "macro_score": meta.get("macro_score", ""),
-            "quality_score": meta.get("quality_score", ""),
-            "vitality_score": meta.get("vitality_score", ""),
-            "score_rate": meta.get("score_rate", ""),
-            "position_pct": meta.get("position_pct", 0),
-            "verdict": str(meta.get("verdict", "")),
-            "body_excerpt": body[:2000],
-        })
+        for md_file in sorted(folder.glob("*.md")):
+            if md_file.name in skip_files:
+                continue
+            meta, body = parse_markdown_frontmatter(md_file)
+            if "ticker" not in meta or "action" in meta:
+                continue
+            ticker = str(meta.get("ticker", "")).strip()
+            if not ticker or ticker in seen_tickers:
+                continue
+            status_str = str(meta.get("status", "观察中")).strip()
+            if "放弃" in status_str:
+                continue
+            seen_tickers.add(ticker)
+            targets.append({
+                "file_name": md_file.stem,
+                "ticker": ticker,
+                "company": str(meta.get("company", md_file.stem)),
+                "asset_type": str(meta.get("asset_type", "股票")),
+                "pool_type": str(meta.get("pool_type", "💎皇冠明珠复利池")),
+                "macro_bucket": str(meta.get("macro_bucket", "")),
+                "sector": str(meta.get("sector", "")),
+                "status": status_str,
+                "recorded_price": meta.get("price", ""),
+                "target_buy_price": str(meta.get("target_buy_price", "")),
+                "target_sell_price": str(meta.get("target_sell_price", "")),
+                "target_position_pct": meta.get("target_position_pct", ""),
+                "next_risk_date": meta.get("next_risk_date", ""),
+                "macro_score": meta.get("macro_score", ""),
+                "quality_score": meta.get("quality_score", ""),
+                "timing_score": meta.get("timing_score", ""),
+                "vitality_score": meta.get("vitality_score", ""),
+                "score_rate": meta.get("score_rate", ""),
+                "position_pct": meta.get("position_pct", 0),
+                "verdict": str(meta.get("verdict", "")),
+                "body_excerpt": body[:2000],
+            })
     return targets
 
 

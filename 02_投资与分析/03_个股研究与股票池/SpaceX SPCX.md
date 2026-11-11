@@ -13,8 +13,11 @@ status: 观察中
 price: 134
 target_buy_price: "$75 (12/08解禁错杀坑) 或 Starlink独立分拆"
 target_sell_price: "$240(情绪泡沫止盈) 或 关联交易>30%/Starlink增速<20%证伪清仓"
+target_position_pct: 10
+next_risk_date: "2026-12-08"
 macro_score: 52
 quality_score: 60
+timing_score: 42
 vitality_score: 85
 score_rate: 54
 traps_hit: 4

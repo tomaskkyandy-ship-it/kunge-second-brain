@@ -13,8 +13,11 @@ status: 观察中
 price: 285
 target_buy_price: "$230 或单季FCF转正(+$150亿)"
 target_sell_price: "$420(PE>35x泡沫止盈) 或 Cloud利润率<20%/Search转负证伪清仓"
+target_position_pct: 15
+next_risk_date: "2027-01-28"
 macro_score: 56
 quality_score: 73
+timing_score: 55
 vitality_score: 78
 score_rate: 68
 traps_hit: 2

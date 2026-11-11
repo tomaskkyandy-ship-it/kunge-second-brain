@@ -1,6 +1,6 @@
 filters:
   and:
-    - file.inFolder("02_投资与分析/04_交易记录")
+    - file.inFolder("02_投资与分析/03_个股研究与股票池")
     - file.ext == "md"
     - file.name != "_选股分析模板"
     - note.company != null
@@ -26,43 +26,50 @@ properties:
     displayName: 🟢学徒买点
   target_sell_price:
     displayName: 🔴师傅卖点
+  target_position_pct:
+    displayName: 目标仓位%
+  position_pct:
+    displayName: 当前仓位%
+  next_risk_date:
+    displayName: 💣排雷日历
   macro_score:
     displayName: 中观分%
   quality_score:
     displayName: 质量分%
+  timing_score:
+    displayName: 时机分%
   vitality_score:
     displayName: 新物种生命力%
   score_rate:
     displayName: 综合分%
   traps_hit:
     displayName: 陷阱数
-  position_pct:
-    displayName: 仓位%
   verdict:
     displayName: 结论
 views:
   - type: table
-    name: 我的股票池
+    name: 我的股票池全景
     order:
       - company
       - ticker
       - pool_type
-      - macro_bucket
       - status
       - price
       - target_buy_price
       - target_sell_price
-      - macro_score
+      - position_pct
+      - target_position_pct
+      - next_risk_date
       - quality_score
+      - timing_score
       - vitality_score
       - score_rate
-      - position_pct
       - verdict
     sort:
       - property: score_rate
         direction: DESC
   - type: table
-    name: 皇冠明珠狙击池
+    name: 💎皇冠明珠狙击池
     filters:
       and:
         - quality_score >= 70
@@ -73,16 +80,18 @@ views:
       - target_buy_price
       - target_sell_price
       - quality_score
-      - macro_score
+      - timing_score
       - score_rate
       - position_pct
+      - target_position_pct
+      - next_risk_date
       - status
       - verdict
     sort:
       - property: quality_score
         direction: DESC
   - type: table
-    name: 新物种观察池
+    name: 🚀新物种观察池
     filters:
       and:
         - vitality_score >= 65
@@ -95,6 +104,9 @@ views:
       - vitality_score
       - quality_score
       - score_rate
+      - position_pct
+      - target_position_pct
+      - next_risk_date
       - status
       - verdict
     sort:
@@ -113,11 +125,12 @@ views:
       - price
       - target_buy_price
       - target_sell_price
-      - macro_score
       - quality_score
-      - vitality_score
+      - timing_score
       - score_rate
       - position_pct
+      - target_position_pct
+      - next_risk_date
       - verdict
     sort:
       - property: score_rate
@@ -135,10 +148,12 @@ views:
       - price
       - target_buy_price
       - target_sell_price
-      - macro_score
       - quality_score
+      - timing_score
       - score_rate
       - position_pct
+      - target_position_pct
+      - next_risk_date
       - verdict
     sort:
       - property: score_rate
@@ -154,6 +169,7 @@ views:
       - quality_score
       - vitality_score
       - score_rate
+      - next_risk_date
       - verdict
     sort:
       - property: score_rate
