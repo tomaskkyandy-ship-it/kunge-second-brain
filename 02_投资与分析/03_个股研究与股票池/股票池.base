@@ -3,6 +3,7 @@ filters:
     - file.inFolder("02_投资与分析/03_个股研究与股票池")
     - file.ext == "md"
     - file.name != "_选股分析模板"
+    - !tags.contains("模板")
     - note.company != null
     - note.action == null
 properties:
