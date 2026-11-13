@@ -247,6 +247,208 @@ def fetch_onchain_and_sentiment_metrics():
     return metrics
 
 
+def _parse_farside_float(val_str: str):
+    """解析 Farside ETF 表格中的数字（括号表示负数，'-' 返回 None）"""
+    s = val_str.strip().replace(",", "")
+    if not s or s == "-":
+        return None
+    if s.startswith("(") and s.endswith(")"):
+        s = "-" + s[1:-1]
+    try:
+        return float(s)
+    except ValueError:
+        return None
+
+
+def fetch_btc_liquidity_radar(dxy_val=None, tnx_10y_val=None, btc_rsi=None):
+    """第一梯队：BTC 宏观流动性与机构管道 6 维量化信号灯（全免费公开数据源）"""
+    radar = {
+        "metrics": {},
+        "signals": {},
+        "green_lights": 0,
+        "total_lights": 6,
+        "verdict": "",
+    }
+    headers_browser = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    }
+
+    # 1. FRED 宏观暗线：2Y 美债 (DGS2)、10Y 实际利率 (DFII10)、美国净流动性 (WALCL - WTREGEN - RRPONTSYD)
+    fred_series = {}
+    for fid in ["DGS2", "DFII10", "WALCL", "WTREGEN", "RRPONTSYD"]:
+        try:
+            r = requests.get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={fid}", timeout=10)
+            if r.status_code == 200:
+                rows = []
+                for line in r.text.strip().splitlines()[1:]:
+                    parts = line.split(",")
+                    if len(parts) == 2 and parts[1] not in ("", "."):
+                        try:
+                            rows.append((parts[0], float(parts[1])))
+                        except ValueError:
+                            pass
+                if rows:
+                    fred_series[fid] = rows
+        except Exception:
+            pass
+
+    if "DGS2" in fred_series:
+        radar["metrics"]["2Y美债收益率 (FRED DGS2)"] = f"{fred_series['DGS2'][-1][1]:.2f}% ({fred_series['DGS2'][-1][0]})"
+    if "DFII10" in fred_series:
+        radar["metrics"]["10Y实际利率 (FRED DFII10)"] = f"{fred_series['DFII10'][-1][1]:.2f}% ({fred_series['DFII10'][-1][0]})"
+
+    net_liq_chg_b = None
+    if all(k in fred_series for k in ("WALCL", "WTREGEN", "RRPONTSYD")):
+        try:
+            # WALCL & WTREGEN 单位为百万美元，RRPONTSYD 单位为十亿美元
+            w_cur, w_prev = fred_series["WALCL"][-1][1], fred_series["WALCL"][-2][1]
+            t_cur, t_prev = fred_series["WTREGEN"][-1][1], fred_series["WTREGEN"][-2][1]
+            r_cur = fred_series["RRPONTSYD"][-1][1]
+            r_prev = fred_series["RRPONTSYD"][-6][1] if len(fred_series["RRPONTSYD"]) >= 6 else fred_series["RRPONTSYD"][0][1]
+            nl_cur_b = (w_cur - t_cur) / 1000.0 - r_cur
+            nl_prev_b = (w_prev - t_prev) / 1000.0 - r_prev
+            net_liq_chg_b = nl_cur_b - nl_prev_b
+            radar["metrics"]["美国净流动性 (WALCL-TGA-RRP)"] = f"${nl_cur_b / 1000:.3f}T (周变动 {net_liq_chg_b:+.1f}B)"
+        except Exception:
+            pass
+
+    # 2. DefiLlama：USDT + USDC 合计总市值及 7D / 30D 变动
+    stable_7d_b = None
+    try:
+        dl = requests.get("https://stablecoins.llama.fi/stablecoins?includePrices=false", timeout=12)
+        if dl.status_code == 200:
+            total_cur, total_7d, total_30d = 0.0, 0.0, 0.0
+            detail_parts = []
+            for a in dl.json().get("peggedAssets", []):
+                sym = a.get("symbol")
+                if sym in ("USDT", "USDC"):
+                    cur = float(a.get("circulating", {}).get("peggedUSD", 0) or 0)
+                    w1 = float(a.get("circulatingPrevWeek", {}).get("peggedUSD", 0) or 0)
+                    m1 = float(a.get("circulatingPrevMonth", {}).get("peggedUSD", 0) or 0)
+                    total_cur += cur
+                    total_7d += (cur - w1)
+                    total_30d += (cur - m1)
+                    detail_parts.append(f"{sym} ${cur/1e9:.2f}B(7D {(cur-w1)/1e9:+.2f}B)")
+            if total_cur > 0:
+                stable_7d_b = total_7d / 1e9
+                radar["metrics"]["稳定币双雄总量 (USDT+USDC)"] = f"${total_cur/1e9:.2f}B | 7D {stable_7d_b:+.2f}B | 30D {total_30d/1e9:+.2f}B ({', '.join(detail_parts)})"
+    except Exception as e:
+        radar["metrics"]["稳定币双雄总量"] = f"获取略过 ({e})"
+
+    # 3. Coinbase 现货溢价率 (vs OKX / Kraken)
+    cb_premium_pct = None
+    try:
+        cb_p = float(requests.get("https://api.coinbase.com/v2/prices/BTC-USD/spot", timeout=8).json()["data"]["amount"])
+        ref_p = None
+        try:
+            ref_p = float(requests.get("https://www.okx.com/api/v5/market/ticker?instId=BTC-USDT", timeout=8).json()["data"][0]["last"])
+        except Exception:
+            krk_spot = requests.get("https://api.kraken.com/0/public/Ticker?pair=XBTUSD", timeout=8).json()
+            pair_data = next(iter(krk_spot.get("result", {}).values()), {})
+            if pair_data.get("c"):
+                ref_p = float(pair_data["c"][0])
+        if cb_p and ref_p:
+            cb_premium_pct = (cb_p - ref_p) / ref_p * 100.0
+            radar["metrics"]["Coinbase 现货溢价率"] = f"{cb_premium_pct:+.3f}% (CB ${cb_p:,.1f} vs Ref ${ref_p:,.1f})"
+    except Exception as e:
+        radar["metrics"]["Coinbase 现货溢价率"] = f"获取略过 ({e})"
+
+    # 4. 美国现货 BTC ETF 净流向 (Farside)
+    etf_latest_m = None
+    etf_5d_m = None
+    try:
+        fs_resp = requests.get("https://farside.co.uk/btc/", timeout=12, headers=headers_browser)
+        if fs_resp.status_code == 200:
+            rows = re.findall(r"<tr[^>]*>(.*?)</tr>", fs_resp.text, re.S)
+            settled_days = []
+            for row in rows:
+                cells = [re.sub(r"<[^>]+>", "", c).strip() for c in re.findall(r"<t[hd][^>]*>(.*?)</t[hd]>", row, re.S)]
+                if len(cells) >= 4 and re.match(r"^\d{2}\s+[A-Za-z]{3}\s+\d{4}$", cells[0]):
+                    ibit_val = _parse_farside_float(cells[1])
+                    tot_val = _parse_farside_float(cells[-1])
+                    # 跳过尚未结算的全 '-' 行
+                    if any(_parse_farside_float(c) is not None for c in cells[1:-1]) and tot_val is not None:
+                        settled_days.append((cells[0], tot_val, ibit_val))
+            if settled_days:
+                last_date, etf_latest_m, ibit_latest = settled_days[-1]
+                etf_5d_m = sum(d[1] for d in settled_days[-5:])
+                ibit_str = f"{ibit_latest:+.1f}M" if ibit_latest is not None else "N/A"
+                radar["metrics"]["现货BTC ETF净流向 (Farside)"] = f"最新({last_date}) {etf_latest_m:+.1f}M (IBIT {ibit_str}) | 近5日累计 {etf_5d_m:+.1f}M"
+    except Exception as e:
+        radar["metrics"]["现货BTC ETF净流向"] = f"获取略过 ({e})"
+
+    # 5. 永续合约资金费率 & 未平仓量 (OKX 优先, Kraken Futures 兜底)
+    funding_pct = None
+    try:
+        okx_fr = requests.get("https://www.okx.com/api/v5/public/funding-rate?instId=BTC-USDT-SWAP", timeout=8).json()
+        okx_oi = requests.get("https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=BTC-USDT-SWAP", timeout=8).json()
+        fr = float(okx_fr["data"][0]["fundingRate"]) * 100.0
+        oi_usd = float(okx_oi["data"][0]["oiUsd"]) / 1e9
+        funding_pct = fr
+        radar["metrics"]["永续合约费率与OI (OKX)"] = f"8h费率 {fr:+.4f}% (年化 {fr*3*365:+.1f}%) | OI ${oi_usd:.2f}B"
+    except Exception:
+        try:
+            krk = requests.get("https://futures.kraken.com/derivatives/api/v3/tickers", timeout=8).json()
+            for t in krk.get("tickers", []):
+                if t.get("symbol") == "PF_XBTUSD":
+                    fr = float(t.get("fundingRate", 0)) * 100.0
+                    oi_btc = float(t.get("openInterest", 0))
+                    funding_pct = fr
+                    radar["metrics"]["永续合约费率与OI (Kraken)"] = f"费率 {fr:+.4f}% | OI {oi_btc:,.0f} BTC"
+                    break
+        except Exception as e:
+            radar["metrics"]["永续合约费率与OI"] = f"获取略过 ({e})"
+
+    # 6. BTC 200周均线 (200W SMA) 铁底偏离度
+    try:
+        hist_w = yf.Ticker("BTC-USD").history(period="5y", interval="1wk")["Close"].dropna()
+        if len(hist_w) >= 100:
+            sma200w = float(hist_w.tail(200).mean())
+            latest_w = float(hist_w.iloc[-1])
+            dev_200w = (latest_w - sma200w) / sma200w * 100.0
+            radar["metrics"]["BTC 200周均线 (200W SMA)"] = f"${sma200w:,.0f} (当前偏离 {dev_200w:+.1f}%)"
+    except Exception:
+        pass
+
+    # 7. 计算 6 盏流动性信号灯 (🟢 满足利好/出清条件 vs 🔴 逆风/未出清)
+    checks = []
+    # 灯1: 美元与美债重力
+    l1_ok = (isinstance(dxy_val, (int, float)) and dxy_val < 103.0) and (isinstance(tnx_10y_val, (int, float)) and tnx_10y_val < 5.0)
+    checks.append(("1.美元美债重力(DXY<103 & 10Y<5%)", l1_ok))
+    # 灯2: 美国净流动性周变动 > 0
+    l2_ok = net_liq_chg_b is not None and net_liq_chg_b > 0
+    checks.append(("2.美国净流动性(周变动>0)", l2_ok))
+    # 灯3: 稳定币双雄 7D 净增发 > 0
+    l3_ok = stable_7d_b is not None and stable_7d_b > 0
+    checks.append(("3.稳定币燃料(USDT+USDC 7D>0)", l3_ok))
+    # 灯4: 现货 BTC ETF 近5日净流入 > 0
+    l4_ok = etf_5d_m is not None and etf_5d_m > 0
+    checks.append(("4.现货ETF买盘(近5日净流入>0)", l4_ok))
+    # 灯5: Coinbase 溢价率 >= 0
+    l5_ok = cb_premium_pct is not None and cb_premium_pct >= 0
+    checks.append(("5.美资风向(Coinbase溢价≥0%)", l5_ok))
+    # 灯6: 杠杆出清与技术超卖 (费率≤0.01% 或 RSI≤35)
+    l6_ok = (funding_pct is not None and funding_pct <= 0.01) or (isinstance(btc_rsi, (int, float)) and btc_rsi <= 35)
+    checks.append(("6.杠杆与超卖出清(费率≤0.01%或RSI≤35)", l6_ok))
+
+    green_cnt = 0
+    for name, ok in checks:
+        radar["signals"][name] = "🟢" if ok else "🔴"
+        if ok:
+            green_cnt += 1
+
+    radar["green_lights"] = green_cnt
+    if green_cnt >= 4:
+        radar["verdict"] = f"🟢 流动性反转放行 ({green_cnt}/6 绿灯)：宏观与资金管道共振改善，可积极配合买点建仓。"
+    elif green_cnt >= 2:
+        radar["verdict"] = f"🟡 震荡分化期 ({green_cnt}/6 绿灯)：部分指标修复但未共振，严守左侧分批挂单纪律。"
+    else:
+        radar["verdict"] = f"🔴 美元退潮抽水期 ({green_cnt}/6 绿灯)：流动性全面逆风，仅允许极度超卖区小仓位左侧挂单，严禁加杠杆。"
+
+    return radar
+
+
 def scan_sector_radar_candidates(existing_tickers: set):
     """🔭 五大赛道新物种与错杀猎物雷达：自动扫描候选猎物并附带【第一性原理推荐理由】与【核心卡点】"""
     radar_watchlist = [
@@ -459,6 +661,15 @@ def fetch_realtime_market_and_news(targets):
     # 4. 扫描五大赛道新猎物雷达
     snapshot["new_hunter_radar"] = scan_sector_radar_candidates(existing_set)
 
+    # 5. 计算第一梯队：BTC 宏观流动性与机构管道 6 维信号灯
+    dxy_latest = snapshot["macro_prices"].get("美元指数 (DX-Y.NYB)", {}).get("latest")
+    btc_rsi_val = snapshot["targets_data"].get("BTC", {}).get("technicals", {}).get("rsi_14")
+    snapshot["btc_liquidity_radar"] = fetch_btc_liquidity_radar(
+        dxy_val=dxy_latest,
+        tnx_10y_val=tnx_10y,
+        btc_rsi=btc_rsi_val,
+    )
+
     return snapshot
 
 
@@ -520,6 +731,7 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
    - 表格列必须包含：`标的(双链)` | `所属池子(💎皇冠/🚀新物种)` | `收盘价(涨跌)` | `RSI(14) & MA200偏离` | `🟢学徒买点(距买点%)` | `🔴师傅卖点(泡沫止盈/证伪线)` | `排雷日历与操盘指令`
 2. `## 二、🧭 宏观 7 大路标、金油双锚与链上硬数据快照`
    - 解读 10Y美债、WTI原油三档警戒线、COMEX黄金、实时【金油比】、【BTC/黄金比】、**【USDC 实时流通市值】**（对比 Circle 30% 增速目标）与【加密恐慌贪婪指数】。
+   - **必须单列子模块 `### ₿ BTC 宏观流动性信号灯（第一梯队 6 维雷达）`**：严格引用 `btc_liquidity_radar` 中的硬数据（DXY、10Y实际利率、美国净流动性周变动、USDT+USDC双雄7D/30D变动、Coinbase溢价率、现货ETF净流向、永续费率与OI、200W均线偏离度），输出 6 盏红绿灯状态（`X/6 绿灯`）与 `verdict` 结论，并直接联动 `[[Bitcoin BTC]]` 的左侧挂单纪律。
 3. `## 三、🔬 核心精锐二级/三级情报深潜（含预期差三问）`
    - 仅分析当前股票池中的 5 只活跃精锐（`GOOGL`、`BTC`、`CRCL`、`COIN`、`SPCX`），严禁出现已删除的 `RXRX / CT / ZEC`！
    - 若标的临近财报日或已出季报，优先对照其档案中的【🎯 季度必盯 3 个硬核 KPI（core_kpis）】核验是否破线！
@@ -538,6 +750,7 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
    - 表格列：`标的(双链)` | `盘前/最新价` | `RSI(14)` | `🟢今晚买点挂单线(差距%)` | `🔴今晚止盈/止损红线` | `今晚开盘一句话动作指令`
 2. `## 二、⚡ 欧美盘宏观、金油比与链上资金异动速递`
    - 聚焦过去 12 小时内 10Y美债、WTI原油、黄金、USDC 流通市值、加密恐慌贪婪指数的最新边际变化。
+   - **必须附带一行 `₿ BTC 流动性雷达 [X/6 绿灯]` 快照**：点明 DXY、USDT+USDC 7D变动、Coinbase 溢价率、ETF 净流向与永续费率是否发生边际拐点。
 3. `## 三、🔭 「新物种与错杀猎物雷达池」盘前异动与推荐逻辑追踪（详见 [[新物种与候选猎物雷达池]]）`
    - 必须输出一张 **【🔭 预备队猎物雷达追踪表】**，列包含：`候选标的(PLTR/NVDA/TSLA/RKLB等)` | `最新价 & RSI(14)` | `💡为什么值得盯(核心推荐理由)` | `🎯转正观察区与今晚策略`。
 4. `## 四、⚖️ 盘前紧急贝叶斯调分或排雷提醒（若无则写“今日晚盘维持早报评分不变”）`
@@ -570,9 +783,9 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 
 #### 第二部分：用于推送到坤哥 iPhone Bark 的精简 JSON（严禁包裹代码块，直接输出合法 JSON 对象）
 {{
-  "alert_level": "active 或 timeSensitive（若有标的距买点/卖点 <15%、或 RSI≤32 / RSI≥75、或排雷日历 <10天、或 WTI原油 >$90，设为 timeSensitive）",
+  "alert_level": "active 或 timeSensitive（若有标的距买点/卖点 <15%、或 RSI≤32 / RSI≥75、或排雷日历 <10天、或 WTI原油 >$90、或 BTC 流动性绿灯 ≥4 反转放行、或 BTC RSI≤30 且资金费率≤0 极端出清，设为 timeSensitive）",
   "title": "📡 {TODAY_STR} {'早报' if IS_MORNING else '晚报'}：一句话核心结论（不超过22个字）",
-  "body": "用 4 行极简要点列出：\\n1. 🟢🔴 双扳机监控（最近买点/卖点标的与RSI）\\n2. 🚀 新物种与排雷预警（SPCX解禁/猎物雷达）\\n3. 🧭 宏观与链上硬数据（10Y美债/油价/USDC市值）\\n4. ⚖️ 操盘与调分指令"
+  "body": "用 4 行极简要点列出：\\n1. 🟢🔴 双扳机监控（最近买点/卖点标的与RSI）\\n2. 🚀 新物种与排雷预警（SPCX解禁/猎物雷达）\\n3. 🧭 宏观与₿ BTC雷达（[X/6绿灯] DXY/10Y美债/稳定币7D/ETF/费率）\\n4. ⚖️ 操盘与调分指令"
 }}
 """
 
