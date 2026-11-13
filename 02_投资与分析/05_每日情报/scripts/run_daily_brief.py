@@ -617,6 +617,32 @@ def save_report_to_obsidian(md_content: str):
 
     md_content = purge_deprecated_lines(md_content)
 
+    def format_with_valid_frontmatter(content: str) -> str:
+        """确保 Markdown 开头具备标准、合法的 YAML Frontmatter，防止 GitHub 渲染报错"""
+        content = content.strip()
+        if content.startswith("---"):
+            parts = content.split("---", 2)
+            if len(parts) >= 3:
+                try:
+                    meta = yaml.safe_load(parts[1])
+                    if isinstance(meta, dict) and meta:
+                        return content
+                except Exception:
+                    pass
+                content = parts[2].strip()
+            else:
+                content = re.sub(r"^---\s*\n*", "", content).strip()
+
+        standard_header = (
+            f"---\n"
+            f"date: {TODAY_STR}\n"
+            f"session: {SESSION_LABEL}\n"
+            f"author: 坤哥的第二大脑\n"
+            f"status: Complete\n"
+            f"---\n\n"
+        )
+        return standard_header + content
+
     if report_path.exists() and not IS_MORNING:
         existing = purge_deprecated_lines(report_path.read_text(encoding="utf-8"))
         # 清理晚报可能自带的重复 YAML Frontmatter
@@ -629,7 +655,8 @@ def save_report_to_obsidian(md_content: str):
             combined = head_part + f"\n\n---\n\n## 🌙 晚盘开盘作战快报（{NOW_BJT.strftime('%H:%M')} 更新）\n\n" + clean_evening
             report_path.write_text(combined, encoding="utf-8")
     else:
-        report_path.write_text(md_content, encoding="utf-8")
+        final_md = format_with_valid_frontmatter(md_content)
+        report_path.write_text(final_md, encoding="utf-8")
 
     index_path = DAILY_DIR / "每日投资情报总览.md"
     if index_path.exists():
