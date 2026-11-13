@@ -179,6 +179,7 @@ def load_portfolio_targets():
                 "target_sell_price": str(meta.get("target_sell_price", "")),
                 "target_position_pct": meta.get("target_position_pct", ""),
                 "next_risk_date": meta.get("next_risk_date", ""),
+                "core_kpis": meta.get("core_kpis", ""),
                 "macro_score": meta.get("macro_score", ""),
                 "quality_score": meta.get("quality_score", ""),
                 "timing_score": meta.get("timing_score", ""),
@@ -521,6 +522,7 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
    - 解读 10Y美债、WTI原油三档警戒线、COMEX黄金、实时【金油比】、【BTC/黄金比】、**【USDC 实时流通市值】**（对比 Circle 30% 增速目标）与【加密恐慌贪婪指数】。
 3. `## 三、🔬 核心精锐二级/三级情报深潜（含预期差三问）`
    - 仅分析当前股票池中的 5 只活跃精锐（`GOOGL`、`BTC`、`CRCL`、`COIN`、`SPCX`），严禁出现已删除的 `RXRX / CT / ZEC`！
+   - 若标的临近财报日或已出季报，优先对照其档案中的【🎯 季度必盯 3 个硬核 KPI（core_kpis）】核验是否破线！
    - 对 `[[SpaceX SPCX]]` 必须结合其 **【🚀新物种生命力 85.5% vs 12/08 解禁倒计时】** 双重属性分析。
 4. `## 四、🔭 五大赛道二阶传导与「新物种/错杀猎物雷达」（详见 [[新物种与候选猎物雷达池]]）`
    - 结合 `new_hunter_radar` 中的数据，必须输出一张 **【🔭 候选猎物雷达追踪表】**，表格列必须包含：`候选标的` | `归属池` | `最新价(涨跌) & RSI(14)` | `💡核心推荐理由(第一性原理/护城河)` | `⚠️当前卡点与转正观察价`，绝不允许只给代码不写推荐理由！
