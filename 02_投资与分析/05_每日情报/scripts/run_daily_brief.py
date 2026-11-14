@@ -603,7 +603,7 @@ def fetch_realtime_market_and_news(targets):
             snapshot["macro_prices"][label] = {"error": str(e)}
 
     # 2. 获取股票池标的实时量价技术指标、双向扳机距离与专属新闻
-    crypto_map = {"BTC": "BTC-USD", "ZEC": "ZEC-USD"}
+    crypto_map = {"BTC": "BTC-USD", "ETH": "ETH-USD", "ZEC": "ZEC-USD"}
     existing_set = set()
     for t in targets:
         raw_ticker = t["ticker"].upper()
@@ -1005,6 +1005,17 @@ def main():
     print(f"📝 每日情报已写入: {report_path}")
 
     send_bark_notification(bark_data)
+
+    # 联动自动刷新 04_交易记录（本地环境若存在持仓则自动计算最新市值与人民币折合）
+    try:
+        sync_script = Path(__file__).resolve().parent.parent.parent / "04_交易记录" / "同步持仓盈亏.py"
+        if sync_script.exists():
+            import subprocess, sys
+            subprocess.run([sys.executable, str(sync_script)], check=False)
+            print("💹 已联动自动刷新持仓盈亏与交易看板！")
+    except Exception as e:
+        print(f"ℹ️ 持仓联动跳过: {e}")
+
     print("🎉 v3.0 全部流程执行完毕！")
 
 
