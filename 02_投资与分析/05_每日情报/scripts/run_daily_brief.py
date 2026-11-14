@@ -4,7 +4,7 @@
 坤哥的第二大脑 · 云端每日投资情报与买卖双扳机监控引擎 (v3.0 机构量化终极版)
 运行环境：GitHub Actions (Ubuntu) 或 本地 Python 3.10+
 v3.0 六大核心进化特性：
-1. 【双池杠铃架构】：自动识别 `💎皇冠明珠复利池 (85%)` 与 `🚀新物种观察池 (15% 第一性原理记分卡)`，自动屏蔽 `已放弃` 标的。
+1. 【三桶资产架构】：识别 `💎皇冠明珠复利池 (75%–85%)`、`🚀奇兵高赔率池 (10%–15%，加密≤5%)` 与 `💵战略现金 (5%–10%)`，自动屏蔽 `已放弃` 标的。
 2. 【🟢学徒买 + 🔴师傅卖 双扳机监控】：同时提取 `target_buy_price` 与 `target_sell_price`（泡沫止盈 + 逻辑证伪 + 移动护利），自动计算双向百分比距离。
 3. 【一手量化盘面与链上硬数据】：
    - 通过 yfinance 1年日线数据自动计算每只标的的 `RSI(14) 超买超卖指标`、`MA200 牛熊均线偏离度`、`距 52 周高点回撤率`、`量比 (Volume Ratio)`；
@@ -92,8 +92,8 @@ def compute_technical_indicators(hist_df):
     delta = closes.diff()
     gain = delta.clip(lower=0)
     loss = -delta.clip(upper=0)
-    avg_gain = gain.rolling(window=14, min_periods=14).mean().iloc[-1]
-    avg_loss = loss.rolling(window=14, min_periods=14).mean().iloc[-1]
+    avg_gain = gain.ewm(alpha=1 / 14, adjust=False, min_periods=14).mean().iloc[-1]
+    avg_loss = loss.ewm(alpha=1 / 14, adjust=False, min_periods=14).mean().iloc[-1]
     if avg_loss == 0:
         rsi_14 = 100.0
     else:
@@ -432,13 +432,30 @@ def fetch_btc_liquidity_radar(dxy_val=None, tnx_10y_val=None, btc_rsi=None):
     l6_ok = (funding_pct is not None and funding_pct <= 0.01) or (isinstance(btc_rsi, (int, float)) and btc_rsi <= 35)
     checks.append(("6.杠杆与超卖出清(费率≤0.01%或RSI≤35)", l6_ok))
 
+    # 数据可用性：抓取失败的信号灯标 ⚪数据缺失，不计绿灯也不计红灯
+    avail = [
+        isinstance(dxy_val, (int, float)) and isinstance(tnx_10y_val, (int, float)),
+        net_liq_chg_b is not None,
+        stable_7d_b is not None,
+        etf_5d_m is not None,
+        cb_premium_pct is not None,
+        funding_pct is not None or isinstance(btc_rsi, (int, float)),
+    ]
     green_cnt = 0
-    for name, ok in checks:
+    missing_cnt = 0
+    for (name, ok), has_data in zip(checks, avail):
+        if not has_data:
+            radar["signals"][name] = "⚪数据缺失"
+            missing_cnt += 1
+            continue
         radar["signals"][name] = "🟢" if ok else "🔴"
         if ok:
             green_cnt += 1
+    radar["missing_signals"] = missing_cnt
 
     radar["green_lights"] = green_cnt
+    if missing_cnt:
+        radar["data_warning"] = f"⚠️ {missing_cnt}/6 项数据抓取失败，已排除出计数，结论仅供参考"
     if green_cnt >= 4:
         radar["verdict"] = f"🟢 流动性反转放行 ({green_cnt}/6 绿灯)：宏观与资金管道共振改善，可积极配合买点建仓。"
     elif green_cnt >= 2:
@@ -457,49 +474,49 @@ def scan_sector_radar_candidates(existing_tickers: set):
             "name": "Palantir (AI操作系统新物种)",
             "pool": "🚀新物种观察池",
             "recommend_reason": "本体论(Ontology)架构深嵌军工与巨头血管，转换成本极高；AIP引爆商业S曲线，Rule of 40突破80%+的罕见高FCF应用层真龙",
-            "risk_and_trigger": "平时PE/PS估值极贵且有SBC减持；重点盯防随纳指回调至 $130-$140 区间或日线 RSI≤30 恐慌错杀时转正建档"
+            "risk_and_trigger": "平时PE/PS估值极贵且有SBC减持；重点盯防随纳指回调至动态观察区或日线 RSI≤30 恐慌错杀时转正建档"
         },
         {
             "ticker": "NVDA",
             "name": "NVIDIA (AI算力全栈底座)",
             "pool": "💎皇冠/🚀新物种",
             "recommend_reason": "黄仁勋极客掌舵，CUDA生态+NVLink+1年1代极限迭代垄断全球AI训练>80%利润池",
-            "risk_and_trigger": "下游云巨头CapEx/折旧比达4-6倍高位且自研ASIC分流；等回调至 $150-$170 或 RSI≤30 时狙击"
+            "risk_and_trigger": "下游云巨头CapEx/折旧比达4-6倍高位且自研ASIC分流；等回调至动态观察区或 RSI≤30 时狙击"
         },
         {
             "ticker": "TSLA",
             "name": "Tesla (FSD与具身机器人新物种)",
             "pool": "🚀新物种观察池",
             "recommend_reason": "端到端物理AI大脑+百万车队真实数据闭环+一体化压铸莱特定律；Megapack储能现金牛喂养Robotaxi与Optimus人形机器人",
-            "risk_and_trigger": "汽车价格战挤压毛利、FSD监管审批时滞；等回调至 $200-$220 或无监督FSD跨州获批拐点"
+            "risk_and_trigger": "汽车价格战挤压毛利、FSD监管审批时滞；等回调至动态观察区或无监督FSD跨州获批拐点"
         },
         {
             "ticker": "RKLB",
             "name": "Rocket Lab (商业航天第二极)",
             "pool": "🚀新物种观察池",
             "recommend_reason": "全球除SpaceX外唯一高频发射+卫星零部件垂直整合龙头(空间系统占营收>70%提供造血底盘)，中型可回收火箭Neutron直指星座组网",
-            "risk_and_trigger": "Neutron首飞与回收工程验证期FCF微负；等回调至 $18-$22 或 Neutron 成功入轨回收验证"
+            "risk_and_trigger": "Neutron首飞与回收工程验证期FCF微负；等回调至动态观察区或 Neutron 成功入轨回收验证"
         },
         {
             "ticker": "META",
             "name": "Meta Platforms (社交垄断与AI皇冠)",
             "pool": "💎皇冠明珠复利池",
             "recommend_reason": "33亿日活社交网络效应不可复制，AI推荐直接拉升广告ARPU(高ROIIC)，扎克伯格随时可砍开支恢复巨额FCF",
-            "risk_and_trigger": "Reality Labs年亏超$150亿且处AI CapEx军备竞赛期；等 $480-$520 或 CapEx 增速见顶"
+            "risk_and_trigger": "Reality Labs年亏超$150亿且处AI CapEx军备竞赛期；等回调至动态观察区或 CapEx 增速见顶"
         },
         {
             "ticker": "AMZN",
             "name": "Amazon (AWS云与物流机器人飞轮)",
             "pool": "💎皇冠明珠复利池",
             "recommend_reason": "AWS云+高毛利广告驱动营业利润率创新高，百万台仓储机器人按莱特定律持续压降履约成本",
-            "risk_and_trigger": "面临AWS AI基建与Kuiper卫星高CapEx折旧期；等 $175-$190 区间或FCF加速扩张拐点"
+            "risk_and_trigger": "面临AWS AI基建与Kuiper卫星高CapEx折旧期；等回调至动态观察区或FCF加速扩张拐点"
         },
         {
             "ticker": "LLY",
             "name": "Eli Lilly (GLP-1代谢医药皇冠)",
             "pool": "💎皇冠明珠复利池",
             "recommend_reason": "替尔泊肽(Mounjaro/Zepbound)十年一遇超级大单品，适应症向心血管/NASH扩展，强定价权且无近期专利悬崖",
-            "risk_and_trigger": "表观PE常年40-50x偏贵、口服竞品与医保控费扰动；等错杀回调至 $680-$730 区间"
+            "risk_and_trigger": "表观PE常年40-50x偏贵、口服竞品与医保控费扰动；等错杀回调至动态观察区"
         },
     ]
     radar_results = []
@@ -509,10 +526,16 @@ def scan_sector_radar_candidates(existing_tickers: set):
             continue
         try:
             tk = yf.Ticker(sym)
-            hist = tk.history(period="6mo")
+            hist = tk.history(period="1y")
             tech = compute_technical_indicators(hist)
             if tech:
+                _hi = tech["high_52w"]
+                _px = tech["latest_price"]
+                _zl, _zh = round(_hi * 0.60, 2), round(_hi * 0.70, 2)
+                _zone = f"${_zl:,.2f}–${_zh:,.2f}（52周高点${_hi:,.2f}回撤30%–40%）；现价距区间上沿 {((_zh - _px) / _px * 100):+.1f}%"
                 radar_results.append({
+                    "dynamic_watch_zone": _zone,
+                    "in_score_system": "未建档（无评分，严禁编造总分率）",
                     "ticker": sym,
                     "name": item["name"],
                     "recommended_pool": item["pool"],
@@ -764,7 +787,7 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 {json.dumps(market_snapshot, ensure_ascii=False, indent=2)}
 ```
 
-### 二、坤哥当前活跃股票池档案（85% 皇冠复利池 + 15% 新物种观察池，共 {len(targets)} 只精锐）
+### 二、坤哥当前活跃股票池档案（三桶架构：💎皇冠复利池 75%–85% ｜ 🚀奇兵高赔率池 10%–15%（加密≤5%）｜ 💵战略现金 5%–10%；共 {len(targets)} 只精锐）
 ```json
 {json.dumps(targets, ensure_ascii=False, indent=2)}
 ```
@@ -775,6 +798,9 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 
 ### 四、通用格式硬性要求（严格输出两部分，用 `[BARK_PUSH_START]` 分隔）
 - **严禁输出任何已删除标的（RXRX、CT、ZEC）！**
+- **严禁编造评分与价位**：贝叶斯调分表只允许包含股票池档案里已有 `score_rate` 的标的，未建档标的（如 NVDA、PLTR 等雷达候选）一律不得出现“当前总分率”；候选雷达的转正观察价只能使用 `dynamic_watch_zone` 字段的程序计算值，不得自行杜撰价位。
+- 资金比例口径一律为：💎皇冠 75%–85%、🚀奇兵 10%–15%（加密≤5%）、💵战略现金 5%–10%，严禁再写“85%/15%”旧口径。
+- 若 `btc_liquidity_radar` 含 `data_warning`，必须在正文如实提示数据缺失。
 - 正文中所有的美元符号必须转义为 `\\$`（如 `\\$120`、`\\$75,500`），防止 Obsidian KaTeX 公式渲染错乱！
 - 必须使用 Obsidian 双链语法（如 `[[Alphabet GOOGL]]`、`[[Bitcoin BTC]]`、`[[Circle CRCL]]`、`[[Coinbase COIN]]`、`[[SpaceX SPCX]]`、`[[股票池]]`、`[[颠覆性新物种与生命力评估模型]]`、`[[新物种与候选猎物雷达池]]`）。
 

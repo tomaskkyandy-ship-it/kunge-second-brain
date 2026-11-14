@@ -9,6 +9,10 @@ on:
     - cron: '30 13 * * *'
   workflow_dispatch: # 允许在 GitHub 网页/手机 App 上随时手动点击「Run workflow」立即试跑
 
+concurrency:
+  group: daily-brief
+  cancel-in-progress: false
+
 permissions:
   contents: write # 允许将生成的每日情报 Markdown 自动 Commit 回 Obsidian 仓库
 
@@ -52,5 +56,6 @@ jobs:
             echo "没有新增或变更的情报文件需要提交。"
           else
             git commit -m "📡 自动更新每日投资情报 ($(date -u -d '+8 hours' '+%Y-%m-%d %H:%M')) [skip ci]"
+            git pull --rebase origin main
             git push
           fi
