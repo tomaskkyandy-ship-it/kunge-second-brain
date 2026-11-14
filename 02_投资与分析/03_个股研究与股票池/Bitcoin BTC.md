@@ -9,7 +9,7 @@ asset_type: 加密资产
 pool_type: "💎皇冠明珠复利池"
 macro_bucket: "🌊流动性久期"
 sector: "加密资产 / 储值"
-status: 观察中
+status: 持仓中
 price: 75000
 target_buy_price: "$55000-$66000(矿机关机价) 或 10Y实际利率<2.0%"
 target_sell_price: "$135000-$150000(MVRV>3.5泡沫止盈) 或 算力跌>30%证伪清仓"
