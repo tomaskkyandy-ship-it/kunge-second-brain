@@ -34,8 +34,16 @@ import yfinance as yf
 # 设定北京时间 (UTC+8)
 BJT = timezone(timedelta(hours=8))
 NOW_BJT = datetime.now(BJT)
-TODAY_STR = NOW_BJT.strftime("%Y-%m-%d")
-IS_MORNING = NOW_BJT.hour < 15
+_SCHEDULE = os.environ.get("BRIEF_SCHEDULE", "").strip()
+if _SCHEDULE == "30 13 * * *":      # 21:30 晚报 cron（即使被 GitHub 延迟到跨天也按晚报处理）
+    IS_MORNING = False
+elif _SCHEDULE == "30 0 * * *":     # 08:30 早报 cron
+    IS_MORNING = True
+else:                                # 手动触发/本地运行：按北京时间判断
+    IS_MORNING = NOW_BJT.hour < 15
+# 晚报若被延迟到次日凌晨，仍归属上一日的日报文件，避免误建新日期文件
+_REPORT_DT = NOW_BJT - timedelta(days=1) if (not IS_MORNING and NOW_BJT.hour < 15) else NOW_BJT
+TODAY_STR = _REPORT_DT.strftime("%Y-%m-%d")
 SESSION_LABEL = "早报 (08:30 美股收盘深度复盘 & 贝叶斯审计)" if IS_MORNING else "晚报 (21:30 美股盘前异动 & 挂单狙击快报)"
 
 # 仓库根目录定位
@@ -456,7 +464,9 @@ def fetch_btc_liquidity_radar(dxy_val=None, tnx_10y_val=None, btc_rsi=None):
     radar["green_lights"] = green_cnt
     if missing_cnt:
         radar["data_warning"] = f"⚠️ {missing_cnt}/6 项数据抓取失败，已排除出计数，结论仅供参考"
-    if green_cnt >= 4:
+    if missing_cnt >= 3:
+        radar["verdict"] = f"⚪ 数据不足（{missing_cnt}/6 项抓取失败）：本次不下流动性结论，沿用上一期判断并严守左侧分批纪律。"
+    elif green_cnt >= 4:
         radar["verdict"] = f"🟢 流动性反转放行 ({green_cnt}/6 绿灯)：宏观与资金管道共振改善，可积极配合买点建仓。"
     elif green_cnt >= 2:
         radar["verdict"] = f"🟡 震荡分化期 ({green_cnt}/6 绿灯)：部分指标修复但未共振，严守左侧分批挂单纪律。"
@@ -707,18 +717,23 @@ def call_gemini_with_fallback(api_key: str, prompt: str) -> str:
     ]
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.2, "maxOutputTokens": 8192}
+        "generationConfig": {"temperature": 0.2, "maxOutputTokens": 16384}
     }
 
     last_err = ""
+    deadline = time.time() + 480  # 总预算 8 分钟，防止撞上 workflow 超时
     for model_name in candidate_models:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        if time.time() > deadline:
+            break
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent"
         for attempt in range(2):
             try:
                 print(f"🧠 正在请求大模型 [{model_name}] (尝试 {attempt + 1}/2)...")
-                resp = requests.post(url, json=payload, timeout=95)
+                resp = requests.post(url, json=payload, headers={"x-goog-api-key": api_key}, timeout=max(15, min(95, int(deadline - time.time()))))
                 if resp.status_code == 200:
                     data = resp.json()
+                    if data["candidates"][0].get("finishReason") == "MAX_TOKENS":
+                        print("⚠️ 输出触达 token 上限，报告可能被截断")
                     parts = data["candidates"][0]["content"]["parts"]
                     text = "".join(p.get("text", "") for p in parts if not p.get("thought", False))
                     if not text.strip():
@@ -726,11 +741,11 @@ def call_gemini_with_fallback(api_key: str, prompt: str) -> str:
                     print(f"✅ 模型 [{model_name}] 响应成功！(长度: {len(text)} 字符)")
                     return text
                 else:
-                    last_err = f"{model_name} HTTP {resp.status_code}: {resp.text[:200]}"
+                    last_err = f"{model_name} HTTP {resp.status_code}: {resp.text[:200].replace(api_key, '***')}"
                     print(f"⚠️ {last_err}")
                     time.sleep(2)
             except Exception as e:
-                last_err = f"{model_name} Exception: {e}"
+                last_err = f"{model_name} Exception: {str(e).replace(api_key, '***')}"
                 print(f"⚠️ {last_err}")
                 time.sleep(2)
 
@@ -888,6 +903,7 @@ def save_report_to_obsidian(md_content: str):
         existing = purge_deprecated_lines(report_path.read_text(encoding="utf-8"))
         # 清理晚报可能自带的重复 YAML Frontmatter
         clean_evening = re.sub(r"^---\s*\n.*?\n---\s*\n", "", md_content, flags=re.DOTALL).strip()
+        existing = re.sub(r"(\n\s*---\s*)+$", "", existing.rstrip())
         if "## 🌙 晚盘" not in existing:
             combined = existing.rstrip() + f"\n\n---\n\n## 🌙 晚盘开盘作战快报（{NOW_BJT.strftime('%H:%M')} 更新）\n\n" + clean_evening
             report_path.write_text(combined, encoding="utf-8")
@@ -945,6 +961,27 @@ def send_bark_notification(bark_data: dict):
     print(f"✅ iPhone Bark 推送成功！响应: {resp.text}")
 
 
+def build_fallback_report(targets, snapshot, err: str) -> str:
+    """AI 生成失败时的保底数据版日报：只输出程序计算的量价事实，不做任何主观结论"""
+    rows = []
+    for t in targets:
+        tech = snapshot.get("targets_data", {}).get(t["ticker"], {}).get("technicals", {}) or {}
+        rows.append(
+            f"| [[{t['file_name']}]] | {t['pool_type']} | \\${tech.get('latest_price', 'N/A')} ({tech.get('change_pct_1d', 'N/A')}) "
+            f"| RSI {tech.get('rsi_14', 'N/A')} / MA200 {tech.get('ma200_distance_pct', 'N/A')} "
+            f"| {t['target_buy_price']} | {t['target_sell_price']} |"
+        )
+    radar = snapshot.get("btc_liquidity_radar", {}) or {}
+    return (
+        f"---\ndate: {TODAY_STR}\nsession: {SESSION_LABEL}\nauthor: 坤哥的第二大脑\nstatus: DataOnly\n---\n\n"
+        f"# 📡 数据保底版日报（AI 生成失败）\n\n"
+        f"> ⚠️ 大模型本次未能生成分析，以下仅为程序计算的量价事实，未做任何主观调分。\n\n"
+        f"| 标的 | 所属池子 | 收盘价(涨跌) | 技术指标 | 🟢买点 | 🔴卖点 |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n"
+        + "\n".join(rows)
+        + f"\n\n**BTC 流动性雷达**：{radar.get('verdict', 'N/A')}\n"
+    )
+
+
 def main():
     print(f"🚀 开始执行【坤哥的第二大脑 · 每日投资情报 v3.0】({TODAY_STR} {SESSION_LABEL})...")
     targets = load_portfolio_targets()
@@ -953,7 +990,17 @@ def main():
     market_snapshot = fetch_realtime_market_and_news(targets)
     print("📈 已拉取实时量价指标 (RSI/MA200)、链上 USDC 市值、金油双锚与新物种雷达数据。")
 
-    md_content, bark_data = generate_intelligence_with_gemini(targets, market_snapshot)
+    try:
+        md_content, bark_data = generate_intelligence_with_gemini(targets, market_snapshot)
+    except Exception as e:
+        msg = str(e)
+        print(f"❌ AI 生成失败，转入数据保底版: {msg[:300]}")
+        md_content = build_fallback_report(targets, market_snapshot, msg)
+        bark_data = {
+            "alert_level": "active",
+            "title": f"⚠️ {TODAY_STR} {'早报' if IS_MORNING else '晚报'}：AI 未生成（仅数据版）",
+            "body": "大模型调用失败，已写入程序计算的量价保底日报，请稍后手动重跑 workflow。",
+        }
     report_path = save_report_to_obsidian(md_content)
     print(f"📝 每日情报已写入: {report_path}")
 

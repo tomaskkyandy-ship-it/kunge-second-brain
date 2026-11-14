@@ -19,7 +19,7 @@ permissions:
 jobs:
   run-daily-brief:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: 📥 1. 检出坤哥的第二大脑仓库
@@ -44,6 +44,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           BARK_KEY: ${{ secrets.BARK_KEY }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          BRIEF_SCHEDULE: ${{ github.event.schedule }}
         run: |
           python "02_投资与分析/05_每日情报/scripts/run_daily_brief.py"
 
