@@ -35,16 +35,16 @@ import yfinance as yf
 BJT = timezone(timedelta(hours=8))
 NOW_BJT = datetime.now(BJT)
 _SCHEDULE = os.environ.get("BRIEF_SCHEDULE", "").strip()
-if _SCHEDULE == "30 13 * * *":      # 21:30 晚报 cron（即使被 GitHub 延迟到跨天也按晚报处理）
+if _SCHEDULE in ("37 13 * * *", "30 13 * * *"):      # 21:37 晚报 cron（兼容旧配置；即使被 GitHub 延迟到跨天也按晚报处理）
     IS_MORNING = False
-elif _SCHEDULE == "30 0 * * *":     # 08:30 早报 cron
+elif _SCHEDULE in ("37 23 * * *", "30 0 * * *"):     # 07:37 早报 cron（兼容旧配置；UTC 23:37 对应北京时间当日 07:37）
     IS_MORNING = True
-else:                                # 手动触发/本地运行：按北京时间判断
+else:                                                # 手动触发/本地运行：按北京时间判断
     IS_MORNING = NOW_BJT.hour < 15
-# 晚报若被延迟到次日凌晨，仍归属上一日的日报文件，避免误建新日期文件
+# 晚报若被延迟到次日凌晨，仍归属上一日的日报文件，避免误建新日期文件；早报即便延迟也不跨日回退
 _REPORT_DT = NOW_BJT - timedelta(days=1) if (not IS_MORNING and NOW_BJT.hour < 15) else NOW_BJT
 TODAY_STR = _REPORT_DT.strftime("%Y-%m-%d")
-SESSION_LABEL = "早报 (08:30 美股收盘深度复盘 & 贝叶斯审计)" if IS_MORNING else "晚报 (21:30 美股盘前异动 & 挂单狙击快报)"
+SESSION_LABEL = "早报 (07:45 美股收盘深度复盘 & 贝叶斯审计)" if IS_MORNING else "晚报 (21:40 美股盘前异动 & 挂单狙击快报)"
 
 # 仓库根目录定位
 SCRIPT_DIR = Path(__file__).resolve().parent
