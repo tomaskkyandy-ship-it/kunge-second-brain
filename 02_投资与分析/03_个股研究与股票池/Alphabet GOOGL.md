@@ -10,7 +10,7 @@ pool_type: "💎皇冠明珠复利池"
 macro_bucket: "🌊流动性久期"
 sector: "互联网 / 云计算 / AI"
 status: 观察中
-price: 285
+price: 280.2
 target_buy_price: "$230 或单季FCF转正(+$150亿)"
 target_sell_price: "$420(PE>35x泡沫止盈) 或 Cloud利润率<20%/Search转负证伪清仓"
 target_position_pct: 15
@@ -23,6 +23,23 @@ score_rate: 68
 traps_hit: 2
 position_pct: 0
 verdict: 迄今股票池最高分（67.9%），Google Cloud 同比翻倍且营业利润率 36% 证明 AI ROIIC 极高；但单季 $514 亿天量 CapEx 导致自由现金流转负、暂停回购并增发发债，11/09 贝叶斯微调后继续等待 CapEx 拐点或 $230 狙击区
+标的名称: "Alphabet GOOGL"
+代码: "GOOGL"
+类型: 股票
+所属池子: "💎皇冠明珠复利池"
+宏观因子篮子: "🌊流动性久期"
+状态: 观察中
+现价: 280.2
+🟢学徒买点: "$230 或单季FCF转正(+$150亿)"
+🔴师傅卖点: "$420(PE>35x泡沫止盈) 或 Cloud利润率<20%/Search转负证伪清仓"
+目标仓位%: 15
+当前仓位%: 0
+💣排雷日历: "2027-01-28"
+质量分%: 73
+时机分%: 55
+新物种生命力%: 78
+综合分%: 68
+结论: "迄今股票池最高分（67.9%），Google Cloud 同比翻倍且营业利润率 36% 证明 AI ROIIC 极高；但单季 $514 亿天量 CapEx 导致自由现金流转负、暂停回购并增发发债，11/09 贝叶斯微调后继续等待 CapEx 拐点或 $230 狙击区"
 ---
 
 # Alphabet / Google（GOOGL）个股分析

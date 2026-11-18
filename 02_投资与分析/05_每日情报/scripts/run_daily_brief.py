@@ -71,17 +71,93 @@ def parse_markdown_frontmatter(file_path: Path):
     return meta, parts[2].strip()
 
 
-def extract_first_price(price_str: str):
-    """从 '$230 或单季FCF转正' 或 '$55000-$66000' 中提取第一个基准美元价格数字"""
+def extract_price_range(price_str: str):
+    """从 '$230 或单季FCF转正(+$150亿)' 或 '$55000-$66000' 中提取首个价格或价格区间 (low, high)"""
     if not price_str:
-        return None
-    m = re.search(r"\$\s*([0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?)", str(price_str))
-    if m:
-        try:
-            return float(m.group(1).replace(",", ""))
-        except Exception:
-            return None
-    return None
+        return None, None
+    m = re.search(
+        r"\$\s*([0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?)(?:\s*[-–~至]\s*\$?\s*([0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?))?",
+        str(price_str),
+    )
+    if not m:
+        return None, None
+    try:
+        p1 = float(m.group(1).replace(",", ""))
+        p2 = float(m.group(2).replace(",", "")) if m.group(2) else p1
+        return min(p1, p2), max(p1, p2)
+    except Exception:
+        return None, None
+
+
+def extract_first_price(price_str: str):
+    """兼容旧调用：返回首个基准美元价格"""
+    low, _ = extract_price_range(price_str)
+    return low
+
+
+def compute_buy_trigger_status(cur_p: float, price_str: str) -> str:
+    """精确计算现价相对于单点买价或买点区间 [low, high] 的状态与距离"""
+    low, high = extract_price_range(price_str)
+    if not low or cur_p <= 0:
+        return "待计算"
+    if abs(high - low) < 1e-6:
+        if cur_p > low:
+            drop_pct = (cur_p - low) / cur_p * 100
+            return f"距买点(${low:g})还需回调 {drop_pct:.1f}%"
+        else:
+            below_pct = (low - cur_p) / low * 100
+            return f"🟢已触及/跌破买点(${low:g}) -{below_pct:.1f}%（进入击球区！）"
+    else:
+        if cur_p > high:
+            drop_pct = (cur_p - high) / cur_p * 100
+            return f"距买点区间上沿(${high:g})还需回调 {drop_pct:.1f}%（区间 ${low:g}–${high:g}）"
+        elif cur_p >= low:
+            depth = (high - cur_p) / (high - low) * 100
+            return f"🟢已进入买点区间(${low:g}–${high:g})！区间深入度 {depth:.0f}%"
+        else:
+            below_pct = (low - cur_p) / low * 100
+            return f"🔥极度错杀！已跌破买点下沿(${low:g}) -{below_pct:.1f}%（区间 ${low:g}–${high:g}）"
+
+
+def compute_sell_trigger_status(cur_p: float, price_str: str) -> str:
+    """精确计算现价相对于止盈卖点或止盈区间 [low, high] 的空间"""
+    low, high = extract_price_range(price_str)
+    if not low or cur_p <= 0:
+        return "待计算"
+    if cur_p < low:
+        upside = (low - cur_p) / cur_p * 100
+        return f"距止盈线(${low:g})尚有 +{upside:.1f}% 空间"
+    elif abs(high - low) > 1e-6 and cur_p <= high:
+        return f"🔴已进入泡沫止盈区间(${low:g}–${high:g})，启动分批止盈！"
+    else:
+        above = (cur_p - high) / high * 100
+        return f"🚨已突破止盈上限(${high:g}) +{above:.1f}%，右侧分批兑现！"
+
+
+def compute_risk_calendar_status(date_str: str) -> str:
+    """计算排雷日历精确倒计时天数与过期告警"""
+    if not date_str:
+        return "未设置"
+    m = re.search(r"(\d{4}-\d{2}-\d{2})", str(date_str))
+    if not m:
+        return str(date_str)
+    d_str = m.group(1)
+    try:
+        r_date = datetime.strptime(d_str, "%Y-%m-%d").date()
+        today_d = _REPORT_DT.date()
+        days = (r_date - today_d).days
+        if days < 0:
+            return f"⚠️ {d_str}（排雷日已过期 {abs(days)} 天，请更新下一节点）"
+        elif days == 0:
+            return f"🚨 {d_str}（今日引爆！高度戒备）"
+        elif days <= 15:
+            return f"🚨 {d_str}（倒计时仅剩 {days} 天！一级戒备）"
+        elif days <= 30:
+            return f"⏳ {d_str}（倒计时 {days} 天）"
+        else:
+            return f"📅 {d_str}（剩余 {days} 天）"
+    except Exception:
+        return str(date_str)
 
 
 def compute_technical_indicators(hist_df):
@@ -466,12 +542,16 @@ def fetch_btc_liquidity_radar(dxy_val=None, tnx_10y_val=None, btc_rsi=None):
         radar["data_warning"] = f"⚠️ {missing_cnt}/6 项数据抓取失败，已排除出计数，结论仅供参考"
     if missing_cnt >= 3:
         radar["verdict"] = f"⚪ 数据不足（{missing_cnt}/6 项抓取失败）：本次不下流动性结论，沿用上一期判断并严守左侧分批纪律。"
+        radar["recommended_position_multiplier"] = "0.5x（⚪ 数据缺失防御档：暂停主动加仓，维持底仓不动）"
     elif green_cnt >= 4:
         radar["verdict"] = f"🟢 流动性反转放行 ({green_cnt}/6 绿灯)：宏观与资金管道共振改善，可积极配合买点建仓。"
+        radar["recommended_position_multiplier"] = "1.0x（🟢 顺风共振档：允许按 3-4-3 阶梯解锁第二枪 40% 主力建仓）"
     elif green_cnt >= 2:
         radar["verdict"] = f"🟡 震荡分化期 ({green_cnt}/6 绿灯)：部分指标修复但未共振，严守左侧分批挂单纪律。"
+        radar["recommended_position_multiplier"] = "0.5x（🟡 震荡分化档：严禁市价追涨，仅限左侧极深击球区限价挂单）"
     else:
         radar["verdict"] = f"🔴 美元退潮抽水期 ({green_cnt}/6 绿灯)：流动性全面逆风，仅允许极度超卖区小仓位左侧挂单，严禁加杠杆。"
+        radar["recommended_position_multiplier"] = "0.25x（🔴 紧缩防御档：全线收缩，锁死现金安全垫，非极端黄金坑不开枪）"
 
     return radar
 
@@ -618,6 +698,8 @@ def fetch_realtime_market_and_news(targets):
             "score_rate": t["score_rate"],
             "target_buy_price": t["target_buy_price"],
             "target_sell_price": t["target_sell_price"],
+            "next_risk_date": t["next_risk_date"],
+            "risk_calendar_status": compute_risk_calendar_status(t["next_risk_date"]),
             "latest_price": t["recorded_price"],
             "distance_to_buy_trigger": "待计算",
             "distance_to_sell_trigger": "待计算",
@@ -632,16 +714,10 @@ def fetch_realtime_market_and_news(targets):
                 t_info["latest_price"] = tech["latest_price"]
                 t_info["technicals"] = tech
 
-                # 自动计算距离【学徒买点】与【师傅卖点】的精确百分比
-                buy_num = extract_first_price(t["target_buy_price"])
-                sell_num = extract_first_price(t["target_sell_price"])
+                # 自动计算距离【学徒买点（含区间识别）】与【师傅卖点】的精确百分比
                 cur_p = tech["latest_price"]
-                if buy_num and cur_p > 0:
-                    diff_buy = (cur_p - buy_num) / cur_p * 100
-                    t_info["distance_to_buy_trigger"] = f"距买点(${buy_num:g})还需跌 {-diff_buy:.1f}%" if diff_buy > 0 else f"🟢已跌破买点(${buy_num:g}) {abs(diff_buy):.1f}%！"
-                if sell_num and cur_p > 0:
-                    diff_sell = (sell_num - cur_p) / cur_p * 100
-                    t_info["distance_to_sell_trigger"] = f"距止盈卖点(${sell_num:g})还有 +{diff_sell:.1f}% 空间" if diff_sell > 0 else f"🔴已突破止盈卖点(${sell_num:g})！"
+                t_info["distance_to_buy_trigger"] = compute_buy_trigger_status(cur_p, t["target_buy_price"])
+                t_info["distance_to_sell_trigger"] = compute_sell_trigger_status(cur_p, t["target_sell_price"])
 
             # 拉取 yfinance 内置新闻
             yf_news = getattr(tk, "news", []) or []
@@ -761,8 +837,11 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
     news_sop_path = METHOD_DIR / "新闻过滤与贝叶斯动态更新系统.md"
     news_sop_text = news_sop_path.read_text(encoding="utf-8")[:2000] if news_sop_path.exists() else ""
 
+    active_tickers_str = "、".join([f"`{t['ticker']}` ([[{t['file_name']}]])" for t in targets])
+    active_count = len(targets)
+
     if IS_MORNING:
-        mode_instructions = """
+        mode_instructions = f"""
 ### ☀️ 当前为【08:30 早报模式：美股隔夜收盘深度复盘 & 贝叶斯调分审计】
 ⚠️ **版面格式铁律**：
 - 报告正文必须**直接从第一章标题 `## 一、🚨 买卖双扳机与量化量价仪表盘（🟢学徒买 · 🔴师傅卖）` 开始**！
@@ -773,29 +852,36 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 
 请按以下 6 大章节撰写完整 Markdown 报告：
 1. `## 一、🚨 买卖双扳机与量化量价仪表盘（🟢学徒买 · 🔴师傅卖）`
-   - 表格列必须严格保持完整 7 列：`标的(双链)` | `所属池子` | `收盘价(涨跌)` | `RSI(14) & MA200偏离` | `🟢学徒买点(距买点%)` | `🔴师傅卖点(泡沫止盈/证伪线)` | `排雷日历与操盘指令`
+   - 表格列必须严格保持完整 7 列：`标的(双链)` | `所属池子` | `收盘价(涨跌)` | `RSI(14) & MA200偏离` | `🟢学徒买点(距买点%)` | `🔴师傅卖点(泡沫止盈/证伪线)` | `排雷日历与操盘指令`（直接引用 `risk_calendar_status` 的精确倒计时天数与 `distance_to_buy_trigger` 区间状态）。
 2. `## 二、🧭 宏观 7 大路标、金油双锚与链上硬数据快照`
    - 解读 10Y美债、WTI原油三档警戒线、COMEX黄金、实时【金油比】、【BTC/黄金比】、**【USDC 实时流通市值】**（对比 Circle 30% 增速目标）与【加密恐慌贪婪指数】。
-   - **必须单列子模块 `### ₿ BTC 宏观流动性信号灯（第一梯队 6 维雷达）`**：严格引用 `btc_liquidity_radar` 中的硬数据（DXY、10Y实际利率、美国净流动性周变动、USDT+USDC双雄7D/30D变动、Coinbase溢价率、现货ETF净流向、永续费率与OI、200W均线偏离度），输出 6 盏红绿灯状态（`X/6 绿灯`）与 `verdict` 结论，并直接联动 `[[Bitcoin BTC]]` 的左侧挂单纪律。
+   - **必须单列子模块 `### ₿ BTC 宏观流动性信号灯（第一梯队 6 维雷达）`**：严格引用 `btc_liquidity_radar` 中的硬数据（DXY、10Y实际利率、美国净流动性周变动、USDT+USDC双雄7D/30D变动、Coinbase溢价率、现货ETF净流向、永续费率与OI、200W均线偏离度），输出 6 盏红绿灯状态（`X/6 绿灯`）、`verdict` 结论，**以及系统输出的动态仓位乘数 `recommended_position_multiplier`**，直接联动 `[[Bitcoin BTC]]` 与 `[[Ethereum ETH]]` 的左侧挂单纪律。
 3. `## 三、🔬 核心精锐二级/三级情报深潜（含预期差三问）`
-   - 仅分析当前股票池中的 5 只活跃精锐（`GOOGL`、`BTC`、`CRCL`、`COIN`、`SPCX`），严禁出现已删除的 `RXRX / CT / ZEC`！
+   - **必须逐一完整分析当前股票池中的全部 {active_count} 只活跃精锐（{active_tickers_str}），一只都不允许漏掉**！同时严禁出现已删除的 `RXRX / CT / ZEC`！
    - 若标的临近财报日或已出季报，优先对照其档案中的【🎯 季度必盯 3 个硬核 KPI（core_kpis）】核验是否破线！
-   - 对 `[[SpaceX SPCX]]` 必须结合其 **【🚀新物种生命力 85.5% vs 12/08 解禁倒计时】** 双重属性分析。
+   - 对 `[[SpaceX SPCX]]` 必须结合其 **【🚀新物种生命力 85.5% vs 解禁倒计时】** 双重属性分析。
 4. `## 四、🔭 五大赛道二阶传导与「新物种/错杀猎物雷达」（详见 [[新物种与候选猎物雷达池]]）`
    - 结合 `new_hunter_radar` 中的数据，必须输出一张 **【🔭 候选猎物雷达追踪表】**，表格列必须包含：`候选标的` | `归属池` | `最新价(涨跌) & RSI(14)` | `💡核心推荐理由(第一性原理/护城河)` | `⚠️当前卡点与转正观察价`，绝不允许只给代码不写推荐理由！
 5. `## 五、⚖️ 贝叶斯动态调分建议表（待坤哥人工确认）`
+   - 必须完整覆盖全部 {active_count} 只建档精锐（{active_tickers_str}）。
 6. `## 六、🗑️ 今日已过滤的一级噪音（半衰期 < 1 周）`
 """
     else:
-        mode_instructions = """
+        mode_instructions = f"""
 ### 🌙 当前为【21:30 晚报模式：美股盘前宏观/金油异动 & 今晚挂单狙击快报】
-⚠️ **晚报铁律：拒绝重复早报的长篇大论！必须极度精炼、实战导向，专为美股开盘前 1 小时盯盘与挂单服务！**
+⚠️ **晚报版面与内容铁律**：
+- 拒绝重复早报的长篇大论！必须极度精炼、实战导向，专为美股开盘前 1 小时盯盘与挂单服务！
+- 报告正文必须**直接从第一章标题 `## 一、🎯 今晚开盘「学徒买 · 师傅卖」挂单作战表（主池 {active_count} 大精锐）` 开始**！
+- **严禁在正文最开头自行输出 `---` YAML 前言或孤立的 `---` 分割线**！
+- 表格双链必须是干净的 `[[Alphabet GOOGL]]`，**严禁包裹反引号代码块**！
+
 请按以下 4 大精简实战章节输出：
-1. `## 一、🎯 今晚开盘「学徒买 · 师傅卖」挂单作战表（仅列主池 5 大精锐）`
-   - 表格列：`标的(双链)` | `盘前/最新价` | `RSI(14)` | `🟢今晚买点挂单线(差距%)` | `🔴今晚止盈/止损红线` | `今晚开盘一句话动作指令`
+1. `## 一、🎯 今晚开盘「学徒买 · 师傅卖」挂单作战表（主池 {active_count} 大精锐）`
+   - 必须完整列出全部 {active_count} 只活跃标的（{active_tickers_str}）。
+   - 表格列：`标的(双链)` | `盘前/最新价` | `RSI(14)` | `🟢今晚买点挂单线(差距%)` | `🔴今晚止盈/止损红线` | `今晚开盘一句话动作指令（含排雷倒计时）`
 2. `## 二、⚡ 欧美盘宏观、金油比与链上资金异动速递`
    - 聚焦过去 12 小时内 10Y美债、WTI原油、黄金、USDC 流通市值、加密恐慌贪婪指数的最新边际变化。
-   - **必须附带一行 `₿ BTC 流动性雷达 [X/6 绿灯]` 快照**：点明 DXY、USDT+USDC 7D变动、Coinbase 溢价率、ETF 净流向与永续费率是否发生边际拐点。
+   - **必须附带 `₿ BTC 流动性雷达 [X/6 绿灯]` 快照与 `recommended_position_multiplier` 动态仓位乘数**：点明 DXY、USDT+USDC 7D变动、Coinbase 溢价率、ETF 净流向与永续费率是否发生边际拐点。
 3. `## 三、🔭 「新物种与错杀猎物雷达池」盘前异动与推荐逻辑追踪（详见 [[新物种与候选猎物雷达池]]）`
    - 必须输出一张 **【🔭 预备队猎物雷达追踪表】**，列包含：`候选标的(PLTR/NVDA/TSLA/RKLB等)` | `最新价 & RSI(14)` | `💡为什么值得盯(核心推荐理由)` | `🎯转正观察区与今晚策略`。
 4. `## 四、⚖️ 盘前紧急贝叶斯调分或排雷提醒（若无则写“今日晚盘维持早报评分不变”）`
@@ -883,29 +969,31 @@ def save_report_to_obsidian(md_content: str):
 
     md_content = purge_deprecated_lines(md_content)
 
-    def format_with_valid_frontmatter(content: str) -> str:
-        """确保 Markdown 开头具备标准、合法的 YAML Frontmatter，绝不误删正文第一章标题与表格"""
+    def strip_frontmatter_safely(content: str) -> tuple[bool, str]:
+        """安全检查并剥离顶部 Frontmatter，绝不误吞包含 ## 标题或 | 表格的正文"""
         content = content.strip()
-        has_valid_yaml = False
         if content.startswith("---"):
             m = re.match(r"^---\s*\n(.*?)\n---\s*\n", content, re.DOTALL)
             if m:
                 yaml_candidate = m.group(1)
-                # 只有不含二级标题且不含表格的才可能是真正的 frontmatter
                 if "##" not in yaml_candidate and "|" not in yaml_candidate:
                     try:
                         meta = yaml.safe_load(yaml_candidate)
                         if isinstance(meta, dict) and meta and ("date" in meta or "session" in meta):
-                            has_valid_yaml = True
+                            return True, content[m.end():].strip()
                     except Exception:
                         pass
-                if has_valid_yaml:
-                    return content
-                else:
-                    # 仅剥离错误的单独起始 '---'，严禁丢弃后续的正文第一节标题与表格！
-                    content = re.sub(r"^---\s*\n*", "", content).strip()
+                # 仅剥离错误的单独起始 '---'，严禁丢弃后续的正文第一节标题与表格！
+                return False, re.sub(r"^---\s*\n*", "", content).strip()
             else:
-                content = re.sub(r"^---\s*\n*", "", content).strip()
+                return False, re.sub(r"^---\s*\n*", "", content).strip()
+        return False, content
+
+    def format_with_valid_frontmatter(content: str) -> str:
+        """确保 Markdown 开头具备标准、合法的 YAML Frontmatter，绝不误删正文第一章标题与表格"""
+        has_valid, body_only = strip_frontmatter_safely(content)
+        if has_valid:
+            return content.strip()
 
         standard_header = (
             f"---\n"
@@ -915,12 +1003,12 @@ def save_report_to_obsidian(md_content: str):
             f"status: Complete\n"
             f"---\n\n"
         )
-        return standard_header + content
+        return standard_header + body_only
 
     if report_path.exists() and not IS_MORNING:
         existing = purge_deprecated_lines(report_path.read_text(encoding="utf-8"))
-        # 清理晚报可能自带的重复 YAML Frontmatter
-        clean_evening = re.sub(r"^---\s*\n.*?\n---\s*\n", "", md_content, flags=re.DOTALL).strip()
+        # 安全清理晚报可能自带的重复 YAML Frontmatter，绝不误删晚报第一章节
+        _, clean_evening = strip_frontmatter_safely(md_content)
         existing = re.sub(r"(\n\s*---\s*)+$", "", existing.rstrip())
         if "## 🌙 晚盘" not in existing:
             combined = existing.rstrip() + f"\n\n---\n\n## 🌙 晚盘开盘作战快报（{NOW_BJT.strftime('%H:%M')} 更新）\n\n" + clean_evening
@@ -1024,9 +1112,9 @@ def main():
 
     send_bark_notification(bark_data)
 
-    # 联动自动刷新 04_交易记录（本地环境若存在持仓则自动计算最新市值与人民币折合）
+    # 联动自动刷新 04_交易记录与 03_个股研究与股票池（本地环境若存在持仓则自动计算最新市值、3-4-3扳机与人民币折合）
     try:
-        sync_script = Path(__file__).resolve().parent.parent.parent / "04_交易记录" / "同步持仓盈亏.py"
+        sync_script = RECORDS_DIR / "同步持仓盈亏.py"
         if sync_script.exists():
             import subprocess, sys
             subprocess.run([sys.executable, str(sync_script)], check=False)
