@@ -764,9 +764,16 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
     if IS_MORNING:
         mode_instructions = """
 ### ☀️ 当前为【08:30 早报模式：美股隔夜收盘深度复盘 & 贝叶斯调分审计】
-请按以下 6 大章节撰写完整 Markdown 报告（直接以 `---` YAML 开头）：
+⚠️ **版面格式铁律**：
+- 报告正文必须**直接从第一章标题 `## 一、🚨 买卖双扳机与量化量价仪表盘（🟢学徒买 · 🔴师傅卖）` 开始**！
+- **严禁在正文最开头自行输出 `---` YAML 前言**（YAML 属性由程序底层统一标准添加，自行输出会导致版面截断破坏！）。
+- **严禁在第一章标题上方放置任何孤立的 `---` 分割线**！
+- 表格双链必须是干净的 `[[Alphabet GOOGL]]`，**严禁包裹反引号代码块**（写成 `` `[[Alphabet GOOGL]]` `` 会导致 Obsidian 双链失效变成纯文本）！
+- 表格第一行必须包含完整的 7 列表头和分隔线：`| 标的(双链) | 所属池子 | 收盘价(涨跌) | RSI(14) & MA200偏离 | 🟢学徒买点(距买点%) | 🔴师傅卖点(泡沫止盈/证伪线) | 排雷日历与操盘指令 |`
+
+请按以下 6 大章节撰写完整 Markdown 报告：
 1. `## 一、🚨 买卖双扳机与量化量价仪表盘（🟢学徒买 · 🔴师傅卖）`
-   - 表格列必须包含：`标的(双链)` | `所属池子(💎皇冠/🚀新物种)` | `收盘价(涨跌)` | `RSI(14) & MA200偏离` | `🟢学徒买点(距买点%)` | `🔴师傅卖点(泡沫止盈/证伪线)` | `排雷日历与操盘指令`
+   - 表格列必须严格保持完整 7 列：`标的(双链)` | `所属池子` | `收盘价(涨跌)` | `RSI(14) & MA200偏离` | `🟢学徒买点(距买点%)` | `🔴师傅卖点(泡沫止盈/证伪线)` | `排雷日历与操盘指令`
 2. `## 二、🧭 宏观 7 大路标、金油双锚与链上硬数据快照`
    - 解读 10Y美债、WTI原油三档警戒线、COMEX黄金、实时【金油比】、【BTC/黄金比】、**【USDC 实时流通市值】**（对比 Circle 30% 增速目标）与【加密恐慌贪婪指数】。
    - **必须单列子模块 `### ₿ BTC 宏观流动性信号灯（第一梯队 6 维雷达）`**：严格引用 `btc_liquidity_radar` 中的硬数据（DXY、10Y实际利率、美国净流动性周变动、USDT+USDC双雄7D/30D变动、Coinbase溢价率、现货ETF净流向、永续费率与OI、200W均线偏离度），输出 6 盏红绿灯状态（`X/6 绿灯`）与 `verdict` 结论，并直接联动 `[[Bitcoin BTC]]` 的左侧挂单纪律。
@@ -863,29 +870,40 @@ def save_report_to_obsidian(md_content: str):
     report_path = DAILY_DIR / f"{TODAY_STR}_每日投资情报.md"
 
     def purge_deprecated_lines(text: str) -> str:
-        """过滤掉旧报告表格中可能残留的 RXRX / Concrete CT / Zcash ZEC 行"""
+        """过滤掉旧报告表格中可能残留的 RXRX / Concrete CT / Zcash ZEC 行，并修复反引号双链等排版错误"""
         deprecated_patterns = ("RXRX", "Recursion", "Concrete CT", "Zcash ZEC", "| **CT** |", "| **ZEC** |")
         cleaned_lines = [
             line for line in text.splitlines()
             if not (line.lstrip().startswith("|") and any(p in line for p in deprecated_patterns))
         ]
-        return "\n".join(cleaned_lines)
+        cleaned_text = "\n".join(cleaned_lines)
+        # 自动修复反引号包裹的 Obsidian 双链（如 `[[Alphabet GOOGL]]` -> [[Alphabet GOOGL]]）
+        cleaned_text = re.sub(r"`(\[\[.+?\]\])`", r"\1", cleaned_text)
+        return cleaned_text
 
     md_content = purge_deprecated_lines(md_content)
 
     def format_with_valid_frontmatter(content: str) -> str:
-        """确保 Markdown 开头具备标准、合法的 YAML Frontmatter，防止 GitHub 渲染报错"""
+        """确保 Markdown 开头具备标准、合法的 YAML Frontmatter，绝不误删正文第一章标题与表格"""
         content = content.strip()
+        has_valid_yaml = False
         if content.startswith("---"):
-            parts = content.split("---", 2)
-            if len(parts) >= 3:
-                try:
-                    meta = yaml.safe_load(parts[1])
-                    if isinstance(meta, dict) and meta:
-                        return content
-                except Exception:
-                    pass
-                content = parts[2].strip()
+            m = re.match(r"^---\s*\n(.*?)\n---\s*\n", content, re.DOTALL)
+            if m:
+                yaml_candidate = m.group(1)
+                # 只有不含二级标题且不含表格的才可能是真正的 frontmatter
+                if "##" not in yaml_candidate and "|" not in yaml_candidate:
+                    try:
+                        meta = yaml.safe_load(yaml_candidate)
+                        if isinstance(meta, dict) and meta and ("date" in meta or "session" in meta):
+                            has_valid_yaml = True
+                    except Exception:
+                        pass
+                if has_valid_yaml:
+                    return content
+                else:
+                    # 仅剥离错误的单独起始 '---'，严禁丢弃后续的正文第一节标题与表格！
+                    content = re.sub(r"^---\s*\n*", "", content).strip()
             else:
                 content = re.sub(r"^---\s*\n*", "", content).strip()
 
