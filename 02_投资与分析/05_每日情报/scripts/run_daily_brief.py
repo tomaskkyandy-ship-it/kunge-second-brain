@@ -240,37 +240,46 @@ def load_portfolio_targets():
             if md_file.name in skip_files:
                 continue
             meta, body = parse_markdown_frontmatter(md_file)
-            if "ticker" not in meta or "action" in meta:
+            # 交易流水单（带「操作」属性）不是标的档案
+            if "操作" in meta or "action" in meta:
                 continue
-            ticker = str(meta.get("ticker", "")).strip()
+
+            def g(cn, en, default=""):
+                """优先读取纯中文属性，兼容旧版英文属性"""
+                v = meta.get(cn)
+                if v is None or v == "":
+                    v = meta.get(en, default)
+                return default if v is None else v
+
+            ticker = str(g("代码", "ticker")).strip()
             if not ticker or ticker in seen_tickers:
                 continue
-            status_str = str(meta.get("status", "观察中")).strip()
-            if "放弃" in status_str:
+            status_str = str(g("状态", "status", "观察中")).strip()
+            if any(k in status_str for k in ("放弃", "淘汰", "拉黑")):
                 continue
             seen_tickers.add(ticker)
             targets.append({
                 "file_name": md_file.stem,
                 "ticker": ticker,
-                "company": str(meta.get("company", md_file.stem)),
-                "asset_type": str(meta.get("asset_type", "股票")),
-                "pool_type": str(meta.get("pool_type", "💎皇冠明珠复利池")),
-                "macro_bucket": str(meta.get("macro_bucket", "")),
-                "sector": str(meta.get("sector", "")),
+                "company": str(g("公司全称", "company", md_file.stem)),
+                "asset_type": str(g("类型", "asset_type", "股票")),
+                "pool_type": str(g("所属池子", "pool_type", "💎皇冠明珠复利池")),
+                "macro_bucket": str(g("宏观因子篮子", "macro_bucket")),
+                "sector": str(g("行业", "sector")),
                 "status": status_str,
-                "recorded_price": meta.get("price", ""),
-                "target_buy_price": str(meta.get("target_buy_price", "")),
-                "target_sell_price": str(meta.get("target_sell_price", "")),
-                "target_position_pct": meta.get("target_position_pct", ""),
-                "next_risk_date": meta.get("next_risk_date", ""),
-                "core_kpis": meta.get("core_kpis", ""),
-                "macro_score": meta.get("macro_score", ""),
-                "quality_score": meta.get("quality_score", ""),
-                "timing_score": meta.get("timing_score", ""),
-                "vitality_score": meta.get("vitality_score", ""),
-                "score_rate": meta.get("score_rate", ""),
-                "position_pct": meta.get("position_pct", 0),
-                "verdict": str(meta.get("verdict", "")),
+                "recorded_price": g("现价", "price"),
+                "target_buy_price": str(g("🟢学徒买点", "target_buy_price")),
+                "target_sell_price": str(g("🔴师傅卖点", "target_sell_price")),
+                "target_position_pct": g("目标仓位%", "target_position_pct"),
+                "next_risk_date": g("💣排雷日历", "next_risk_date"),
+                "core_kpis": g("核心KPI", "core_kpis"),
+                "macro_score": g("宏观分%", "macro_score"),
+                "quality_score": g("质量分%", "quality_score"),
+                "timing_score": g("时机分%", "timing_score"),
+                "vitality_score": g("新物种生命力%", "vitality_score"),
+                "score_rate": g("综合分%", "score_rate"),
+                "position_pct": g("当前仓位%", "position_pct", 0),
+                "verdict": str(g("结论", "verdict")),
                 "body_excerpt": body[:2000],
             })
     return targets

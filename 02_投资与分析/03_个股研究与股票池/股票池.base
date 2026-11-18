@@ -6,9 +6,7 @@ filters:
     - file.name != "股票池"
     - file.name != "新物种与候选猎物雷达池"
     - !tags.contains("模板")
-    - or:
-        - note.标的名称 != null
-        - note.company != null
+    - note.代码 != null
 views:
   - type: table
     name: 我的股票池全景
@@ -36,8 +34,8 @@ views:
     filters:
       and:
         - or:
-            - 质量分% >= 70
-            - quality_score >= 70
+            - 质量分% >= 75
+            - 所属池子 == "💎皇冠明珠复利池"
     order:
       - 标的名称
       - 代码
@@ -60,8 +58,8 @@ views:
     filters:
       and:
         - or:
-            - 新物种生命力% >= 65
-            - vitality_score >= 65
+            - 新物种生命力% >= 80
+            - 所属池子 == "🚀新物种观察池"
     order:
       - 标的名称
       - 代码
@@ -83,9 +81,7 @@ views:
     name: 股票标的
     filters:
       and:
-        - or:
-            - 类型 == "股票"
-            - asset_type == "股票"
+        - 类型 == "股票"
     order:
       - 标的名称
       - 代码
@@ -108,9 +104,7 @@ views:
     name: 加密资产
     filters:
       and:
-        - or:
-            - 类型 == "加密资产"
-            - asset_type == "加密资产"
+        - 类型 == "加密资产"
     order:
       - 标的名称
       - 代码

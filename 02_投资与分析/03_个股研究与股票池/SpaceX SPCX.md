@@ -3,31 +3,13 @@ title: SpaceX SPCX
 tags:
   - 投资/选股
 created: 2026-11-07
-ticker: "SPCX"
-company: "SpaceX"
-asset_type: 股票
-pool_type: "🚀新物种观察池"
-macro_bucket: "🌊流动性久期"
-sector: "航天 / 卫星通信 / AI 算力"
-status: 观察中
-price: 141.7
-target_buy_price: "$75 (12/08解禁错杀坑) 或 Starlink独立分拆"
-target_sell_price: "$240(情绪泡沫止盈) 或 关联交易>30%/Starlink增速<20%证伪清仓"
-target_position_pct: 10
-next_risk_date: "2026-12-08"
-macro_score: 52
-quality_score: 60
-timing_score: 42
-vitality_score: 85
-score_rate: 54
-traps_hit: 4
-position_pct: 0
-verdict: 🐉时代级新物种（第一性原理生命力高达 85.5% 👑 vs 传统稳态分 53.9%）：火箭回收莱特定律 + Starlink 45%营业利润率印钞机无人能及，但因年烧$780亿投AI且距12/08近8亿股解禁<30天，严禁追高，死等解禁砸向$75用奇兵仓位狙击！
 标的名称: "SpaceX SPCX"
+公司全称: "SpaceX"
 代码: "SPCX"
 类型: 股票
 所属池子: "🚀新物种观察池"
 宏观因子篮子: "🌊流动性久期"
+行业: "航天 / 卫星通信 / AI 算力"
 状态: 观察中
 现价: 141.7
 🟢学徒买点: "$75 (12/08解禁错杀坑) 或 Starlink独立分拆"
@@ -35,10 +17,12 @@ verdict: 🐉时代级新物种（第一性原理生命力高达 85.5% 👑 vs �
 目标仓位%: 10
 当前仓位%: 0
 💣排雷日历: "2026-12-08"
+宏观分%: 52
 质量分%: 60
 时机分%: 42
 新物种生命力%: 85
 综合分%: 54
+命中陷阱数: 4
 结论: "🐉时代级新物种（第一性原理生命力高达 85.5% 👑 vs 传统稳态分 53.9%）：火箭回收莱特定律 + Starlink 45%营业利润率印钞机无人能及，但因年烧$780亿投AI且距12/08近8亿股解禁<30天，严禁追高，死等解禁砸向$75用奇兵仓位狙击！"
 ---
 

@@ -4,31 +4,13 @@ tags:
   - 投资/选股
   - 投资/数字货币
 created: 2026-11-07
-ticker: "CRCL"
-company: "Circle Internet Group"
-asset_type: 股票
-pool_type: "⏳周期观察池"
-macro_bucket: "🔥通胀实物(高息受益)"
-sector: "稳定币 / 金融科技"
-status: 持仓中
-price: 54.63
-target_buy_price: "$40 或 USDC增速>30%"
-target_sell_price: "$120(PE>60x泡沫止盈) 或 USDC份额<15%/分成恶化证伪清仓"
-target_position_pct: 5
-next_risk_date: "2027-02-18"
-macro_score: 55
-quality_score: 63
-timing_score: 52
-vitality_score: 62
-score_rate: 60
-traps_hit: 2
-position_pct: 0
-verdict: 合规稳定币龙头、零负债，但利润被利率与分销分成双重挤压，11月官方宣布裁员5%且遭华尔街下调评级；经11/09贝叶斯下调后得分率降至60.3%，继续等待$40安全边际
 标的名称: "Circle CRCL"
+公司全称: "Circle Internet Group"
 代码: "CRCL"
 类型: 股票
 所属池子: "⏳周期观察池"
 宏观因子篮子: "🔥通胀实物(高息受益)"
+行业: "稳定币 / 金融科技"
 状态: 持仓中
 现价: 54.63
 🟢学徒买点: "$40 或 USDC增速>30%"
@@ -36,10 +18,12 @@ verdict: 合规稳定币龙头、零负债，但利润被利率与分销分成�
 目标仓位%: 5
 当前仓位%: 0
 💣排雷日历: "2027-02-18"
+宏观分%: 55
 质量分%: 63
 时机分%: 52
 新物种生命力%: 62
 综合分%: 60
+命中陷阱数: 2
 结论: "合规稳定币龙头、零负债，但利润被利率与分销分成双重挤压，11月官方宣布裁员5%且遭华尔街下调评级；经11/09贝叶斯下调后得分率降至60.3%，继续等待$40安全边际"
 ---
 

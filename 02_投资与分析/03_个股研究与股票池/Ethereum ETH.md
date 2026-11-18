@@ -3,31 +3,13 @@ title: Ethereum ETH
 tags:
   - 投资/数字货币
 created: 2026-11-14
-ticker: "ETH"
-company: "Ethereum"
-asset_type: 加密资产
-pool_type: "🪙加密资产配置(≤5%)"
-macro_bucket: "🌊流动性久期"
-sector: "加密资产 / 智能合约结算"
-status: 持仓中
-price: 1814.2
-target_buy_price: "$2100-$2400 或 质押收益率回升"
-target_sell_price: "$4500-$5000(泡沫止盈) 或 L1价值捕获崩溃证伪清仓"
-target_position_pct: 3
-next_risk_date: "2026-12-16"
-macro_score: 58
-quality_score: 75
-timing_score: 60
-vitality_score: 78
-score_rate: 71
-traps_hit: 2
-position_pct: 1
-verdict: 全球去中心化智能合约结算层龙头；已建底仓（0.25186793 ETH，约 $600），与 BTC 共同纳入加密资产 ≤5% 严格硬顶风控下运行
 标的名称: "Ethereum ETH"
+公司全称: "Ethereum"
 代码: "ETH"
 类型: 加密资产
 所属池子: "🪙加密资产配置(≤5%)"
 宏观因子篮子: "🌊流动性久期"
+行业: "加密资产 / 智能合约结算"
 状态: 持仓中
 现价: 1814.2
 🟢学徒买点: "$2100-$2400 或 质押收益率回升"
@@ -35,10 +17,12 @@ verdict: 全球去中心化智能合约结算层龙头；已建底仓（0.251867
 目标仓位%: 3
 当前仓位%: 1
 💣排雷日历: "2026-12-16"
+宏观分%: 58
 质量分%: 75
 时机分%: 60
 新物种生命力%: 78
 综合分%: 71
+命中陷阱数: 2
 结论: "全球去中心化智能合约结算层龙头；已建底仓（0.25186793 ETH，约 $600），与 BTC 共同纳入加密资产 ≤5% 严格硬顶风控下运行"
 ---
 
