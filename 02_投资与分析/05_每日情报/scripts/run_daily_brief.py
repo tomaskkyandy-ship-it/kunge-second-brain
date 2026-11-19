@@ -54,6 +54,177 @@ RECORDS_DIR = VAULT_ROOT / "02_投资与分析" / "04_交易记录"
 POOL_DIRS = [RESEARCH_DIR, RECORDS_DIR]
 METHOD_DIR = VAULT_ROOT / "02_投资与分析" / "01_方法论"
 DAILY_DIR = VAULT_ROOT / "02_投资与分析" / "05_每日情报"
+HISTORY_FILE = DAILY_DIR / "data" / "market_history.jsonl"
+
+
+def build_history_record(snapshot: dict) -> dict:
+    """将当日量化快照提炼为结构化时序记录（纯公开行情与宏观数据，不含任何隐私持仓）"""
+    mp = snapshot.get("macro_prices", {}) or {}
+    ratios = snapshot.get("cross_asset_ratios", {}) or {}
+    onchain = snapshot.get("onchain_and_sentiment", {}) or {}
+    radar = snapshot.get("btc_liquidity_radar", {}) or {}
+
+    macro = {}
+    if isinstance(mp.get("10Y美债收益率 (^TNX)", {}).get("latest"), (int, float)):
+        macro["tnx_10y"] = mp["10Y美债收益率 (^TNX)"]["latest"]
+    if isinstance(mp.get("WTI原油期货 (CL=F)", {}).get("latest"), (int, float)):
+        macro["wti"] = mp["WTI原油期货 (CL=F)"]["latest"]
+    if isinstance(mp.get("COMEX黄金期货 (GC=F)", {}).get("latest"), (int, float)):
+        macro["gold"] = mp["COMEX黄金期货 (GC=F)"]["latest"]
+    if isinstance(mp.get("美元指数 (DX-Y.NYB)", {}).get("latest"), (int, float)):
+        macro["dxy"] = mp["美元指数 (DX-Y.NYB)"]["latest"]
+    if isinstance(mp.get("VIX恐慌指数 (^VIX)", {}).get("latest"), (int, float)):
+        macro["vix"] = mp["VIX恐慌指数 (^VIX)"]["latest"]
+    if isinstance(ratios.get("金油比 (Gold/WTI Ratio)", {}).get("value"), (int, float)):
+        macro["gold_oil_ratio"] = ratios["金油比 (Gold/WTI Ratio)"]["value"]
+
+    usdc_str = str(onchain.get("USDC实时流通总市值 (CoinGecko)", ""))
+    m_usdc = re.search(r"\$([0-9,.]+)B", usdc_str)
+    if m_usdc:
+        macro["usdc_mcap_b"] = round(float(m_usdc.group(1).replace(",", "")), 2)
+    fg_str = str(onchain.get("加密恐慌与贪婪指数 (Fear & Greed)", ""))
+    m_fg = re.search(r"(\d+)\s*/\s*100", fg_str)
+    if m_fg:
+        macro["fear_greed"] = int(m_fg.group(1))
+
+    gl = radar.get("green_lights")
+    btc_radar = {
+        "green_lights": gl,
+        "missing_signals": radar.get("missing_signals", 0),
+        "multiplier": "1.0x" if (isinstance(gl, int) and gl >= 4) else ("0.5x" if (isinstance(gl, int) and gl >= 2) else "0.25x"),
+    }
+
+    targets_rec = {}
+    for tk, info in (snapshot.get("targets_data", {}) or {}).items():
+        tech = info.get("technicals", {}) or {}
+        targets_rec[tk] = {
+            "price": info.get("latest_price"),
+            "rsi_14": tech.get("rsi_14"),
+        }
+
+    radar_rec = {}
+    for item in (snapshot.get("new_hunter_radar", []) or []):
+        radar_rec[item["ticker"]] = {
+            "price": item.get("latest_price"),
+            "rsi_14": item.get("rsi_14"),
+        }
+
+    return {
+        "date": TODAY_STR,
+        "macro": macro,
+        "btc_radar": btc_radar,
+        "targets": targets_rec,
+        "radar": radar_rec,
+    }
+
+
+def save_market_history(record: dict):
+    """按日期去重写入结构化时序库 market_history.jsonl"""
+    HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
+    by_date = {}
+    if HISTORY_FILE.exists():
+        for line in HISTORY_FILE.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+                if obj.get("date"):
+                    by_date[obj["date"]] = obj
+            except Exception:
+                continue
+    by_date[record["date"]] = record
+    sorted_dates = sorted(by_date.keys())
+    with HISTORY_FILE.open("w", encoding="utf-8") as f:
+        for d in sorted_dates:
+            f.write(json.dumps(by_date[d], ensure_ascii=False) + "\n")
+
+
+def compute_historical_trends(current_record: dict) -> dict:
+    """读取最近 7-14 天历史时序，计算跨日趋势、连续超卖天数、BTC绿灯持续天数与昨日贝叶斯建议防重复"""
+    history = []
+    if HISTORY_FILE.exists():
+        for line in HISTORY_FILE.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+                if obj.get("date") and obj["date"] < TODAY_STR:
+                    history.append(obj)
+            except Exception:
+                continue
+    history.sort(key=lambda x: x["date"])
+    recent = history[-7:]
+    all_seq = recent + [current_record]
+
+    trends = {
+        "history_days_available": len(recent),
+        "macro_7d_delta": {},
+        "btc_radar_streak": "",
+        "consecutive_oversold_days": {},
+        "yesterday_bayesian_notes": [],
+    }
+
+    if recent:
+        base = recent[0]
+        cur_m = current_record.get("macro", {})
+        base_m = base.get("macro", {})
+        base_date = base.get("date", "")
+        for k, label, unit in [
+            ("tnx_10y", "10Y美债", "%"),
+            ("dxy", "美元指数DXY", ""),
+            ("wti", "WTI原油", "$"),
+            ("gold", "COMEX黄金", "$"),
+            ("gold_oil_ratio", "金油比", ""),
+            ("usdc_mcap_b", "USDC市值", "B"),
+            ("fear_greed", "恐慌贪婪指数", ""),
+        ]:
+            if isinstance(cur_m.get(k), (int, float)) and isinstance(base_m.get(k), (int, float)):
+                diff = round(cur_m[k] - base_m[k], 2)
+                trends["macro_7d_delta"][label] = f"{base_m[k]}{unit} ({base_date}) → {cur_m[k]}{unit} (Δ {diff:+.2f}{unit})"
+
+    # BTC 绿灯连续天数
+    cur_gl = current_record.get("btc_radar", {}).get("green_lights")
+    if isinstance(cur_gl, int):
+        streak = 0
+        for rec in reversed(all_seq):
+            if rec.get("btc_radar", {}).get("green_lights") == cur_gl:
+                streak += 1
+            else:
+                break
+        trends["btc_radar_streak"] = f"已连续 {streak} 天维持 {cur_gl}/6 绿灯"
+
+    # 个股及雷达连续 RSI <= 30 天数
+    for tk in current_record.get("targets", {}):
+        cnt = 0
+        for rec in reversed(all_seq):
+            rsi = rec.get("targets", {}).get(tk, {}).get("rsi_14")
+            if isinstance(rsi, (int, float)) and rsi <= 30:
+                cnt += 1
+            else:
+                break
+        if cnt >= 2:
+            trends["consecutive_oversold_days"][tk] = f"已连续 {cnt} 天处于 RSI≤30 极度超卖区"
+
+    # 读取上一份日报的贝叶斯调分建议，避免无意义重复刷屏
+    prev_briefs = sorted([f for f in DAILY_DIR.glob("*_每日投资情报.md") if f.stem[:10] < TODAY_STR], reverse=True)
+    if prev_briefs:
+        try:
+            prev_text = prev_briefs[0].read_text(encoding="utf-8")
+            in_sec5 = False
+            for line in prev_text.splitlines():
+                if "贝叶斯动态调分建议表" in line:
+                    in_sec5 = True
+                    continue
+                if in_sec5 and line.startswith("## "):
+                    break
+                if in_sec5 and line.startswith("|") and "[[" in line and "保持" not in line:
+                    trends["yesterday_bayesian_notes"].append(line.strip())
+        except Exception:
+            pass
+
+    return trends
 
 
 def parse_markdown_frontmatter(file_path: Path):
@@ -788,6 +959,15 @@ def fetch_realtime_market_and_news(targets):
         btc_rsi=btc_rsi_val,
     )
 
+    # 6. 写入结构化时序记忆库并计算 7 日动态趋势（治愈短期失忆症）
+    try:
+        hist_rec = build_history_record(snapshot)
+        snapshot["historical_trends_7d"] = compute_historical_trends(hist_rec)
+        save_market_history(hist_rec)
+        print(f"🧠 已更新时序记忆库并计算跨日趋势 (可用历史: {snapshot['historical_trends_7d']['history_days_available']} 天)")
+    except Exception as e:
+        snapshot["historical_trends_7d"] = {"warning": f"历史趋势计算略过: {e}"}
+
     return snapshot
 
 
@@ -914,12 +1094,13 @@ def generate_intelligence_with_gemini(targets, market_snapshot):
 {mode_instructions}
 
 ### 四、通用格式硬性要求（严格输出两部分，用 `[BARK_PUSH_START]` 分隔）
+- **必须利用 `historical_trends_7d` 跨日趋势记忆**：在第二章与第三章自然融入 7 日趋势变化（如 `macro_7d_delta`、`btc_radar_streak`、`consecutive_oversold_days`），让报告呈现连续演变脉络而非孤立切片；若第五章的贝叶斯调分建议与 `yesterday_bayesian_notes` 相同，须注明“延续昨日建议，待人工确认”。
 - **严禁输出任何已删除标的（RXRX、CT、ZEC）！**
 - **严禁编造评分与价位**：贝叶斯调分表只允许包含股票池档案里已有 `score_rate` 的标的，未建档标的（如 NVDA、PLTR 等雷达候选）一律不得出现“当前总分率”；候选雷达的转正观察价只能使用 `dynamic_watch_zone` 字段的程序计算值，不得自行杜撰价位。
 - 资金比例口径一律为：💎皇冠 75%–85%、🚀奇兵 10%–15%（加密≤5%）、💵战略现金 5%–10%，严禁再写“85%/15%”旧口径。
 - 若 `btc_liquidity_radar` 含 `data_warning`，必须在正文如实提示数据缺失。
 - 正文中所有的美元符号必须转义为 `\\$`（如 `\\$120`、`\\$75,500`），防止 Obsidian KaTeX 公式渲染错乱！
-- 必须使用 Obsidian 双链语法（如 `[[Alphabet GOOGL]]`、`[[Bitcoin BTC]]`、`[[Circle CRCL]]`、`[[Coinbase COIN]]`、`[[SpaceX SPCX]]`、`[[股票池]]`、`[[颠覆性新物种与生命力评估模型]]`、`[[新物种与候选猎物雷达池]]`）。
+- 必须使用 Obsidian 双链语法（如 `[[Alphabet GOOGL]]`、`[[Bitcoin BTC]]`、`[[Circle CRCL]]`、`[[Coinbase COIN]]`、`[[Ethereum ETH]]`、`[[SpaceX SPCX]]`、`[[股票池]]`、`[[颠覆性新物种与生命力评估模型]]`、`[[新物种与候选猎物雷达池]]`）。
 
 #### 分隔符（在 Markdown 报告全部结束后，独占一行写以下标记）：
 `[BARK_PUSH_START]`
@@ -964,8 +1145,24 @@ def save_report_to_obsidian(md_content: str):
     DAILY_DIR.mkdir(parents=True, exist_ok=True)
     report_path = DAILY_DIR / f"{TODAY_STR}_每日投资情报.md"
 
+    def repair_markdown_tables(text: str) -> str:
+        """落盘前质量门禁：自动校验并修复 Markdown 表格分隔行与表头列数不一致的排版漏洞"""
+        lines = text.splitlines()
+        out = []
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            # 检测表格对齐分隔行（如 | :--- | :--- |）
+            if stripped.startswith("|") and re.match(r"^\|\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$", stripped):
+                if out and out[-1].strip().startswith("|"):
+                    header_cols = len([c for c in out[-1].strip().strip("|").split("|")])
+                    sep_cols = len([c for c in stripped.strip("|").split("|")])
+                    if header_cols >= 2 and sep_cols != header_cols:
+                        line = "| " + " | ".join([":---"] * header_cols) + " |"
+            out.append(line)
+        return "\n".join(out)
+
     def purge_deprecated_lines(text: str) -> str:
-        """过滤掉旧报告表格中可能残留的 RXRX / Concrete CT / Zcash ZEC 行，并修复反引号双链等排版错误"""
+        """过滤掉旧报告表格中可能残留的 RXRX / Concrete CT / Zcash ZEC 行，并修复反引号双链与表格对齐"""
         deprecated_patterns = ("RXRX", "Recursion", "Concrete CT", "Zcash ZEC", "| **CT** |", "| **ZEC** |")
         cleaned_lines = [
             line for line in text.splitlines()
@@ -974,6 +1171,8 @@ def save_report_to_obsidian(md_content: str):
         cleaned_text = "\n".join(cleaned_lines)
         # 自动修复反引号包裹的 Obsidian 双链（如 `[[Alphabet GOOGL]]` -> [[Alphabet GOOGL]]）
         cleaned_text = re.sub(r"`(\[\[.+?\]\])`", r"\1", cleaned_text)
+        # 自动修复表格分隔行与表头列数错位
+        cleaned_text = repair_markdown_tables(cleaned_text)
         return cleaned_text
 
     md_content = purge_deprecated_lines(md_content)
